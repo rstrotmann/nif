@@ -20,23 +20,31 @@ domain(obj, name)
 
 ## Value
 
-The specified domain as data frame. Issues a warning if the domain does
-not exist and returns NULL.
+The specified domain as data frame. Stops if the domain is not
+available.
 
 ## Examples
 
 ``` r
 head(domain(examplinib_fe, "dm"), 3)
-#>   SITEID  SUBJID         ACTARM ACTARMCD          RFICDTC          RFSTDTC
-#> 1    102 1020001 Screen Failure SCRNFAIL 2000-12-21T10:30             <NA>
-#> 2    104 1040001   Fed - Fasted       BA 2000-12-25T09:47 2001-01-02T09:47
-#> 3    105 1050001   Fasted - Fed       AB 2000-12-26T10:05 2001-01-05T10:05
-#>           RFXSTDTC    STUDYID           USUBJID SEX AGE  AGEU COUNTRY DOMAIN
-#> 1             <NA> 2023000400 20230004001020001   F  42 YEARS     DEU     DM
-#> 2 2001-01-02T09:47 2023000400 20230004001040001   M  28 YEARS     DEU     DM
-#> 3 2001-01-05T10:05 2023000400 20230004001050001   M  34 YEARS     DEU     DM
-#>              ARM    ARMCD                      RACE ETHNIC          RFENDTC
-#> 1 Screen Failure SCRNFAIL                     WHITE                    <NA>
-#> 2   Fed - Fasted       BA                     WHITE        2001-01-15T09:47
-#> 3   Fasted - Fed       AB BLACK OR AFRICAN AMERICAN        2001-01-18T10:05
+#> ──────── SDTM domain ──────── 
+#> Domain DM, study 2023000400
+#> An open-label 2-period crossover study in healthy subjects to investigate the effect of food on the pharmacokinetics of examplinib
+#> 
+#> # A tibble: 3 × 19
+#>   SITEID SUBJID  ACTARM       ACTARMCD RFICDTC          RFSTDTC         
+#>   <chr>  <chr>   <chr>        <chr>    <chr>            <chr>           
+#> 1 102    1020001 Fasted - Fed AB       2000-12-22T09:49 2001-01-01T09:49
+#> 2 104    1040001 Fed - Fasted BA       2000-12-24T11:25 2001-01-03T11:25
+#> 3 104    1040002 Fed - Fasted BA       2000-12-27T10:17 2001-01-07T10:17
+#>   RFXSTDTC         STUDYID    USUBJID           SEX     AGE AGEU  COUNTRY DOMAIN
+#>   <chr>            <chr>      <chr>             <chr> <dbl> <chr> <chr>   <chr> 
+#> 1 2001-01-01T09:49 2023000400 20230004001020001 M        23 YEARS DEU     DM    
+#> 2 2001-01-03T11:25 2023000400 20230004001040001 F        47 YEARS DEU     DM    
+#> 3 2001-01-07T10:17 2023000400 20230004001040002 F        53 YEARS DEU     DM    
+#>   ARM          ARMCD RACE  ETHNIC RFENDTC         
+#>   <chr>        <chr> <fct> <chr>  <chr>           
+#> 1 Fasted - Fed AB    WHITE ""     2001-01-14T09:49
+#> 2 Fed - Fasted BA    WHITE ""     2001-01-16T11:25
+#> 3 Fed - Fasted BA    WHITE ""     2001-01-20T10:17
 ```

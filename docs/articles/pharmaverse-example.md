@@ -39,7 +39,7 @@ sdtm <- sdtm(
 ``` r
 
 summary(sdtm)
-#> ──────── SDTM data set summary ──────── 
+#> ──────── SDTM data summary ──────── 
 #> Study CDISCPILOT01
 #> 
 #> Safety and Efficacy of the Xanomeline Transdermal Therapeutic System (TTS) in
@@ -73,7 +73,7 @@ summary(sdtm)
 #>   PCTEST      PCTESTCD  
 #>   XANOMELINE  XAN
 #> 
-#> Hash: 225dce0eb67a5748787059eacf2b00b3
+#> Hash: 0d62eb0202ab5d4a390a6400f4c7867f
 #> Last DTC: 2015-03-05 15:40:00
 
 plot(sdtm, domain = "dm", points = F)
@@ -132,18 +132,18 @@ summary(nif)
 #>   3    ALT      1814
 #> 
 #> Observations by NTIME:
-#>   NTIME  ALT  XAN   
-#>   -2448  1    -     
-#>   -2184  1    -     
-#>   -1920  1    -     
-#>   -1896  1    -     
-#>   -1584  1    -     
-#>   -1560  1    -     
-#>   -1536  1    -     
-#>   -1248  1    -     
-#>   -1200  1    -     
-#>   -1056  1    -     
-#>   (202 more rows)
+#>   NTIME  ALT  XAN  
+#>   -2448  1    -    
+#>   -2184  1    -    
+#>   -1920  1    -    
+#>   -1896  1    -    
+#>   -1584  1    -    
+#>   -1560  1    -    
+#>   -1536  1    -    
+#>   -1248  1    -    
+#>   -1200  1    -    
+#>   -1056  1    -    
+#>   (213 more rows)
 #> 
 #> Subjects with dose reductions:
 #>   treatment  n  
@@ -155,9 +155,9 @@ summary(nif)
 #>   PLACEBO  7    210  149.1  182     
 #>   XAN      1    212  99.2   81
 #> 
-#> NIF version: 0.66.1
-#> Creation date: 2026-09-13
-#> Hash: 983163ef4b0c551ef964dee3cdef0dd2
+#> NIF version: 0.66.2
+#> Creation date: 2026-10-23
+#> Hash: 20c0f8475df98d34b480a98bdacf18c1
 #> Last DTC: 2015-03-05 14:40:00
 
 invisible(capture.output(

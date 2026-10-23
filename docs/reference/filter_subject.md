@@ -26,7 +26,7 @@ The filtered object.
 
 ``` r
 filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
-#> ──────── SDTM data set summary ──────── 
+#> ──────── SDTM data summary ──────── 
 #> Study 2023000022
 #> 
 #> An open-label single-arm Phase 2 study of examplinib in patients
@@ -56,7 +56,7 @@ filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
 #>   RS2023      RS2023      
 #>   RS2023487A  RS2023487A
 #> 
-#> Hash: c04ee3bae73d466d091ca4eba8b6f3e3
+#> Hash: 53bdf159bb304711d8aa942d5f884311
 #> Last DTC: 2001-03-07 09:56:00
 #> 
 filter_subject(examplinib_poc_nif,

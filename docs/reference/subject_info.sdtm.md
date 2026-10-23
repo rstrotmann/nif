@@ -30,32 +30,32 @@ subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
 #> ──────── Subject information ────────
 #> SUBJID    1020001            
 #> USUBJID   20230004001020001  
-#> ARM       Screen Failure     
-#> ARMCD     SCRNFAIL           
-#> ACTARM    Screen Failure     
-#> ACTARMCD  SCRNFAIL           
+#> ARM       Fasted - Fed       
+#> ARMCD     AB                 
+#> ACTARM    Fasted - Fed       
+#> ACTARMCD  AB                 
 #> SITEID    102                
 #> COUNTRY   DEU                
-#> RFSTDTC   NA                 
-#> RFENDTC   NA                 
-#> SEX       F                  
-#> AGE       42                 
+#> RFSTDTC   2001-01-01T09:49   
+#> RFENDTC   2001-01-14T09:49   
+#> SEX       M                  
+#> AGE       23                 
 #> RACE      WHITE              
 #> ETHNIC                       
 subject_info(examplinib_fe, subjects(examplinib_fe)[1:3, "USUBJID"])
 #> ──────── Subject information ────────
-#> SUBJID    1020001            1040001            1050001                    
-#> USUBJID   20230004001020001  20230004001040001  20230004001050001          
-#> ARM       Screen Failure     Fed - Fasted       Fasted - Fed               
-#> ARMCD     SCRNFAIL           BA                 AB                         
-#> ACTARM    Screen Failure     Fed - Fasted       Fasted - Fed               
-#> ACTARMCD  SCRNFAIL           BA                 AB                         
-#> SITEID    102                104                105                        
-#> COUNTRY   DEU                DEU                DEU                        
-#> RFSTDTC   NA                 2001-01-02T09:47   2001-01-05T10:05           
-#> RFENDTC   NA                 2001-01-15T09:47   2001-01-18T10:05           
-#> SEX       F                  M                  M                          
-#> AGE       42                 28                 34                         
-#> RACE      WHITE              WHITE              BLACK OR AFRICAN AMERICAN  
-#> ETHNIC                                                                     
+#> SUBJID    1020001            1040001            1040002            
+#> USUBJID   20230004001020001  20230004001040001  20230004001040002  
+#> ARM       Fasted - Fed       Fed - Fasted       Fed - Fasted       
+#> ARMCD     AB                 BA                 BA                 
+#> ACTARM    Fasted - Fed       Fed - Fasted       Fed - Fasted       
+#> ACTARMCD  AB                 BA                 BA                 
+#> SITEID    102                104                104                
+#> COUNTRY   DEU                DEU                DEU                
+#> RFSTDTC   2001-01-01T09:49   2001-01-03T11:25   2001-01-07T10:17   
+#> RFENDTC   2001-01-14T09:49   2001-01-16T11:25   2001-01-20T10:17   
+#> SEX       M                  F                  F                  
+#> AGE       23                 47                 53                 
+#> RACE      WHITE              WHITE              WHITE              
+#> ETHNIC                                                             
 ```

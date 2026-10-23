@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -105,7 +105,9 @@ domains. Let’s summarize the <code>examplinib_poc</code> sdtm object for
 a high-level overview:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">examplinib_poc</span><span class="op">)</span></span>
-<span><span class="co">#&gt; ──────── SDTM data set summary ──────── </span></span>
+<span><span class="co">#&gt; ──────── SDTM data summary ──────── </span></span>
+<span><span class="co">#&gt; Source: synthetic data</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Study 2023000022</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; An open-label single-arm Phase 2 study of examplinib in patients</span></span>
@@ -136,7 +138,7 @@ a high-level overview:</p>
 <span><span class="co">#&gt;   RS2023      RS2023      </span></span>
 <span><span class="co">#&gt;   RS2023487A  RS2023487A</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hash: 5bc89e9fe26d195ef49ffc7b75abbe9b</span></span>
+<span><span class="co">#&gt; Hash: daa83ec8882927b899bfe34f0051ab58</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-08-15 11:01:00</span></span></code></pre></div>
 <p>Note that in the EX domain, the administered drug is given as
 ‘EXAMPLINIB’ while in PC, the corresponding analyte is ‘RS2023’. The
@@ -156,11 +158,12 @@ pharmacokinetic nif object from <code>examplinic_poc</code>:</p>
 <span>  <span class="fu"><a href="../reference/add_administration.html">add_administration</a></span><span class="op">(</span><span class="va">sdtm</span>, extrt <span class="op">=</span> <span class="st">"EXAMPLINIB"</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">sdtm</span>, domain <span class="op">=</span> <span class="st">"pc"</span>, testcd <span class="op">=</span> <span class="st">"RS2023"</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span>, cmt <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">sdtm</span>, domain <span class="op">=</span> <span class="st">"pc"</span>, testcd <span class="op">=</span> <span class="st">"RS2023487A"</span>, parent <span class="op">=</span> <span class="st">"RS2023"</span>, cmt <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Default imputation rules: imputation_rules_standard</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Default nif imputation rules applied to administration of EXAMPLINIB</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> A global cut-off-date of 2001-08-15 09:01:00 was automatically assigned!</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation model 'imputation_rules_standard' applied to RS2023 observations</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Default nif imputation rules applied to RS2023 observations</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation model 'imputation_rules_standard' applied to RS2023487A observations</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Default nif imputation rules applied to RS2023487A observations</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.</span></span></code></pre></div>
 <p>Let’s add some further baseline data to our nif object. The serum
 creatinine concentration can be used to calculate the individual
@@ -272,9 +275,9 @@ impaired renal function:</p>
 <span><span class="co">#    PARENT  min  max  mean  median  </span></span>
 <span><span class="co">#    RS2023  58   101  76.9  75</span></span>
 <span><span class="co">#  </span></span>
-<span><span class="co">#  NIF version: 0.66.1</span></span>
-<span><span class="co">#  Creation date: 2026-09-13</span></span>
-<span><span class="co">#  Hash: ece6f63960475b8121568b693136282e</span></span>
+<span><span class="co">#  NIF version: 0.66.2</span></span>
+<span><span class="co">#  Creation date: 2026-10-23</span></span>
+<span><span class="co">#  Hash: a0e0953ea5cb78ff61e1d9fd57146192</span></span>
 <span><span class="co">#  Last DTC: 2001-08-15 09:01:00</span></span></code></pre></div>
 <p>For a visual overview of the NIF data set <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> can be
 applied to the nif summary object. Ignore the
@@ -577,7 +580,7 @@ Essentially, <code><a href="../reference/nca.html">nca()</a></code> is a wrapper
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

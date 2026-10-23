@@ -14,7 +14,8 @@ nca(
   time = "TIME",
   duplicates = "stop",
   duplicate_function = mean,
-  silent = NULL
+  silent = NULL,
+  na_action = "exclude"
 )
 ```
 
@@ -64,6 +65,18 @@ nca(
 
   Suppress messages.
 
+- na_action:
+
+  How to handle missing observation `DV`:
+
+  - `'exclude'`: Drop missing concentrations (default).
+
+  - `'zero'`: Replace missing concentrations with 0.
+
+  - `'error'`: Stop if any observation `DV` is missing. Dose rows are
+    not changed. Missing concentrations at the start of an interval are
+    still imputed as 0 by PKNCA.
+
 ## Value
 
 A data frame.
@@ -73,7 +86,11 @@ A data frame.
 This function is a wrapper around the NCA functions provided by the
 [PKNCA](https://CRAN.R-project.org/package=PKNCA) package.
 
-NA values are set to zero! Negative concentrations are set to zero!
+Missing observation concentrations are excluded by default. Use
+`na_action = "zero"` to treat them as 0, or `"error"` to stop. Negative
+concentrations are set to zero with a warning. PKNCA still imputes a
+missing concentration at the start of each interval
+(`impute = "start_conc0"`).
 
 ## Examples
 
@@ -93,13 +110,13 @@ head(nca(examplinib_fe_nif, time = "TIME", group = "FASTED"))
 #> ! No analyte specified for NCA!
 #> Selected RS2023 as the most likely analyte!
 #> ℹ Parent set to RS2023
-#> ! 5 negative concentrations set to zero!
+#> ! 6 negative concentrations set to zero!
 #> ℹ NCA: Group by FASTED
 #>   FASTED ID DI start end  PPTESTCD      PPORRES exclude DOSE
-#> 1      1  1  1     0  24   auclast 2.504642e+04    <NA>  500
-#> 2      1  1  1     0 Inf      cmax 6.325101e+03    <NA>  500
-#> 3      1  1  1     0 Inf      tmax 1.000000e+00    <NA>  500
-#> 4      1  1  1     0 Inf     tlast 1.680000e+02    <NA>  500
-#> 5      1  1  1     0 Inf clast.obs 9.704197e-05    <NA>  500
-#> 6      1  1  1     0 Inf  lambda.z 8.895551e-02    <NA>  500
+#> 1      0  1  1     0  24   auclast 1.758944e+04    <NA>  500
+#> 2      0  1  1     0 Inf      cmax 2.842672e+03    <NA>  500
+#> 3      0  1  1     0 Inf      tmax 2.000000e+00    <NA>  500
+#> 4      0  1  1     0 Inf     tlast 1.680000e+02    <NA>  500
+#> 5      0  1  1     0 Inf clast.obs 2.153413e-05    <NA>  500
+#> 6      0  1  1     0 Inf  lambda.z 9.668765e-02    <NA>  500
 ```

@@ -18,7 +18,8 @@ obesity_class(bmi)
 
 ## Value
 
-A character vector.
+A character vector of NHLBI obesity classes. Missing, non-finite, or
+non-positive BMI values yield `NA`.
 
 ## Details
 

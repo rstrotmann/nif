@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,20 +75,19 @@
 <li><p><code>domains</code> The included domains by their SDTM code and the number of
 respective unique USUBJID, as data frame,</p></li>
 <li><p><code>treatments</code> The unique <code>EXTRT</code> as character.</p></li>
-<li><p><code>arms</code> The unique <code>ACTAMCD</code> and <code>ACTARM</code> as data frame.</p></li>
+<li><p><code>arms</code> The unique <code>ACTARMCD</code> and <code>ACTARM</code> as data frame.</p></li>
 <li><p><code>doses</code> The unique <code>EXTRT</code> and <code>EXDOSE</code> as data frame.</p></li>
 <li><p><code>specimens</code> The unique <code>PCSPEC</code> as character.</p></li>
 <li><p><code>analytes</code> The unique <code>PCTEST</code> and <code>PCTESTCD</code> as data frame.</p></li>
 <li><p><code>pc_timepoints</code> The unique <code>PCTPT</code> and <code>PCTPTNUM</code> as data frame.</p></li>
-<li><p><code>analyte_mapping</code> The analyte mapping as data frame.</p></li>
-<li><p><code>metabolite_mapping</code> The metabolite mapping as data frame.</p></li>
-<li><p><code>time_mapping</code> The time mapping as data frame.</p></li>
 </ul></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">examplinib_poc</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ──────── SDTM data set summary ──────── </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ──────── SDTM data summary ──────── </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Source: synthetic data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Study 2023000022</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> An open-label single-arm Phase 2 study of examplinib in patients</span>
@@ -119,7 +118,7 @@ respective unique USUBJID, as data frame,</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   RS2023      RS2023      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   RS2023487A  RS2023487A</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Hash: 5bc89e9fe26d195ef49ffc7b75abbe9b</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Hash: daa83ec8882927b899bfe34f0051ab58</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Last DTC: 2001-08-15 11:01:00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
@@ -133,7 +132,7 @@ respective unique USUBJID, as data frame,</p></li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

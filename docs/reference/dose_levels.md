@@ -36,14 +36,14 @@ dose_levels(examplinib_fe_nif)
 #> 1    500 20
 dose_levels(examplinib_fe_nif, group = "SEX")
 #>   SEX RS2023  N
-#> 1   0    500 13
-#> 2   1    500  7
+#> 1   0    500  6
+#> 2   1    500 14
 dose_levels(examplinib_fe_nif, group = c("SEX", "FASTED"))
 #>   SEX FASTED RS2023  N
-#> 1   0      0    500 13
-#> 2   0      1    500 13
-#> 3   1      0    500  7
-#> 4   1      1    500  7
+#> 1   0      0    500  6
+#> 2   0      1    500  6
+#> 3   1      0    500 14
+#> 4   1      1    500 14
 dose_levels(examplinib_sad_min_nif)
 #>   CMT1  N
 #> 1    5  3
@@ -55,6 +55,6 @@ dose_levels(examplinib_sad_min_nif)
 #> 7  500 18
 #> 8  800  6
 #> 9 1000  3
-dose_levels(nif())
+dose_levels(nif(silent = TRUE))
 #> NULL
 ```

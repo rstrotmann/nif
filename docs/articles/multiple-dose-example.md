@@ -40,7 +40,9 @@ overview:
 ``` r
 
 summary(examplinib_poc)
-#> ──────── SDTM data set summary ──────── 
+#> ──────── SDTM data summary ──────── 
+#> Source: synthetic data
+#> 
 #> Study 2023000022
 #> 
 #> An open-label single-arm Phase 2 study of examplinib in patients
@@ -71,7 +73,7 @@ summary(examplinib_poc)
 #>   RS2023      RS2023      
 #>   RS2023487A  RS2023487A
 #> 
-#> Hash: 5bc89e9fe26d195ef49ffc7b75abbe9b
+#> Hash: daa83ec8882927b899bfe34f0051ab58
 #> Last DTC: 2001-08-15 11:01:00
 ```
 
@@ -92,11 +94,12 @@ nif_poc <- nif() %>%
   add_administration(sdtm, extrt = "EXAMPLINIB", analyte = "RS2023") %>%
   add_observation(sdtm, domain = "pc", testcd = "RS2023", analyte = "RS2023", cmt = 2) %>%
   add_observation(sdtm, domain = "pc", testcd = "RS2023487A", parent = "RS2023", cmt = 3)
-#> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
+#> ℹ Default imputation rules: imputation_rules_standard
+#> ℹ Default nif imputation rules applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-08-15 09:01:00 was automatically assigned!
-#> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
+#> ℹ Default nif imputation rules applied to RS2023 observations
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
-#> ℹ Imputation model 'imputation_rules_standard' applied to RS2023487A observations
+#> ℹ Default nif imputation rules applied to RS2023487A observations
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
 ```
 
@@ -220,9 +223,9 @@ summary(nif_poc)
 #    PARENT  min  max  mean  median  
 #    RS2023  58   101  76.9  75
 #  
-#  NIF version: 0.66.1
-#  Creation date: 2026-09-13
-#  Hash: ece6f63960475b8121568b693136282e
+#  NIF version: 0.66.2
+#  Creation date: 2026-10-23
+#  Hash: a0e0953ea5cb78ff61e1d9fd57146192
 #  Last DTC: 2001-08-15 09:01:00
 ```
 

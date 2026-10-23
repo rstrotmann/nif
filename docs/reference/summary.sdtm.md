@@ -34,7 +34,7 @@ A sdtm_summary object.
 
 - `treatments` The unique `EXTRT` as character.
 
-- `arms` The unique `ACTAMCD` and `ACTARM` as data frame.
+- `arms` The unique `ACTARMCD` and `ACTARM` as data frame.
 
 - `doses` The unique `EXTRT` and `EXDOSE` as data frame.
 
@@ -44,17 +44,13 @@ A sdtm_summary object.
 
 - `pc_timepoints` The unique `PCTPT` and `PCTPTNUM` as data frame.
 
-- `analyte_mapping` The analyte mapping as data frame.
-
-- `metabolite_mapping` The metabolite mapping as data frame.
-
-- `time_mapping` The time mapping as data frame.
-
 ## Examples
 
 ``` r
 summary(examplinib_poc)
-#> ──────── SDTM data set summary ──────── 
+#> ──────── SDTM data summary ──────── 
+#> Source: synthetic data
+#> 
 #> Study 2023000022
 #> 
 #> An open-label single-arm Phase 2 study of examplinib in patients
@@ -85,7 +81,7 @@ summary(examplinib_poc)
 #>   RS2023      RS2023      
 #>   RS2023487A  RS2023487A
 #> 
-#> Hash: 5bc89e9fe26d195ef49ffc7b75abbe9b
+#> Hash: daa83ec8882927b899bfe34f0051ab58
 #> Last DTC: 2001-08-15 11:01:00
 #> 
 ```

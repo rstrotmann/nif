@@ -38,7 +38,7 @@ add_observation(
   omit_not_done = TRUE,
   na_rm = TRUE,
   na_to_zero = FALSE,
-  imputation = imputation_rules_standard
+  imputation = NULL
 )
 ```
 
@@ -192,7 +192,8 @@ add_observation(
 
 - imputation:
 
-  The imputation rule set.
+  The imputation rule set as a list, or `NULL` to use
+  `attr(nif, "imputation_rules")`.
 
 ## Value
 

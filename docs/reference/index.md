@@ -3,7 +3,7 @@
 ## All functions
 
 - [`GeomAdmin`](GeomAdmin.md) : GeomAdmin ggproto object
-- [`adam()`](adam.md) : adam object class constructor
+- [`adam()`](adam.md) : Public constructor for adam objects
 - [`add_administration()`](add_administration.md) : Add administration
   events
 - [`add_ae_observation()`](add_ae_observation.md) **\[experimental\]** :
@@ -49,6 +49,8 @@
 - [`bsa_dubois()`](bsa_dubois.md) : Body surface area (Du Bois formula)
 - [`bsa_mosteller()`](bsa_mosteller.md) : Body surface area (Mosteller
   formula)
+- [`cdiscpilot01_adam`](cdiscpilot01_adam.md) : Pharmaverse sample ADaM
+  data
 - [`cdiscpilot01_nif`](cdiscpilot01_nif.md) : Pharmaverse sample nif
   object
 - [`cdiscpilot01_sdtm`](cdiscpilot01_sdtm.md) : Pharmaverse sample SDTM
@@ -182,13 +184,17 @@
 - [`plot(`*`<sdtm>`*`)`](plot.sdtm.md) : Plot SDTM object
 - [`plot(`*`<sdtm_domain>`*`)`](plot.sdtm_domain.md) : Plot domain
   object
+- [`print(`*`<adam_dataset>`*`)`](print.adam_dataset.md) : Print method
+  for ADaM dataset objects
 - [`race_coding`](race_coding.md) : Race coding table
 - [`read_adam()`](read_adam.md) : Load ADaM data sets from disk
 - [`read_sdtm()`](read_sdtm.md) : Read SDTM data
 - [`recode_race()`](recode_race.md) : Recode RACE columns in nif object
 - [`rich_sampling_sbs()`](rich_sampling_sbs.md) : Identify subjects with
   rich sampling
-- [`sdtm()`](sdtm.md) : SDTM class constructor
+- [`sdtm()`](sdtm.md) : sdtm object constructor
+- [`sdtm_domain()`](sdtm_domain.md) : Constructor for sdtm_domain
+  objects
 - [`sdtm_missing_times()`](sdtm_missing_times.md) : Number of DTC
   entries with missing time information
 - [`studies()`](studies.md) : Studies within a nif object
@@ -205,10 +211,13 @@
   object
 - [`time_plot()`](time_plot.md) : Plot time metrics against each other
   for observations
+- [`timing_chart()`](timing_chart.md) **\[experimental\]** : Nif timing
+  plot
 - [`treatments()`](treatments.md) : Treatments in a nif or sdtm object
 - [`trial_dco()`](trial_dco.md) : Cut-off date
 - [`trial_title()`](trial_title.md) : Trial title
 - [`usubjid()`](usubjid.md) : Get the USUBJID of subject
+- [`validate_sdtm()`](validate_sdtm.md) : Validate sdtm object
 - [`watermark()`](watermark.md) : Add a watermark annotation layer for a
   ggplot2 object
 - [`write_nonmem()`](write_nonmem.md) : Write NONMEM input formatted nif

@@ -28,20 +28,21 @@ nif <- nif() %>%
   add_baseline(examplinib_poc, "lb", "CREAT") %>%
   add_bl_crcl() %>%
   add_bl_renal()
-#> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
+#> ℹ Default imputation rules: imputation_rules_standard
+#> ℹ Default nif imputation rules applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-02-23 11:31:00 was automatically assigned!
-#> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
+#> ℹ Default nif imputation rules applied to RS2023 observations
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
 #> ℹ baseline_filter for BL_CREAT set to LBBLFL == 'Y'
-#> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
-#> ℹ A global cut-off-date of 2001-03-03 10:28:00 was automatically assigned!
-#> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
+#> ℹ Default nif imputation rules applied to administration of EXAMPLINIB
+#> ℹ A global cut-off-date of 2001-02-20 10:06:00 was automatically assigned!
+#> ℹ Default nif imputation rules applied to RS2023 observations
 #> ! Compartment 2 is already assigned. Is this intended?
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
 #> ℹ baseline_filter for BL_CREAT set to LBBLFL == 'Y'
-#> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
+#> ℹ Default nif imputation rules applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-08-15 09:01:00 was automatically assigned!
-#> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
+#> ℹ Default nif imputation rules applied to RS2023 observations
 #> ! Compartment 2 is already assigned. Is this intended?
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
 #> ℹ baseline_filter for BL_CREAT set to LBBLFL == 'Y'
@@ -57,8 +58,8 @@ nif %>%
 #> 
 #> Sex distribution:
 #>   SEX     N    percent  
-#>   male    112  75.7     
-#>   female  36   24.3
+#>   male    105  70.9     
+#>   female  43   29.1
 #> 
 #> Renal impairment class:
 #>   CLASS     N   percent  
@@ -109,8 +110,8 @@ nif %>%
 #>   PARENT  min  max  mean  median  
 #>   RS2023  1    101  42.1  61
 #> 
-#> NIF version: 0.66.1
-#> Creation date: 2026-09-13
-#> Hash: 03249b99078dfb3ae77c5c0276b68137
+#> NIF version: 0.66.2
+#> Creation date: 2026-10-23
+#> Hash: de450fa8035e3eb120506c7cfdc81831
 #> Last DTC: 2001-08-15 09:01:00
 ```

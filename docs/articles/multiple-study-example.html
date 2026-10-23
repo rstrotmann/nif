@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -93,20 +93,21 @@
 <span>  <span class="fu"><a href="../reference/add_baseline.html">add_baseline</a></span><span class="op">(</span><span class="va">examplinib_poc</span>, <span class="st">"lb"</span>, <span class="st">"CREAT"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/add_bl_crcl.html">add_bl_crcl</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/add_bl_renal.html">add_bl_renal</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Default imputation rules: imputation_rules_standard</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Default nif imputation rules applied to administration of EXAMPLINIB</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> A global cut-off-date of 2001-02-23 11:31:00 was automatically assigned!</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation model 'imputation_rules_standard' applied to RS2023 observations</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Default nif imputation rules applied to RS2023 observations</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> baseline_filter for BL_CREAT set to LBBLFL == 'Y'</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> A global cut-off-date of 2001-03-03 10:28:00 was automatically assigned!</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation model 'imputation_rules_standard' applied to RS2023 observations</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Default nif imputation rules applied to administration of EXAMPLINIB</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> A global cut-off-date of 2001-02-20 10:06:00 was automatically assigned!</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Default nif imputation rules applied to RS2023 observations</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Compartment 2 is already assigned. Is this intended?</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> baseline_filter for BL_CREAT set to LBBLFL == 'Y'</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Default nif imputation rules applied to administration of EXAMPLINIB</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> A global cut-off-date of 2001-08-15 09:01:00 was automatically assigned!</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation model 'imputation_rules_standard' applied to RS2023 observations</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Default nif imputation rules applied to RS2023 observations</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Compartment 2 is already assigned. Is this intended?</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> baseline_filter for BL_CREAT set to LBBLFL == 'Y'</span></span>
@@ -122,8 +123,8 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Sex distribution:</span></span>
 <span><span class="co">#&gt;   SEX     N    percent  </span></span>
-<span><span class="co">#&gt;   male    112  75.7     </span></span>
-<span><span class="co">#&gt;   female  36   24.3</span></span>
+<span><span class="co">#&gt;   male    105  70.9     </span></span>
+<span><span class="co">#&gt;   female  43   29.1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Renal impairment class:</span></span>
 <span><span class="co">#&gt;   CLASS     N   percent  </span></span>
@@ -174,9 +175,9 @@
 <span><span class="co">#&gt;   PARENT  min  max  mean  median  </span></span>
 <span><span class="co">#&gt;   RS2023  1    101  42.1  61</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; NIF version: 0.66.1</span></span>
-<span><span class="co">#&gt; Creation date: 2026-09-13</span></span>
-<span><span class="co">#&gt; Hash: 03249b99078dfb3ae77c5c0276b68137</span></span>
+<span><span class="co">#&gt; NIF version: 0.66.2</span></span>
+<span><span class="co">#&gt; Creation date: 2026-10-23</span></span>
+<span><span class="co">#&gt; Hash: de450fa8035e3eb120506c7cfdc81831</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-08-15 09:01:00</span></span></code></pre></div>
   </main>
 </div>
@@ -188,7 +189,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

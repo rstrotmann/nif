@@ -117,9 +117,9 @@ summary(nif)
 #>   PARENT  min  max  mean  median  
 #>   CMT1    1    1    1     1
 #> 
-#> NIF version: 0.66.1
-#> Creation date: 2026-09-13
-#> Hash: ad12b292e2d826399f0066ca09c321bb
+#> NIF version: 0.66.2
+#> Creation date: 2026-10-23
+#> Hash: ea74e7f2bcc8ffb1b56c625d13b29599
 plot(nif, log = T, points = T)
 ```
 

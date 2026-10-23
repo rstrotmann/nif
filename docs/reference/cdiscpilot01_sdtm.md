@@ -13,8 +13,7 @@ cdiscpilot01_sdtm
 
 sdtm object with 9 domains:
 
-
-    -------- SDTM data set summary --------
+    -------- SDTM data summary --------
     Study CDISCPILOT01
 
     Safety and Efficacy of the Xanomeline Transdermal Therapeutic System (TTS) in

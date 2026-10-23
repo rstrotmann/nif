@@ -116,10 +116,10 @@ The return value of this function is a `sdtm` object.
 
 ### SDTM objects
 
-`sdtm` objects are essentially aggregates (lists) of the SDTM domains
-from a particular clinical study, plus some metadata. The easiest way of
-creating `sdtm` objects is by importing the SDTM data using
-[`read_sdtm()`](../reference/read_sdtm.md) as shown above.
+`sdtm` objects are named lists of the SDTM domains from a particular
+clinical study. The easiest way of creating `sdtm` objects is by
+importing the SDTM data using [`read_sdtm()`](../reference/read_sdtm.md)
+as shown above.
 
 The `nif` package includes sample SDTM data sets for demonstration
 purposes. These data do not come from actual clinical studies but are
@@ -133,7 +133,9 @@ Printing an `sdtm` object shows relevant summary information:
 ``` r
 
 examplinib_fe
-#> ──────── SDTM data set summary ──────── 
+#> ──────── SDTM data summary ──────── 
+#> Source: synthetic data
+#> 
 #> Study 2023000400
 #> 
 #> An open-label 2-period crossover study in healthy subjects to investigate the
@@ -141,11 +143,11 @@ examplinib_fe
 #> 
 #> Data disposition:
 #>   DOMAIN  SUBJECTS  OBSERVATIONS  
-#>   dm      28        28            
-#>   vs      28        56            
+#>   dm      30        30            
+#>   vs      30        60            
 #>   ex      20        40            
 #>   pc      20        1360          
-#>   lb      28        28            
+#>   lb      30        30            
 #>   ts      0         0             
 #>   pp      20        360
 #> 
@@ -166,8 +168,8 @@ examplinib_fe
 #>   RS2023      RS2023      
 #>   RS2023487A  RS2023487A
 #> 
-#> Hash: 7c0d6cea178d5af0da1768a17b2513a3
-#> Last DTC: 2001-03-10 11:28:00
+#> Hash: d292543d8f210c3163379028bac1bccc
+#> Last DTC: 2001-02-27 11:06:00
 ```
 
 High-level subject-level disposition data for a specific subject can be
@@ -178,19 +180,19 @@ extracted using [`subject_info()`](../reference/subject_info.md):
 examplinib_fe %>%
   subject_info("20230004001050001")
 #> ──────── Subject information ────────
-#> SUBJID    1050001                    
-#> USUBJID   20230004001050001          
-#> ARM       Fasted - Fed               
-#> ARMCD     AB                         
-#> ACTARM    Fasted - Fed               
-#> ACTARMCD  AB                         
-#> SITEID    105                        
-#> COUNTRY   DEU                        
-#> RFSTDTC   2001-01-05T10:05           
-#> RFENDTC   2001-01-18T10:05           
-#> SEX       M                          
-#> AGE       34                         
-#> RACE      BLACK OR AFRICAN AMERICAN  
+#> SUBJID    1050001            
+#> USUBJID   20230004001050001  
+#> ARM       Fed - Fasted       
+#> ARMCD     BA                 
+#> ACTARM    Fed - Fasted       
+#> ACTARMCD  BA                 
+#> SITEID    105                
+#> COUNTRY   DEU                
+#> RFSTDTC   2001-01-06T09:39   
+#> RFENDTC   2001-01-19T09:39   
+#> SEX       F                  
+#> AGE       40                 
+#> RACE      WHITE              
 #> ETHNIC
 ```
 
@@ -201,22 +203,31 @@ objects with the [`domain()`](../reference/domain.md) function:
 
 domain(examplinib_sad, "dm") %>%
   head(3)
-#>   SITEID  SUBJID                              ACTARM ACTARMCD          RFICDTC
-#> 1    101 1010001 Treatment cohort 1, 5 mg examplinib       C1 2000-12-21T10:18
-#> 2    101 1010002 Treatment cohort 1, 5 mg examplinib       C1 2000-12-21T10:30
-#> 3    101 1010003 Treatment cohort 1, 5 mg examplinib       C1 2000-12-21T09:22
-#>            RFSTDTC         RFXSTDTC    STUDYID           USUBJID SEX AGE  AGEU
-#> 1 2000-12-31T10:18 2000-12-31T10:18 2023000001 20230000011010001   M  43 YEARS
-#> 2 2000-12-29T10:30 2000-12-29T10:30 2023000001 20230000011010002   M  49 YEARS
-#> 3 2000-12-29T09:22 2000-12-29T09:22 2023000001 20230000011010003   M  46 YEARS
-#>   COUNTRY DOMAIN                                 ARM ARMCD
-#> 1     DEU     DM Treatment cohort 1, 5 mg examplinib    C1
-#> 2     DEU     DM Treatment cohort 1, 5 mg examplinib    C1
-#> 3     DEU     DM Treatment cohort 1, 5 mg examplinib    C1
-#>                        RACE ETHNIC          RFENDTC
-#> 1                     WHITE        2000-12-31T10:18
-#> 2                     WHITE        2000-12-29T10:30
-#> 3 BLACK OR AFRICAN AMERICAN        2000-12-29T09:22
+#> ──────── SDTM domain ──────── 
+#> Domain DM, study 2023000001
+#> An open label dose escalation study of RS2023 in healthy subjects
+#> 
+#> # A tibble: 3 × 19
+#>   SITEID SUBJID  ACTARM                              ACTARMCD RFICDTC         
+#>   <chr>  <chr>   <chr>                               <chr>    <chr>           
+#> 1 101    1010001 Treatment cohort 1, 5 mg examplinib C1       2000-12-21T10:18
+#> 2 101    1010002 Treatment cohort 1, 5 mg examplinib C1       2000-12-21T10:30
+#> 3 101    1010003 Treatment cohort 1, 5 mg examplinib C1       2000-12-21T09:22
+#>   RFSTDTC          RFXSTDTC         STUDYID    USUBJID           SEX     AGE
+#>   <chr>            <chr>            <chr>      <chr>             <chr> <dbl>
+#> 1 2000-12-31T10:18 2000-12-31T10:18 2023000001 20230000011010001 M        43
+#> 2 2000-12-29T10:30 2000-12-29T10:30 2023000001 20230000011010002 M        49
+#> 3 2000-12-29T09:22 2000-12-29T09:22 2023000001 20230000011010003 M        46
+#>   AGEU  COUNTRY DOMAIN ARM                                 ARMCD
+#>   <chr> <chr>   <chr>  <chr>                               <chr>
+#> 1 YEARS DEU     DM     Treatment cohort 1, 5 mg examplinib C1   
+#> 2 YEARS DEU     DM     Treatment cohort 1, 5 mg examplinib C1   
+#> 3 YEARS DEU     DM     Treatment cohort 1, 5 mg examplinib C1   
+#>   RACE                      ETHNIC RFENDTC         
+#>   <fct>                     <chr>  <chr>           
+#> 1 WHITE                     ""     2000-12-31T10:18
+#> 2 WHITE                     ""     2000-12-29T10:30
+#> 3 BLACK OR AFRICAN AMERICAN ""     2000-12-29T09:22
 ```
 
 [`summary()`](https://rdrr.io/r/base/summary.html) generates a
@@ -254,7 +265,7 @@ summary(domain(examplinib_sad, "pc"), silent = TRUE)
 #>   EPOCH                 
 #>   OPEN LABEL TREATMENT
 #> 
-#> Hash: 618e6736d84c901296ac92207aeed368
+#> Hash: 15fe3ba0eaf41c2cba4e0f48e452ecf0
 #> Last DTC: 2001-03-02 12:31:00
 ```
 
@@ -411,25 +422,25 @@ head(nif, 5)
 #> # A tibble: 5 × 27
 #>     REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT   BMI
 #>   <int> <dbl> <chr>      <chr>             <dbl> <dbl> <fct>  <dbl>  <dbl> <dbl>
-#> 1     1     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5
-#> 2     2     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5
-#> 3     3     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5
-#> 4     4     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5
-#> 5     5     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5
+#> 1     1     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2
+#> 2     2     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2
+#> 3     3     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2
+#> 4     4     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2
+#> 5     5     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2
 #>   DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE
 #>   <dttm>              <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>  
-#> 1 2001-01-05 10:05:00   0     0     0     0       1   500     1   NA  RS2023 
-#> 2 2001-01-05 10:05:00   0     0     0     0       0     0     2    0  RS2023 
-#> 3 2001-01-05 10:35:00   0.5   0.5   0.5   0.5     0     0     2 4697. RS2023 
-#> 4 2001-01-05 11:05:00   1     1     1     1       0     0     2 6325. RS2023 
-#> 5 2001-01-05 11:35:00   1.5   1.5   1.5   1.5     0     0     2 6294. RS2023 
+#> 1 2001-01-15 08:24:00   0     0     0     0       1   500     1   NA  RS2023 
+#> 2 2001-01-15 08:24:00   0     0     0     0       0     0     2    0  RS2023 
+#> 3 2001-01-15 08:54:00   0.5   0.5   0.5   0.5     0     0     2  624. RS2023 
+#> 4 2001-01-15 09:24:00   1     1     1     1       0     0     2 1740. RS2023 
+#> 5 2001-01-15 09:54:00   1.5   1.5   1.5   1.5     0     0     2 2670. RS2023 
 #>   PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD IMPUTATION                
 #>   <chr>  <dbl> <lgl>      <dbl> <dbl> <chr>    <chr>                     
-#> 1 RS2023     1 FALSE        500     1 AB       "time copied from EXSTDTC"
-#> 2 RS2023     1 FALSE        500     0 AB       ""                        
-#> 3 RS2023     1 FALSE        500     0 AB       ""                        
-#> 4 RS2023     1 FALSE        500     0 AB       ""                        
-#> 5 RS2023     1 FALSE        500     0 AB       ""
+#> 1 RS2023     1 FALSE        500     1 BA       "time copied from EXSTDTC"
+#> 2 RS2023     1 FALSE        500     0 BA       ""                        
+#> 3 RS2023     1 FALSE        500     0 BA       ""                        
+#> 4 RS2023     1 FALSE        500     0 BA       ""                        
+#> 5 RS2023     1 FALSE        500     0 BA       ""
 ```
 
 ### Multiple analytes
@@ -507,24 +518,24 @@ head(nif, 3)
 #> # A tibble: 3 × 31
 #>     REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT   BMI
 #>   <int> <dbl> <chr>      <chr>             <dbl> <dbl> <fct>  <dbl>  <dbl> <dbl>
-#> 1     1     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5
-#> 2     2     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5
-#> 3     3     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5
+#> 1     1     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2
+#> 2     2     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2
+#> 3     3     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2
 #>   DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE
 #>   <dttm>              <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>  
-#> 1 2001-01-05 10:05:00   0     0     0     0       1   500     1   NA  RS2023 
-#> 2 2001-01-05 10:05:00   0     0     0     0       0     0     2    0  RS2023 
-#> 3 2001-01-05 10:35:00   0.5   0.5   0.5   0.5     0     0     2 4697. RS2023 
+#> 1 2001-01-15 08:24:00   0     0     0     0       1   500     1   NA  RS2023 
+#> 2 2001-01-15 08:24:00   0     0     0     0       0     0     2    0  RS2023 
+#> 3 2001-01-15 08:54:00   0.5   0.5   0.5   0.5     0     0     2  624. RS2023 
 #>   PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD IMPUTATION                
 #>   <chr>  <dbl> <lgl>      <dbl> <dbl> <chr>    <chr>                     
-#> 1 RS2023     1 FALSE        500     1 AB       "time copied from EXSTDTC"
-#> 2 RS2023     1 FALSE        500     0 AB       ""                        
-#> 3 RS2023     1 FALSE        500     0 AB       ""                        
+#> 1 RS2023     1 FALSE        500     1 BA       "time copied from EXSTDTC"
+#> 2 RS2023     1 FALSE        500     0 BA       ""                        
+#> 3 RS2023     1 FALSE        500     0 BA       ""                        
 #>   EPOCH                  PERIOD TREATMENT FASTED
 #>   <chr>                  <chr>  <chr>      <dbl>
-#> 1 OPEN LABEL TREATMENT 1 1      A              1
-#> 2 OPEN LABEL TREATMENT 1 1      A              1
-#> 3 OPEN LABEL TREATMENT 1 1      A              1
+#> 1 OPEN LABEL TREATMENT 1 1      B              0
+#> 2 OPEN LABEL TREATMENT 1 1      B              0
+#> 3 OPEN LABEL TREATMENT 1 1      B              0
 ```
 
 ## DATA EXPLORATION
@@ -549,8 +560,8 @@ summary(nif)
 #> 
 #> Sex distribution:
 #>   SEX     N   percent  
-#>   male    13  65       
-#>   female  7   35
+#>   male    6   30       
+#>   female  14  70
 #> 
 #> Treatments: RS2023
 #> 
@@ -586,10 +597,10 @@ summary(nif)
 #>   PARENT  min  max  mean  median  
 #>   RS2023  2    2    2     2
 #> 
-#> NIF version: 0.66.1
-#> Creation date: 2026-09-13
-#> Hash: 7c29b98e687a88c9c3cd473af1d4ee50
-#> Last DTC: 2001-03-10 10:28:00
+#> NIF version: 0.66.2
+#> Creation date: 2026-10-23
+#> Hash: 44434e5857020c436fb7dc0ccef7f3ef
+#> Last DTC: 2001-02-27 10:06:00
 ```
 
 Plotting the summary yields histograms of the baseline demographic

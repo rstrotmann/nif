@@ -29,16 +29,16 @@ subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
 #> ──────── Subject information ────────
 #> SUBJID    1020001            
 #> USUBJID   20230004001020001  
-#> ARM       Screen Failure     
-#> ARMCD     SCRNFAIL           
-#> ACTARM    Screen Failure     
-#> ACTARMCD  SCRNFAIL           
+#> ARM       Fasted - Fed       
+#> ARMCD     AB                 
+#> ACTARM    Fasted - Fed       
+#> ACTARMCD  AB                 
 #> SITEID    102                
 #> COUNTRY   DEU                
-#> RFSTDTC   NA                 
-#> RFENDTC   NA                 
-#> SEX       F                  
-#> AGE       42                 
+#> RFSTDTC   2001-01-01T09:49   
+#> RFENDTC   2001-01-14T09:49   
+#> SEX       M                  
+#> AGE       23                 
 #> RACE      WHITE              
 #> ETHNIC                       
 subject_info(examplinib_poc_nif, 1)

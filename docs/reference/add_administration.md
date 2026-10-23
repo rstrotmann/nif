@@ -18,7 +18,7 @@ add_administration(
   cut_off_date = NULL,
   keep = NULL,
   debug = FALSE,
-  imputation = imputation_rules_standard,
+  imputation = NULL,
   duration = NULL,
   iv_admin = NULL,
   silent = NULL
@@ -71,7 +71,8 @@ add_administration(
 
 - imputation:
 
-  The imputation rule set.
+  The imputation rule set as a list, or `NULL` to use
+  `attr(nif, "imputation_rules")`.
 
 - duration:
 
@@ -118,15 +119,15 @@ To add observation events to the [nif](nif.md) object, see
 ## Examples
 
 ``` r
-add_administration(nif(), examplinib_sad, "EXAMPLINIB")
-#> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
+add_administration(nif(silent = TRUE), examplinib_sad, "EXAMPLINIB")
+#> ℹ Default nif imputation rules applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-02-23 11:31:00 was automatically assigned!
 #> ──────── NONMEM Input Format (NIF) data ────────
 #> 0 observations from 48 subjects across 1 study
 #> 
 #> # A tibble: 48 × 27
 #>      REF    ID STUDYID    USUBJID             AGE   SEX
-#>    <int> <dbl> <chr>      <chr>             <dbl> <dbl>
+#>  * <int> <dbl> <chr>      <chr>             <dbl> <dbl>
 #>  1     1     1 2023000001 20230000011010001    43     0
 #>  2     2     2 2023000001 20230000011010002    49     0
 #>  3     3     3 2023000001 20230000011010003    46     0
@@ -138,7 +139,7 @@ add_administration(nif(), examplinib_sad, "EXAMPLINIB")
 #>  9     9     9 2023000001 20230000011010012    47     0
 #> 10    10    10 2023000001 20230000011010013    40     0
 #>    RACE                      HEIGHT WEIGHT   BMI DTC                  TIME NTIME
-#>    <fct>                      <dbl>  <dbl> <dbl> <dttm>              <dbl> <dbl>
+#>  * <fct>                      <dbl>  <dbl> <dbl> <dttm>              <dbl> <dbl>
 #>  1 WHITE                       187.   77    21.9 2000-12-31 10:18:00     0     0
 #>  2 WHITE                       190.   72.8  20.3 2000-12-29 10:30:00     0     0
 #>  3 BLACK OR AFRICAN AMERICAN   175.   80    26.2 2000-12-29 09:22:00     0     0
@@ -150,7 +151,7 @@ add_administration(nif(), examplinib_sad, "EXAMPLINIB")
 #>  9 WHITE                       190    76.3  21.1 2001-01-07 11:26:00     0     0
 #> 10 WHITE                       173.   77.9  25.9 2001-01-13 09:30:00     0     0
 #>     TAFD   TAD  EVID   AMT   CMT    DV ANALYTE    PARENT     TRTDY METABOLITE
-#>    <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>      <chr>      <dbl> <lgl>     
+#>  * <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>      <chr>      <dbl> <lgl>     
 #>  1     0     0     1     5     1    NA EXAMPLINIB EXAMPLINIB     1 FALSE     
 #>  2     0     0     1     5     1    NA EXAMPLINIB EXAMPLINIB     1 FALSE     
 #>  3     0     0     1     5     1    NA EXAMPLINIB EXAMPLINIB     1 FALSE     
@@ -162,7 +163,7 @@ add_administration(nif(), examplinib_sad, "EXAMPLINIB")
 #>  9     0     0     1    20     1    NA EXAMPLINIB EXAMPLINIB     1 FALSE     
 #> 10     0     0     1    50     1    NA EXAMPLINIB EXAMPLINIB     1 FALSE     
 #>     DOSE   MDV ACTARMCD IMPUTATION              
-#>    <dbl> <dbl> <chr>    <chr>                   
+#>  * <dbl> <dbl> <chr>    <chr>                   
 #>  1     5     1 C1       time copied from EXSTDTC
 #>  2     5     1 C1       time copied from EXSTDTC
 #>  3     5     1 C1       time copied from EXSTDTC

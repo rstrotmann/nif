@@ -46,6 +46,7 @@
 <url><loc>/reference/bmi_by_age.html</loc></url>
 <url><loc>/reference/bsa_dubois.html</loc></url>
 <url><loc>/reference/bsa_mosteller.html</loc></url>
+<url><loc>/reference/cdiscpilot01_adam.html</loc></url>
 <url><loc>/reference/cdiscpilot01_nif.html</loc></url>
 <url><loc>/reference/cdiscpilot01_sdtm.html</loc></url>
 <url><loc>/reference/check.html</loc></url>
@@ -174,6 +175,7 @@
 <url><loc>/reference/plural.html</loc></url>
 <url><loc>/reference/pos_diff.html</loc></url>
 <url><loc>/reference/positive_or_zero.html</loc></url>
+<url><loc>/reference/print.adam_dataset.html</loc></url>
 <url><loc>/reference/pt_to_hours.html</loc></url>
 <url><loc>/reference/qtime_plot.html</loc></url>
 <url><loc>/reference/race_coding.html</loc></url>
@@ -185,6 +187,7 @@
 <url><loc>/reference/safe_min.html</loc></url>
 <url><loc>/reference/safe_sd.html</loc></url>
 <url><loc>/reference/sdtm.html</loc></url>
+<url><loc>/reference/sdtm_domain.html</loc></url>
 <url><loc>/reference/sdtm_missing_times.html</loc></url>
 <url><loc>/reference/standardize_date_format.html</loc></url>
 <url><loc>/reference/stat_admin.html</loc></url>
@@ -202,12 +205,14 @@
 <url><loc>/reference/testcd.html</loc></url>
 <url><loc>/reference/time_by_ntime.html</loc></url>
 <url><loc>/reference/time_plot.html</loc></url>
+<url><loc>/reference/timing_chart.html</loc></url>
 <url><loc>/reference/treatments.html</loc></url>
 <url><loc>/reference/treatments.nif.html</loc></url>
 <url><loc>/reference/treatments.sdtm.html</loc></url>
 <url><loc>/reference/trial_dco.html</loc></url>
 <url><loc>/reference/trial_title.html</loc></url>
 <url><loc>/reference/usubjid.html</loc></url>
+<url><loc>/reference/validate_sdtm.html</loc></url>
 <url><loc>/reference/watermark.html</loc></url>
 <url><loc>/reference/write_monolix.html</loc></url>
 <url><loc>/reference/write_nif.html</loc></url>

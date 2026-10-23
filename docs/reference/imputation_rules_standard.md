@@ -32,9 +32,9 @@ A named list with these functions:
 
 ## Details
 
-This is the default imputation rule set for
-[`add_administration()`](add_administration.md) and
-[`add_observation()`](add_observation.md).
+This is the default stored on objects created by [`nif()`](nif.md) and
+used by [`add_administration()`](add_administration.md) and
+[`add_observation()`](add_observation.md) when `imputation` is `NULL`.
 
 ## Imputation rules for drug administrations
 

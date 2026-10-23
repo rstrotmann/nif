@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,25 +64,33 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>The specified domain as data frame. Issues a warning if the domain
-does not exist and returns NULL.</p>
+    <p>The specified domain as data frame. Stops if the domain is not
+available.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">domain</span><span class="op">(</span><span class="va">examplinib_fe</span>, <span class="st">"dm"</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   SITEID  SUBJID         ACTARM ACTARMCD          RFICDTC          RFSTDTC</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    102 1020001 Screen Failure SCRNFAIL 2000-12-21T10:30             &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    104 1040001   Fed - Fasted       BA 2000-12-25T09:47 2001-01-02T09:47</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    105 1050001   Fasted - Fed       AB 2000-12-26T10:05 2001-01-05T10:05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           RFXSTDTC    STUDYID           USUBJID SEX AGE  AGEU COUNTRY DOMAIN</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1             &lt;NA&gt; 2023000400 20230004001020001   F  42 YEARS     DEU     DM</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2001-01-02T09:47 2023000400 20230004001040001   M  28 YEARS     DEU     DM</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2001-01-05T10:05 2023000400 20230004001050001   M  34 YEARS     DEU     DM</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              ARM    ARMCD                      RACE ETHNIC          RFENDTC</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Screen Failure SCRNFAIL                     WHITE                    &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   Fed - Fasted       BA                     WHITE        2001-01-15T09:47</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   Fasted - Fed       AB BLACK OR AFRICAN AMERICAN        2001-01-18T10:05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ──────── SDTM domain ──────── </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Domain DM, study 2023000400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> An open-label 2-period crossover study in healthy subjects to investigate the effect of food on the pharmacokinetics of examplinib</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 19</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   SITEID SUBJID  ACTARM       ACTARMCD RFICDTC          RFSTDTC         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 102    1020001 Fasted - Fed AB       2000-12-22T09:49 2001-01-01T09:49</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 104    1040001 Fed - Fasted BA       2000-12-24T11:25 2001-01-03T11:25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 104    1040002 Fed - Fasted BA       2000-12-27T10:17 2001-01-07T10:17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   RFXSTDTC         STUDYID    USUBJID           SEX     AGE AGEU  COUNTRY DOMAIN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 2001-01-01T09:49 2023000400 20230004001020001 M        23 YEARS DEU     DM    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 2001-01-03T11:25 2023000400 20230004001040001 F        47 YEARS DEU     DM    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 2001-01-07T10:17 2023000400 20230004001040002 F        53 YEARS DEU     DM    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ARM          ARMCD RACE  ETHNIC RFENDTC         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Fasted - Fed AB    WHITE <span style="color: #949494;">""</span>     2001-01-14T09:49</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Fed - Fasted BA    WHITE <span style="color: #949494;">""</span>     2001-01-16T11:25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Fed - Fasted BA    WHITE <span style="color: #949494;">""</span>     2001-01-20T10:17</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -94,7 +102,7 @@ does not exist and returns NULL.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

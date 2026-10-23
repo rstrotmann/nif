@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,7 +56,8 @@
 <span>  time <span class="op">=</span> <span class="st">"TIME"</span>,</span>
 <span>  duplicates <span class="op">=</span> <span class="st">"stop"</span>,</span>
 <span>  duplicate_function <span class="op">=</span> <span class="va">mean</span>,</span>
-<span>  silent <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  silent <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  na_action <span class="op">=</span> <span class="st">"exclude"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -105,6 +106,15 @@ duplicate entries.</p></li>
 <dt id="arg-silent">silent<a class="anchor" aria-label="anchor" href="#arg-silent"></a></dt>
 <dd><p>Suppress messages.</p></dd>
 
+
+<dt id="arg-na-action">na_action<a class="anchor" aria-label="anchor" href="#arg-na-action"></a></dt>
+<dd><p>How to handle missing observation <code>DV</code>:</p><ul><li><p><code>'exclude'</code>: Drop missing concentrations (default).</p></li>
+<li><p><code>'zero'</code>: Replace missing concentrations with 0.</p></li>
+<li><p><code>'error'</code>: Stop if any observation <code>DV</code> is missing.
+Dose rows are not changed. Missing concentrations at the start of an
+interval are still imputed as 0 by PKNCA.</p></li>
+</ul></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -114,8 +124,10 @@ duplicate entries.</p></li>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function is a wrapper around the NCA functions provided by the
 <a href="https://CRAN.R-project.org/package=PKNCA" class="external-link">PKNCA</a> package.</p>
-<p>NA values are set to zero!
-Negative concentrations are set to zero!</p>
+<p>Missing observation concentrations are excluded by default. Use
+<code>na_action = "zero"</code> to treat them as 0, or <code>"error"</code> to stop. Negative
+concentrations are set to zero with a warning. PKNCA still imputes a missing
+concentration at the start of each interval (<code>impute = "start_conc0"</code>).</p>
     </div>
 
     <div class="section level2">
@@ -135,15 +147,15 @@ Negative concentrations are set to zero!</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> No analyte specified for NCA!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Selected RS2023 as the most likely analyte!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Parent set to RS2023</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> 5 negative concentrations set to zero!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> 6 negative concentrations set to zero!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> NCA: Group by FASTED</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   FASTED ID DI start end  PPTESTCD      PPORRES exclude DOSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1      1  1  1     0  24   auclast 2.504642e+04    &lt;NA&gt;  500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2      1  1  1     0 Inf      cmax 6.325101e+03    &lt;NA&gt;  500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3      1  1  1     0 Inf      tmax 1.000000e+00    &lt;NA&gt;  500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4      1  1  1     0 Inf     tlast 1.680000e+02    &lt;NA&gt;  500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5      1  1  1     0 Inf clast.obs 9.704197e-05    &lt;NA&gt;  500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6      1  1  1     0 Inf  lambda.z 8.895551e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      0  1  1     0  24   auclast 1.758944e+04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      0  1  1     0 Inf      cmax 2.842672e+03    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3      0  1  1     0 Inf      tmax 2.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4      0  1  1     0 Inf     tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5      0  1  1     0 Inf clast.obs 2.153413e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6      0  1  1     0 Inf  lambda.z 9.668765e-02    &lt;NA&gt;  500</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -155,7 +167,7 @@ Negative concentrations are set to zero!</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>
