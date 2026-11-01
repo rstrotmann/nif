@@ -88,7 +88,7 @@ test_that("domain() rejects vectors with multiple names", {
   # domain() rejects vectors with multiple names
   expect_error(
     domain(test_data, c("dm", "pc")),
-    "name must be a single value"
+    "`name` must be a single value"
   )
 })
 

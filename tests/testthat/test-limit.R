@@ -31,25 +31,25 @@ test_that("limit validates inputs correctly", {
   # Test invalid individual parameter (non-logical)
   expect_error(
     limit(test_nif, individual = "TRUE"),
-    "individual must be a logical value"
+    "`individual` must be a logical value"
   )
 
   # Test invalid individual parameter (numeric)
   expect_error(
     limit(test_nif, individual = 1),
-    "individual must be a logical value"
+    "`individual` must be a logical value"
   )
 
   # Test invalid keep_no_obs_sbs parameter (non-logical)
   expect_error(
     limit(test_nif, keep_no_obs_sbs = "FALSE"),
-    "keep_no_obs_sbs must be a logical value"
+    "`keep_no_obs_sbs` must be a logical value"
   )
 
   # Test invalid keep_no_obs_sbs parameter (vector)
   expect_error(
     limit(test_nif, keep_no_obs_sbs = c(TRUE, FALSE)),
-    "keep_no_obs_sbs must be a single value"
+    "`keep_no_obs_sbs` must be a single value"
   )
 })
 

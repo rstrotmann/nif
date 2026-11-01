@@ -158,19 +158,19 @@ test_that("validate_nif_argument validates fields argument type", {
 
   expect_error(
     validate_nif_argument(test_nif, fields = 1),
-    "fields must be a character value"
+    "`fields` must be a character value"
   )
   expect_error(
     validate_nif_argument(test_nif, fields = TRUE),
-    "fields must be a character value"
+    "`fields` must be a character value"
   )
   expect_error(
     validate_nif_argument(test_nif, fields = NA_character_),
-    "fields must not contain NA"
+    "`fields` must not contain NA"
   )
   expect_error(
     validate_nif_argument(test_nif, fields = ""),
-    "fields must be a non-empty string"
+    "`fields` must be a non-empty string"
   )
 })
 

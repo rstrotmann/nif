@@ -498,14 +498,14 @@ test_that("get_admin_time_from_pcrftdtc validates input types", {
     get_admin_time_from_pcrftdtc(
       ex, sdtm, extrt = "TREATMENT_A", pctestcd = 123, silent = TRUE
     ),
-    "pctestcd must be a character value"
+    "`pctestcd` must be a character value"
   )
 
   expect_error(
     get_admin_time_from_pcrftdtc(
       ex, sdtm, extrt = "TREATMENT_A", pctestcd = "ANALYTE_A", silent = "yes"
     ),
-    "silent must be a logical value"
+    "`silent` must be a logical value"
   )
 
   expect_error(
@@ -513,7 +513,7 @@ test_that("get_admin_time_from_pcrftdtc validates input types", {
       ex, sdtm, extrt = "TREATMENT_A",
       pctestcd = c("ANALYTE_A", "ANALYTE_B"), silent = TRUE
     ),
-    "pctestcd must be a single value"
+    "`pctestcd` must be a single value"
   )
 })
 

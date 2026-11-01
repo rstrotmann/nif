@@ -568,19 +568,19 @@ test_that("add_ntile handles invalid input_col parameter", {
   # Test with NULL input_col
   expect_error(
     add_ntile(test_data, input_col = NULL),
-    "input_col must not be NULL"
+    "`input_col` must not be NULL"
   )
 
   # Test with numeric input_col
   expect_error(
     add_ntile(test_data, input_col = 123),
-    "input_col must be a character value"
+    "`input_col` must be a character value"
   )
 
   # Test with multiple input_col values
   expect_error(
     add_ntile(test_data, input_col = c("DV", "TIME")),
-    "input_col must be a single value"
+    "`input_col` must be a single value"
   )
 })
 
@@ -601,13 +601,13 @@ test_that("add_ntile handles invalid ntile_name parameter", {
   # Test with numeric ntile_name
   expect_error(
     add_ntile(test_data, input_col = "DV", ntile_name = 123),
-    "ntile_name must be a character value"
+    "`ntile_name` must be a character value"
   )
 
   # Test with multiple ntile_name values
   expect_error(
     add_ntile(test_data, input_col = "DV", ntile_name = c("A", "B")),
-    "ntile_name must be a single value"
+    "`ntile_name` must be a single value"
   )
 })
 

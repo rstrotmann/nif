@@ -10,27 +10,32 @@
 #'
 #' @examples
 #' validate_domain(domain(examplinib_sad, "dm"))
-validate_domain <- function(domain, silent = NULL) {
+validate_domain <- function(
+    domain,
+    silent = NULL,
+    call = rlang::caller_env()
+) {
   # Input validation
   if (!is.data.frame(domain)) {
-    stop("The 'domain' parameter must be a data frame")
+    rlang::abort("The 'domain' parameter must be a data frame", call = call)
   }
 
   if (!"DOMAIN" %in% colnames(domain)) {
-    stop("The data frame must have a DOMAIN column")
+    rlang::abort("The data frame must have a DOMAIN column", call = call)
   }
 
   # Check if domain$DOMAIN is empty
   if (length(domain$DOMAIN) == 0 || all(domain$DOMAIN == "")) {
-    stop("The DOMAIN column is empty")
+    rlang::abort("The DOMAIN column is empty", call = call)
   }
 
   # Get unique domain names and handle multiple values
   domain_name <- unique(domain$DOMAIN)
   if (length(domain_name) > 1) {
-    stop(paste0(
-      "Multiple domain values found: ", nice_enumeration(domain_name)
-    ))
+    rlang::abort(
+      paste0("Multiple domain values found: ", nice_enumeration(domain_name)),
+      call = call
+    )
   }
 
   if (!domain_name %in% unique(nif::domain_model$DOMAIN)) {
@@ -97,9 +102,9 @@ validate_domain <- function(domain, silent = NULL) {
 #'
 #' @returns Nothing or stop.
 #' @noRd
-validate_dataset <- function(obj) {
+validate_dataset <- function(obj, call = rlang::caller_env()) {
   if (!inherits(obj, "adam_dataset")) {
-    stop("Input must be an adam_dataset object")
+    rlang::abort("Input must be an adam_dataset object", call = call)
   }
 }
 
@@ -113,23 +118,27 @@ validate_dataset <- function(obj) {
 #' @noRd
 validate_sdtm_argument <- function(
   obj,
-  expected_domains = NULL
+  expected_domains = NULL,
+  call = rlang::caller_env()
 ) {
   validate_argument(expected_domains, "character", allow_null = TRUE,
-                    allow_multiple = TRUE)
+                    allow_multiple = TRUE, call = call)
 
   if (!inherits(obj, "sdtm")) {
-    stop("Input must be a sdtm object")
+    rlang::abort("Input must be a sdtm object", call = call)
   }
 
   if (!is.null(expected_domains)) {
     expected_domains <- tolower(expected_domains)
     missing_domains <- setdiff(expected_domains, names(obj))
     if (length(missing_domains) > 0) {
-      stop(paste0(
-        "Expected ", plural("domain", length(missing_domains) > 1),
-        " missing in sdtm object: ", nice_enumeration(missing_domains)
-      ))
+      rlang::abort(
+        paste0(
+          "Expected ", plural("domain", length(missing_domains) > 1),
+          " missing in sdtm object: ", nice_enumeration(missing_domains)
+        ),
+        call = call
+      )
     }
   }
 }
@@ -157,42 +166,58 @@ validate_argument <- function(
     allow_empty = FALSE,
     allow_multiple = FALSE,
     allow_na = FALSE,
-    values = NULL
+    values = NULL,
+    arg = rlang::caller_arg(param),
+    call = rlang::caller_env()
 ) {
   # Validate type parameter
   type <- match.arg(type)
 
-  param_name <- deparse(substitute(param))
-
   # Check for NULL first
   if (is.null(param)) {
-    if (allow_null) {
-      return(invisible(NULL))
-    } else {
-      stop(paste0(param_name, " must not be NULL"))
-    }
+    if (allow_null) return(invisible(NULL))
+    rlang::abort(
+      paste0("`", arg, "` must not be NULL"),
+      class = "nif_arg_error", call = call
+    )
   }
 
-  # Type checking
-  if ((type == "character" && !is.character(param)) ||
-      (type == "logical" && !is.logical(param)) ||
-      (type == "numeric" && !is.numeric(param) && !is.na(param)) ||
-      (type == "date" && !is.Date(param)) ||
-      (type == "function" && !is.function(param))
-  ) {
-    stop(paste0(param_name, " must be a ", type, " value"))
+  # Type checking. A bare NA (of any type) passes the type check for numeric
+  # and is handled by the NA check below.
+  type_ok <- switch(
+    type,
+    character = is.character(param),
+    logical   = is.logical(param),
+    numeric   = is.numeric(param) || (length(param) > 0 && all(is.na(param))),
+    date      = lubridate::is.Date(param),
+    `function` = is.function(param)
+  )
+
+  if (!type_ok) {
+    rlang::abort(
+      paste0(
+        "`", arg, "` must be a ", type, " value",
+        if (allow_null) " or NULL",
+        ", not ", obj_type_friendly(param), "."
+      ),
+      class = "nif_arg_error", call = call
+    )
   }
 
   # Check for NA values
-  if (type != "function") {
-    if (!allow_na && any(is.na(param))) {
-      stop(paste0(param_name, " must not contain NA"))
-    }
+  if (type != "function" && !allow_na && any(is.na(param))) {
+    rlang::abort(
+      paste0("`", arg, "` must not contain NA"),
+      class = "nif_arg_error", call = call
+    )
   }
 
   # Length checking
   if (length(param) != 1 && !allow_multiple) {
-    stop(paste0(param_name, " must be a single value"))
+    rlang::abort(
+      paste0("`", arg, "` must be a single value"),
+      class = "nif_arg_error", call = call
+    )
   }
 
   # Empty string check (only for character types; ignore NA when allow_na)
@@ -202,15 +227,20 @@ validate_argument <- function(
     length(param) > 0 &&
     any(nchar(param[!is.na(param)]) == 0)
   ) {
-    stop(paste0(param_name, " must be a non-empty string"))
+    rlang::abort(
+      paste0("`", arg, "` must be a non-empty string"),
+      class = "nif_arg_error", call = call
+    )
   }
 
-  if (!is.null(values)) {
-    if (!all(param %in% values))
-      stop(paste0(
-        param_name, " must be ",
+  if (!is.null(values) && !all(param %in% values)) {
+    rlang::abort(
+      paste0(
+        "`", arg, "` must be ",
         nice_enumeration(values, conjunction = "or"), "!"
-      ))
+      ),
+      class = "nif_arg_error", call = call
+    )
   }
 
   invisible(NULL)
@@ -301,7 +331,8 @@ validate_fields <- function(
   # input validation
   check_data_frame(obj, arg = arg, call = call)
   validate_argument(
-    fields, "character", allow_null = TRUE, allow_multiple = TRUE)
+    fields, "character", allow_null = TRUE, allow_multiple = TRUE,
+    call = call)
 
   # business logic
   check_df_columns(
@@ -334,7 +365,8 @@ validate_nif_argument <- function(
   }
 
   validate_argument(
-    fields, "character", allow_null = TRUE, allow_multiple = TRUE)
+    fields, "character", allow_null = TRUE, allow_multiple = TRUE,
+    call = call)
 
   # business logic
   check_df_columns(
@@ -355,9 +387,9 @@ validate_nif_argument <- function(
 #'
 #' @returns Nothing or stop.
 #' @noRd
-validate_domain_param <- function(obj) {
+validate_domain_param <- function(obj, call = rlang::caller_env()) {
   if (!inherits(obj, "sdtm_domain")) {
-    stop("Input must be a sdtm_domain object")
+    rlang::abort("Input must be a sdtm_domain object", call = call)
   }
 }
 
@@ -370,11 +402,16 @@ validate_domain_param <- function(obj) {
 #' @noRd
 #'
 #' @returns Validated testcode(s) as character.
-validate_testcd <- function(sdtm, testcd, domain = NULL) {
+validate_testcd <- function(
+    sdtm,
+    testcd,
+    domain = NULL,
+    call = rlang::caller_env()
+) {
   # input validation
-  validate_argument(domain, "character", allow_null = TRUE)
-  validate_argument(testcd, "character", allow_multiple = TRUE)
-  validate_sdtm_argument(sdtm, domain)
+  validate_argument(domain, "character", allow_null = TRUE, call = call)
+  validate_argument(testcd, "character", allow_multiple = TRUE, call = call)
+  validate_sdtm_argument(sdtm, domain, call = call)
 
   if (!is.null(domain)) {
     domain <- tolower(domain)
@@ -383,25 +420,32 @@ validate_testcd <- function(sdtm, testcd, domain = NULL) {
     testcd_field <- paste0(toupper(domain), "TESTCD")
 
     if (!testcd_field %in% names(temp)) {
-      stop(paste0(
-        toupper(domain), " has no ", testcd_field, " field!"
-      ))
+      rlang::abort(
+        paste0(toupper(domain), " has no ", testcd_field, " field!"),
+        call = call
+      )
     }
 
     missing_testcd <- testcd[!testcd %in% unique(temp[[testcd_field]])]
     if (length(missing_testcd) > 0) {
-      stop(paste0(
-        "Testcd ", nice_enumeration(missing_testcd),
-        " not found in domain ", toupper(domain), "!"
-      ))
+      rlang::abort(
+        paste0(
+          "Testcd ", nice_enumeration(missing_testcd),
+          " not found in domain ", toupper(domain), "!"
+        ),
+        call = call
+      )
     }
   }
 
   missing_testcd <- testcd[!testcd %in% testcd(sdtm)$TESTCD]
   if (length(missing_testcd) > 0) {
-    stop(paste0(
-      "Testcd ", nice_enumeration(missing_testcd), " not found in sdtm!"
-    ))
+    rlang::abort(
+      paste0(
+        "Testcd ", nice_enumeration(missing_testcd), " not found in sdtm!"
+      ),
+      call = call
+    )
   }
 
   testcd
@@ -423,24 +467,26 @@ validate_analyte <- function(
   analyte,
   allow_multiple = TRUE,
   allow_null = FALSE,
-  allow_empty = FALSE
+  allow_empty = FALSE,
+  call = rlang::caller_env()
 ) {
   # validate inputs
-  validate_nif_argument(nif, fields = "ANALYTE")
+  validate_nif_argument(nif, fields = "ANALYTE", call = call)
 
   validate_argument(
     analyte, "character", allow_multiple = allow_multiple,
-    allow_null = allow_null, allow_empty = allow_empty)
+    allow_null = allow_null, allow_empty = allow_empty, call = call)
 
   if (!is.null(analyte)) {
     missing_analytes <- setdiff(analyte, analytes(nif))
     if (length(missing_analytes) > 0) {
-      stop(
+      rlang::abort(
         paste0(
-          plural("Analyte", length(missing_analytes) > 1)
-        ), " ",
-        nice_enumeration(missing_analytes),
-        " not found in nif object!"
+          plural("Analyte", length(missing_analytes) > 1), " ",
+          nice_enumeration(missing_analytes),
+          " not found in nif object!"
+        ),
+        call = call
       )
     }
   }
@@ -453,15 +499,17 @@ validate_analyte <- function(
 #'
 #' @returns Nothing or stop.
 #' @noRd
-validate_imputation_set <- function(obj) {
+validate_imputation_set <- function(obj, call = rlang::caller_env()) {
   if (!is.list(obj) || is.data.frame(obj))
-    stop("Imputation rule set must be a list!")
+    rlang::abort("Imputation rule set must be a list!", call = call)
 
   if (length(obj) == 0)
     return(invisible(NULL))
 
   if (is.null(names(obj)) || any(names(obj) == ""))
-    stop("All elements of an imputation rule set must be named!")
+    rlang::abort(
+      "All elements of an imputation rule set must be named!", call = call
+    )
 
   # number of positional arguments
   n_positional <- c(
@@ -473,11 +521,14 @@ validate_imputation_set <- function(obj) {
 
   unknown <- setdiff(names(obj), names(n_positional))
   if (length(unknown) > 0)
-    stop(paste0(
-      "Unknown ", plural("slot", length(unknown) > 1),
-      " in imputation rule set: ", nice_enumeration(unknown),
-      ". Allowed: ", nice_enumeration(names(n_positional))
-    ))
+    rlang::abort(
+      paste0(
+        "Unknown ", plural("slot", length(unknown) > 1),
+        " in imputation rule set: ", nice_enumeration(unknown),
+        ". Allowed: ", nice_enumeration(names(n_positional))
+      ),
+      call = call
+    )
 
   slot_problem <- function(name) {
     f <- obj[[name]]
@@ -499,10 +550,13 @@ validate_imputation_set <- function(obj) {
   problems <- vapply(names(obj), slot_problem, character(1))
   problems <- problems[!is.na(problems)]
   if (length(problems) > 0)
-    stop(paste0(
-      "Invalid imputation rule set: ",
-      paste(problems, collapse = "; "), "!"
-    ))
+    rlang::abort(
+      paste0(
+        "Invalid imputation rule set: ",
+        paste(problems, collapse = "; "), "!"
+      ),
+      call = call
+    )
 
   invisible(NULL)
 }

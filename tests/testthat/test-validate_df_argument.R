@@ -215,5 +215,5 @@ test_that("validate_fields checks data frame and required fields", {
   expect_invisible(validate_fields(x, c("a", "b")))
   expect_error(validate_fields(x, c("a", "z")), "Missing required fields: z")
   expect_error(validate_fields(list(a = 1)), "`list\\(a = 1\\)` must be a data frame")
-  expect_error(validate_fields(x, 1), "fields must be a character value")
+  expect_error(validate_fields(x, 1), "`fields` must be a character value")
 })

@@ -51,7 +51,7 @@ test_that("edish_plot works with basic input", {
 test_that("edish_plot validates enzyme parameter", {
   expect_error(
     edish_plot(create_edish_nif(), create_edish_sdtm(), enzyme = "INVALID", silent = TRUE),
-    "enzyme must be ALT or AST!"
+    "`enzyme` must be ALT or AST!"
   )
 })
 

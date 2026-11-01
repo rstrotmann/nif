@@ -123,19 +123,19 @@ test_that("make_ae validates character parameters", {
   # Test with numeric ae_term
   expect_error(
     make_ae(test_sdtm, 123),
-    "ae_term must be a character value"
+    "`ae_term` must be a character value"
   )
 
   # Test with NULL ae_term
   expect_error(
     make_ae(test_sdtm, NULL),
-    "ae_term must not be NULL"
+    "`ae_term` must not be NULL"
   )
 
   # Test with numeric ae_field
   expect_error(
     make_ae(test_sdtm, "Headache", ae_field = 123),
-    "ae_field must be a character value"
+    "`ae_field` must be a character value"
   )
 })
 

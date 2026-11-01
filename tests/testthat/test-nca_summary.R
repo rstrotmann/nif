@@ -223,12 +223,12 @@ test_that("nca_summary validates argument types", {
 
   expect_error(
     nca_summary(nca_data, parameters = 1),
-    "parameters must be a character value"
+    "`parameters` must be a character value"
   )
 
   expect_error(
     nca_summary(nca_data, group = 1),
-    "group must be a character value"
+    "`group` must be a character value"
   )
 })
 

@@ -288,12 +288,12 @@ test_that("testcd() handles domain parameter validation", {
   # Test with invalid domain parameter types
   expect_error(
     testcd(sdtm_obj, domain = 123),
-    "domain must be a character value"
+    "`domain` must be a character value"
   )
 
   expect_error(
     testcd(sdtm_obj, domain = list("dm")),
-    "domain must be a character value"
+    "`domain` must be a character value"
   )
 })
 

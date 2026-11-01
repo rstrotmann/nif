@@ -17,22 +17,22 @@ eval_tbl <- function(tbl) {
 # ---- Input validation --------------------------------------------------------
 
 test_that("convert_xxtpt_to_hours rejects non-character xxtpt", {
-  expect_error(convert_xxtpt_to_hours(NULL), "xxtpt must not be NULL")
-  expect_error(convert_xxtpt_to_hours(1), "xxtpt must be a character value")
-  expect_error(convert_xxtpt_to_hours(factor("1H")), "xxtpt must be a character value")
+  expect_error(convert_xxtpt_to_hours(NULL), "`xxtpt` must not be NULL")
+  expect_error(convert_xxtpt_to_hours(1), "`xxtpt` must be a character value")
+  expect_error(convert_xxtpt_to_hours(factor("1H")), "`xxtpt` must be a character value")
 })
 
 
 test_that("convert_xxtpt_to_hours rejects missing or empty xxtpt strings", {
-  expect_error(convert_xxtpt_to_hours(NA_character_), "xxtpt must not contain NA")
+  expect_error(convert_xxtpt_to_hours(NA_character_), "`xxtpt` must not contain NA")
   expect_error(
     convert_xxtpt_to_hours(c("1H", NA_character_)),
-    "xxtpt must not contain NA"
+    "`xxtpt` must not contain NA"
   )
-  expect_error(convert_xxtpt_to_hours(""), "xxtpt must be a non-empty string")
+  expect_error(convert_xxtpt_to_hours(""), "`xxtpt` must be a non-empty string")
   expect_error(
     convert_xxtpt_to_hours(c("1H", "")),
-    "xxtpt must be a non-empty string"
+    "`xxtpt` must be a non-empty string"
   )
 })
 
@@ -56,11 +56,11 @@ test_that("convert_xxtpt_to_hours rejects invalid treatment_duration", {
   )
   expect_error(
     convert_xxtpt_to_hours("EOT", treatment_duration = NA_real_),
-    "treatment_duration must not contain NA"
+    "`treatment_duration` must not contain NA"
   )
   expect_error(
     convert_xxtpt_to_hours("EOT", treatment_duration = "1"),
-    "treatment_duration must be a numeric value"
+    "`treatment_duration` must be a numeric value"
   )
 })
 
@@ -68,7 +68,7 @@ test_that("convert_xxtpt_to_hours rejects invalid treatment_duration", {
 test_that("convert_xxtpt_to_hours rejects an invalid range_method", {
   expect_error(
     convert_xxtpt_to_hours("0-6h Post-dose", range_method = "mean"),
-    "range_method must be start, end or midpoint"
+    "`range_method` must be start, end or midpoint"
   )
   expect_error(
     convert_xxtpt_to_hours("0-6h Post-dose", range_method = NA_character_),

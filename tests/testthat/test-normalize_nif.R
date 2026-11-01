@@ -41,22 +41,22 @@ test_that("normalize_nif validates cleanup", {
 
   expect_error(
     normalize_nif(test_nif, cleanup = "TRUE"),
-    "cleanup must be a logical value"
+    "`cleanup` must be a logical value"
   )
 
   expect_error(
     normalize_nif(test_nif, cleanup = 1),
-    "cleanup must be a logical value"
+    "`cleanup` must be a logical value"
   )
 
   expect_error(
     normalize_nif(test_nif, cleanup = c(TRUE, FALSE)),
-    "cleanup must be a single value"
+    "`cleanup` must be a single value"
   )
 
   expect_error(
     normalize_nif(test_nif, cleanup = NA),
-    "cleanup must not contain NA"
+    "`cleanup` must not contain NA"
   )
 })
 
@@ -69,32 +69,32 @@ test_that("normalize_nif validates keep", {
 
   expect_error(
     normalize_nif(test_nif, keep = 1),
-    "keep must be a character value"
+    "`keep` must be a character value"
   )
 
   expect_error(
     normalize_nif(test_nif, keep = TRUE),
-    "keep must be a character value"
+    "`keep` must be a character value"
   )
 
   expect_error(
     normalize_nif(test_nif, keep = NA_character_),
-    "keep must not contain NA"
+    "`keep` must not contain NA"
   )
 
   expect_error(
     normalize_nif(test_nif, keep = ""),
-    "keep must be a non-empty string"
+    "`keep` must be a non-empty string"
   )
 
   expect_error(
     normalize_nif(test_nif, keep = c("CUSTOM", NA_character_)),
-    "keep must not contain NA"
+    "`keep` must not contain NA"
   )
 
   expect_error(
     normalize_nif(test_nif, cleanup = FALSE, keep = 1),
-    "keep must be a character value"
+    "`keep` must be a character value"
   )
 })
 

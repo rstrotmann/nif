@@ -1002,17 +1002,17 @@ test_that("make_observation validates omit_not_done parameter", {
   # Test with invalid omit_not_done parameter
   expect_error(
     make_observation(sdtm, "pc", "A", omit_not_done = "invalid"),
-    "omit_not_done must be a logical value"
+    "`omit_not_done` must be a logical value"
   )
 
   expect_error(
     make_observation(sdtm, "pc", "A", omit_not_done = 123),
-    "omit_not_done must be a logical value"
+    "`omit_not_done` must be a logical value"
   )
 
   expect_error(
     make_observation(sdtm, "pc", "A", omit_not_done = NULL),
-    "omit_not_done must not be NULL"
+    "`omit_not_done` must not be NULL"
   )
 
   # Test with valid omit_not_done parameters
@@ -1037,7 +1037,7 @@ test_that("make_observation rejects invalid ntime_method", {
       ntime_method = "INVALID",
       silent = TRUE
     ),
-    "ntime_method must be TPT, TPTNUM, ELTM, VISITDY or DY!"
+    "`ntime_method` must be TPT, TPTNUM, ELTM, VISITDY or DY!"
   )
 })
 
@@ -1077,11 +1077,11 @@ test_that("make_observation validates na_to_zero parameter", {
 
   expect_error(
     make_observation(sdtm, "pc", "A", na_to_zero = "yes", silent = TRUE),
-    "na_to_zero must be a logical value"
+    "`na_to_zero` must be a logical value"
   )
   expect_error(
     make_observation(sdtm, "pc", "A", na_to_zero = NULL, silent = TRUE),
-    "na_to_zero must not be NULL"
+    "`na_to_zero` must not be NULL"
   )
 })
 

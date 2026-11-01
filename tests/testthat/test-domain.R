@@ -131,15 +131,15 @@ test_that("domain() handles input validation correctly", {
 
   expect_error(
     domain(obj, NULL),
-    "name must not be NULL"
+    "`name` must not be NULL"
   )
   expect_error(
     domain(obj, 123),
-    "name must be a character value"
+    "`name` must be a character value"
   )
   expect_error(
     domain(obj, character(0)),
-    "name must be a single value"
+    "`name` must be a single value"
   )
 })
 
@@ -160,6 +160,6 @@ test_that("domain() rejects vectors with multiple names", {
 
   expect_error(
     domain(obj, c("dm", "pc")),
-    "name must be a single value"
+    "`name` must be a single value"
   )
 })

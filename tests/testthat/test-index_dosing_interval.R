@@ -340,7 +340,7 @@ test_that("index_dosing_interval validates inputs", {
 
   expect_error(
     index_dosing_interval(nif_obj, parent = 1),
-    "parent must be a character value"
+    "`parent` must be a character value"
   )
 
   expect_error(

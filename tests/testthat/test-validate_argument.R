@@ -10,29 +10,29 @@ test_that("validate_argument passes for valid character values", {
 
 test_that("validate_argument rejects non-character values", {
   x <- 123
-  expect_error(validate_argument(x, "character"), "x must be a character value")
+  expect_error(validate_argument(x, "character"), "`x` must be a character value")
 
   x <- TRUE
-  expect_error(validate_argument(x, "character"), "x must be a character value")
+  expect_error(validate_argument(x, "character"), "`x` must be a character value")
 
   x <- factor("a")
-  expect_error(validate_argument(x, "character"), "x must be a character value")
+  expect_error(validate_argument(x, "character"), "`x` must be a character value")
 
   x <- list("a")
-  expect_error(validate_argument(x, "character"), "x must be a character value")
+  expect_error(validate_argument(x, "character"), "`x` must be a character value")
 })
 
 
 test_that("validate_argument handles NULL for character", {
   x <- NULL
-  expect_error(validate_argument(x, "character"), "x must not be NULL")
+  expect_error(validate_argument(x, "character"), "`x` must not be NULL")
   expect_invisible(validate_argument(x, "character", allow_null = TRUE))
 })
 
 
 test_that("validate_argument handles NA for character", {
   x <- NA_character_
-  expect_error(validate_argument(x, "character"), "x must not contain NA")
+  expect_error(validate_argument(x, "character"), "`x` must not contain NA")
   expect_invisible(
     validate_argument(x, "character", allow_na = TRUE, allow_empty = TRUE)
   )
@@ -40,7 +40,7 @@ test_that("validate_argument handles NA for character", {
   x <- c("a", NA_character_)
   expect_error(
     validate_argument(x, "character", allow_multiple = TRUE),
-    "x must not contain NA"
+    "`x` must not contain NA"
   )
   expect_invisible(
     validate_argument(x, "character", allow_multiple = TRUE, allow_na = TRUE)
@@ -50,13 +50,13 @@ test_that("validate_argument handles NA for character", {
 
 test_that("validate_argument handles empty character strings", {
   x <- ""
-  expect_error(validate_argument(x, "character"), "x must be a non-empty string")
+  expect_error(validate_argument(x, "character"), "`x` must be a non-empty string")
   expect_invisible(validate_argument(x, "character", allow_empty = TRUE))
 
   x <- c("", "a")
   expect_error(
     validate_argument(x, "character", allow_multiple = TRUE),
-    "x must be a non-empty string"
+    "`x` must be a non-empty string"
   )
   expect_invisible(
     validate_argument(x, "character", allow_multiple = TRUE, allow_empty = TRUE)
@@ -65,7 +65,7 @@ test_that("validate_argument handles empty character strings", {
   x <- c("a", "")
   expect_error(
     validate_argument(x, "character", allow_multiple = TRUE),
-    "x must be a non-empty string"
+    "`x` must be a non-empty string"
   )
 })
 
@@ -81,13 +81,13 @@ test_that("validate_argument treats whitespace-only strings as non-empty", {
 
 test_that("validate_argument enforces single vs multiple character values", {
   x <- c("a", "b")
-  expect_error(validate_argument(x, "character"), "x must be a single value")
+  expect_error(validate_argument(x, "character"), "`x` must be a single value")
   expect_invisible(
     validate_argument(x, "character", allow_multiple = TRUE)
   )
 
   x <- character(0)
-  expect_error(validate_argument(x, "character"), "x must be a single value")
+  expect_error(validate_argument(x, "character"), "`x` must be a single value")
   expect_invisible(
     validate_argument(x, "character", allow_multiple = TRUE)
   )
@@ -108,26 +108,26 @@ test_that("validate_argument passes for valid logical values", {
 
 test_that("validate_argument rejects non-logical values", {
   x <- "TRUE"
-  expect_error(validate_argument(x, "logical"), "x must be a logical value")
+  expect_error(validate_argument(x, "logical"), "`x` must be a logical value")
 
   x <- 1
-  expect_error(validate_argument(x, "logical"), "x must be a logical value")
+  expect_error(validate_argument(x, "logical"), "`x` must be a logical value")
 })
 
 
 test_that("validate_argument handles NULL and NA for logical", {
   x <- NULL
-  expect_error(validate_argument(x, "logical"), "x must not be NULL")
+  expect_error(validate_argument(x, "logical"), "`x` must not be NULL")
   expect_invisible(validate_argument(x, "logical", allow_null = TRUE))
 
   x <- NA
-  expect_error(validate_argument(x, "logical"), "x must not contain NA")
+  expect_error(validate_argument(x, "logical"), "`x` must not contain NA")
   expect_invisible(validate_argument(x, "logical", allow_na = TRUE))
 
   x <- c(TRUE, NA)
   expect_error(
     validate_argument(x, "logical", allow_multiple = TRUE),
-    "x must not contain NA"
+    "`x` must not contain NA"
   )
   expect_invisible(
     validate_argument(x, "logical", allow_multiple = TRUE, allow_na = TRUE)
@@ -137,10 +137,10 @@ test_that("validate_argument handles NULL and NA for logical", {
 
 test_that("validate_argument enforces single vs multiple logical values", {
   x <- c(TRUE, FALSE)
-  expect_error(validate_argument(x, "logical"), "x must be a single value")
+  expect_error(validate_argument(x, "logical"), "`x` must be a single value")
 
   x <- logical(0)
-  expect_error(validate_argument(x, "logical"), "x must be a single value")
+  expect_error(validate_argument(x, "logical"), "`x` must be a single value")
   expect_invisible(
     validate_argument(x, "logical", allow_multiple = TRUE)
   )
@@ -170,34 +170,34 @@ test_that("validate_argument passes for valid numeric values", {
 
 test_that("validate_argument rejects non-numeric values", {
   x <- "1"
-  expect_error(validate_argument(x, "numeric"), "x must be a numeric value")
+  expect_error(validate_argument(x, "numeric"), "`x` must be a numeric value")
 
   x <- TRUE
-  expect_error(validate_argument(x, "numeric"), "x must be a numeric value")
+  expect_error(validate_argument(x, "numeric"), "`x` must be a numeric value")
 })
 
 
 test_that("validate_argument handles NULL and NA for numeric", {
   x <- NULL
-  expect_error(validate_argument(x, "numeric"), "x must not be NULL")
+  expect_error(validate_argument(x, "numeric"), "`x` must not be NULL")
   expect_invisible(validate_argument(x, "numeric", allow_null = TRUE))
 
   x <- NA_real_
-  expect_error(validate_argument(x, "numeric"), "x must not contain NA")
+  expect_error(validate_argument(x, "numeric"), "`x` must not contain NA")
   expect_invisible(validate_argument(x, "numeric", allow_na = TRUE))
 
   x <- NA
-  expect_error(validate_argument(x, "numeric"), "x must not contain NA")
+  expect_error(validate_argument(x, "numeric"), "`x` must not contain NA")
   expect_invisible(validate_argument(x, "numeric", allow_na = TRUE))
 
   x <- NaN
-  expect_error(validate_argument(x, "numeric"), "x must not contain NA")
+  expect_error(validate_argument(x, "numeric"), "`x` must not contain NA")
   expect_invisible(validate_argument(x, "numeric", allow_na = TRUE))
 
   x <- c(1, NA_real_)
   expect_error(
     validate_argument(x, "numeric", allow_multiple = TRUE),
-    "x must not contain NA"
+    "`x` must not contain NA"
   )
   expect_invisible(
     validate_argument(x, "numeric", allow_multiple = TRUE, allow_na = TRUE)
@@ -207,10 +207,10 @@ test_that("validate_argument handles NULL and NA for numeric", {
 
 test_that("validate_argument enforces single vs multiple numeric values", {
   x <- c(1, 2)
-  expect_error(validate_argument(x, "numeric"), "x must be a single value")
+  expect_error(validate_argument(x, "numeric"), "`x` must be a single value")
 
   x <- numeric(0)
-  expect_error(validate_argument(x, "numeric"), "x must be a single value")
+  expect_error(validate_argument(x, "numeric"), "`x` must be a single value")
   expect_invisible(
     validate_argument(x, "numeric", allow_multiple = TRUE)
   )
@@ -228,29 +228,29 @@ test_that("validate_argument passes for Date values", {
 
 test_that("validate_argument rejects non-Date values", {
   x <- "2020-01-01"
-  expect_error(validate_argument(x, "date"), "x must be a date value")
+  expect_error(validate_argument(x, "date"), "`x` must be a date value")
 
   x <- as.POSIXct("2020-01-01", tz = "UTC")
-  expect_error(validate_argument(x, "date"), "x must be a date value")
+  expect_error(validate_argument(x, "date"), "`x` must be a date value")
 
   x <- 1
-  expect_error(validate_argument(x, "date"), "x must be a date value")
+  expect_error(validate_argument(x, "date"), "`x` must be a date value")
 })
 
 
 test_that("validate_argument handles NULL and NA for date", {
   x <- NULL
-  expect_error(validate_argument(x, "date"), "x must not be NULL")
+  expect_error(validate_argument(x, "date"), "`x` must not be NULL")
   expect_invisible(validate_argument(x, "date", allow_null = TRUE))
 
   x <- as.Date(NA)
-  expect_error(validate_argument(x, "date"), "x must not contain NA")
+  expect_error(validate_argument(x, "date"), "`x` must not contain NA")
   expect_invisible(validate_argument(x, "date", allow_na = TRUE))
 
   x <- as.Date(c("2020-01-01", NA))
   expect_error(
     validate_argument(x, "date", allow_multiple = TRUE),
-    "x must not contain NA"
+    "`x` must not contain NA"
   )
   expect_invisible(
     validate_argument(x, "date", allow_multiple = TRUE, allow_na = TRUE)
@@ -260,10 +260,10 @@ test_that("validate_argument handles NULL and NA for date", {
 
 test_that("validate_argument enforces single vs multiple date values", {
   x <- as.Date(c("2020-01-01", "2020-01-02"))
-  expect_error(validate_argument(x, "date"), "x must be a single value")
+  expect_error(validate_argument(x, "date"), "`x` must be a single value")
 
   x <- as.Date(character(0))
-  expect_error(validate_argument(x, "date"), "x must be a single value")
+  expect_error(validate_argument(x, "date"), "`x` must be a single value")
   expect_invisible(
     validate_argument(x, "date", allow_multiple = TRUE)
   )
@@ -287,20 +287,20 @@ test_that("validate_argument rejects non-function values", {
   x <- "mean"
   expect_error(
     suppressWarnings(validate_argument(x, "function")),
-    "x must be a function value"
+    "`x` must be a function value"
   )
 
   x <- 1
   expect_error(
     suppressWarnings(validate_argument(x, "function")),
-    "x must be a function value"
+    "`x` must be a function value"
   )
 })
 
 
 test_that("validate_argument handles NULL for function", {
   x <- NULL
-  expect_error(validate_argument(x, "function"), "x must not be NULL")
+  expect_error(validate_argument(x, "function"), "`x` must not be NULL")
   expect_invisible(validate_argument(x, "function", allow_null = TRUE))
 })
 
@@ -320,12 +320,12 @@ test_that("validate_argument enforces allowed values", {
 
   expect_error(
     validate_argument(x, "character", values = c("identify", "resolve")),
-    "x must be identify or resolve!"
+    "`x` must be identify or resolve!"
   )
 
   expect_error(
     validate_argument(x, "character", values = "identify"),
-    "x must be identify!"
+    "`x` must be identify!"
   )
 
   x <- c("stop", "identify")
@@ -342,7 +342,7 @@ test_that("validate_argument enforces allowed values", {
       allow_multiple = TRUE,
       values = c("stop", "resolve")
     ),
-    "x must be stop or resolve!"
+    "`x` must be stop or resolve!"
   )
 })
 
@@ -353,7 +353,7 @@ test_that("validate_argument enforces allowed values for numeric", {
 
   expect_error(
     validate_argument(x, "numeric", values = c(2, 3)),
-    "x must be 2 or 3!"
+    "`x` must be 2 or 3!"
   )
 
   x <- c(1, 2)
@@ -362,7 +362,7 @@ test_that("validate_argument enforces allowed values for numeric", {
   )
   expect_error(
     validate_argument(x, "numeric", allow_multiple = TRUE, values = c(1, 3)),
-    "x must be 1 or 3!"
+    "`x` must be 1 or 3!"
   )
 })
 
@@ -372,7 +372,7 @@ test_that("validate_argument enforces allowed values for logical", {
   expect_invisible(validate_argument(x, "logical", values = c(TRUE, FALSE)))
   expect_error(
     validate_argument(x, "logical", values = FALSE),
-    "x must be FALSE!"
+    "`x` must be FALSE!"
   )
 })
 
@@ -394,25 +394,25 @@ test_that("validate_argument uses the parameter name in error messages", {
   analyte <- 1
   expect_error(
     validate_argument(analyte, "character"),
-    "analyte must be a character value"
+    "`analyte` must be a character value"
   )
 
   duplicates <- NULL
   expect_error(
     validate_argument(duplicates, "character"),
-    "duplicates must not be NULL"
+    "`duplicates` must not be NULL"
   )
 
   time <- ""
   expect_error(
     validate_argument(time, "character"),
-    "time must be a non-empty string"
+    "`time` must be a non-empty string"
   )
 
   group <- c("A", "B")
   expect_error(
     validate_argument(group, "character"),
-    "group must be a single value"
+    "`group` must be a single value"
   )
 })
 
@@ -443,5 +443,39 @@ test_that("validate_argument allow_null short-circuits other checks", {
 
 test_that("validate_argument default type rejects non-character input", {
   x <- 1
-  expect_error(validate_argument(x), "x must be a character value")
+  expect_error(validate_argument(x), "`x` must be a character value")
+})
+
+
+test_that("validate_argument reports the calling function and error class", {
+  f <- function(extrt) validate_argument(extrt, "character")
+
+  err <- expect_error(f(1), "`extrt` must be a character value, not the number 1")
+  expect_equal(err$call, quote(f(1)))
+  expect_s3_class(err, "nif_arg_error")
+
+  err <- expect_error(f(c("a", "b")), "`extrt` must be a single value")
+  expect_equal(err$call, quote(f(c("a", "b"))))
+
+  g <- function(method) validate_argument(method, "character", values = c("a", "b"))
+  err <- expect_error(g("z"), "`method` must be a or b!")
+  expect_equal(err$call, quote(g("z")))
+})
+
+
+test_that("validate_argument mentions NULL when it is allowed", {
+  x <- 1
+  expect_error(
+    validate_argument(x, "character", allow_null = TRUE),
+    "must be a character value or NULL"
+  )
+})
+
+
+test_that("validate_argument handles vectors of the wrong type", {
+  x <- c("a", "b")
+  expect_error(
+    validate_argument(x, "numeric", allow_multiple = TRUE),
+    "`x` must be a numeric value, not a character vector"
+  )
 })

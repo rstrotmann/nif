@@ -423,7 +423,7 @@ test_that("ddt validates silent argument", {
 
   expect_error(
     ddt(test_data, silent = "yes"),
-    "silent must be a logical value"
+    "`silent` must be a logical value"
   )
 })
 

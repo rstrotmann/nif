@@ -333,12 +333,12 @@ test_that("nca_from_pp validates argument types", {
 
   expect_error(
     nca_from_pp(nif_obj, sdtm_data, analyte = 1, silent = TRUE),
-    "analyte must be a character value"
+    "`analyte` must be a character value"
   )
 
   expect_error(
     nca_from_pp(nif_obj, sdtm_data, analyte = c("DRUG", "METAB"), silent = TRUE),
-    "analyte must be a single value"
+    "`analyte` must be a single value"
   )
 
   expect_error(
@@ -349,7 +349,7 @@ test_that("nca_from_pp validates argument types", {
       keep = 1,
       silent = TRUE
     ),
-    "keep must be a character value"
+    "`keep` must be a character value"
   )
 
   expect_error(
@@ -360,7 +360,7 @@ test_that("nca_from_pp validates argument types", {
       group = c("PPSPEC", "PPCAT"),
       silent = TRUE
     ),
-    "group must be a single value"
+    "`group` must be a single value"
   )
 
   expect_error(
@@ -371,7 +371,7 @@ test_that("nca_from_pp validates argument types", {
       observation_filter = NULL,
       silent = TRUE
     ),
-    "observation_filter must not be NULL"
+    "`observation_filter` must not be NULL"
   )
 })
 

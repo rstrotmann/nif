@@ -29,27 +29,27 @@ test_that("time_plot rejects non-nif input", {
 test_that("time_plot rejects invalid xtime and ytime", {
   obj <- time_plot_nif()
 
-  expect_error(time_plot(obj, xtime = NULL), "xtime must not be NULL")
-  expect_error(time_plot(obj, ytime = NULL), "ytime must not be NULL")
+  expect_error(time_plot(obj, xtime = NULL), "`xtime` must not be NULL")
+  expect_error(time_plot(obj, ytime = NULL), "`ytime` must not be NULL")
   expect_error(
     time_plot(obj, xtime = "FOO"),
-    "xtime must be TIME, TAFD, TAD or NTIME!"
+    "`xtime` must be TIME, TAFD, TAD or NTIME!"
   )
   expect_error(
     time_plot(obj, ytime = "FOO"),
-    "ytime must be TIME, TAFD, TAD or NTIME!"
+    "`ytime` must be TIME, TAFD, TAD or NTIME!"
   )
   expect_error(
     time_plot(obj, xtime = "time"),
-    "xtime must be TIME, TAFD, TAD or NTIME!"
+    "`xtime` must be TIME, TAFD, TAD or NTIME!"
   )
   expect_error(
     time_plot(obj, xtime = c("TIME", "TAD")),
-    "xtime must be a single value"
+    "`xtime` must be a single value"
   )
   expect_error(
     time_plot(obj, ytime = c("TIME", "TAD")),
-    "ytime must be a single value"
+    "`ytime` must be a single value"
   )
 })
 
@@ -80,7 +80,7 @@ test_that("time_plot validates analyte", {
   expect_error(time_plot(obj, analyte = ""), "non-empty")
   expect_error(
     time_plot(obj, analyte = c("DRUG", "MET")),
-    "analyte must be a single value"
+    "`analyte` must be a single value"
   )
   expect_error(
     time_plot(obj, analyte = "NOPE"),

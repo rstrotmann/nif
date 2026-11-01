@@ -54,17 +54,17 @@ test_that("imputation_summary validates analyte argument", {
 
   expect_error(
     imputation_summary(obj, analyte = 1),
-    "analyte must be a character value"
+    "`analyte` must be a character value"
   )
 
   expect_error(
     imputation_summary(obj, analyte = c("DRUG_A", "DRUG_B")),
-    "analyte must be a single value"
+    "`analyte` must be a single value"
   )
 
   expect_error(
     imputation_summary(obj, analyte = NA_character_),
-    "analyte must not contain NA"
+    "`analyte` must not contain NA"
   )
 })
 

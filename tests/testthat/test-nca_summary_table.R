@@ -263,17 +263,17 @@ test_that("nca_summary_table validates digits and parameters", {
 
   expect_error(
     nca_summary_table(nca_data, parameters = 1),
-    "parameters must be a character value"
+    "`parameters` must be a character value"
   )
 
   expect_error(
     nca_summary_table(nca_data, digits = "x"),
-    "digits must be a numeric value"
+    "`digits` must be a numeric value"
   )
 
   expect_error(
     nca_summary_table(nca_data, digits = c(1, 2)),
-    "digits must be a single value"
+    "`digits` must be a single value"
   )
 })
 

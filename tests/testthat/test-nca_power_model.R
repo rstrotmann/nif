@@ -222,22 +222,22 @@ test_that("nca_power_model validates argument types and ranges", {
 
   expect_error(
     nca_power_model(nca_data, parameter = 1),
-    "parameter must be a character value"
+    "`parameter` must be a character value"
   )
 
   expect_error(
     nca_power_model(nca_data, parameter = "cmax", group = 1),
-    "group must be a character value"
+    "`group` must be a character value"
   )
 
   expect_error(
     nca_power_model(nca_data, parameter = "cmax", title = 1),
-    "title must be a character value"
+    "`title` must be a character value"
   )
 
   expect_error(
     nca_power_model(nca_data, parameter = "cmax", size = "big"),
-    "size must be a numeric value"
+    "`size` must be a numeric value"
   )
 
   expect_error(
@@ -247,7 +247,7 @@ test_that("nca_power_model validates argument types and ranges", {
 
   expect_error(
     nca_power_model(nca_data, parameter = "cmax", alpha = "opaque"),
-    "alpha must be a numeric value"
+    "`alpha` must be a numeric value"
   )
 
   expect_error(

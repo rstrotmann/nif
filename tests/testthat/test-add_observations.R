@@ -561,7 +561,7 @@ test_that("add_observation rejects invalid duplicates parameter", {
         ntime_method = "ELTM",
         silent = TRUE
       ),
-    "duplicates must be stop, identify, ignore or resolve!"
+    "`duplicates` must be stop, identify, ignore or resolve!"
   )
 })
 

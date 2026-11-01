@@ -55,24 +55,24 @@ test_that("subject_info.sdtm finds dm when the list key is uppercase", {
 test_that("subject_info.sdtm validates id", {
   obj <- sdtm_from_dm(full_dm())
 
-  expect_error(subject_info.sdtm(obj, NULL), "id must not be NULL")
-  expect_error(subject_info.sdtm(obj, 1), "id must be a character value")
+  expect_error(subject_info.sdtm(obj, NULL), "`id` must not be NULL")
+  expect_error(subject_info.sdtm(obj, 1), "`id` must be a character value")
   expect_error(
     subject_info.sdtm(obj, factor("SUBJ-001")),
-    "id must be a character value"
+    "`id` must be a character value"
   )
-  expect_error(subject_info.sdtm(obj, ""), "id must be a non-empty string")
+  expect_error(subject_info.sdtm(obj, ""), "`id` must be a non-empty string")
   expect_error(
     subject_info.sdtm(obj, c("SUBJ-001", "")),
-    "id must be a non-empty string"
+    "`id` must be a non-empty string"
   )
   expect_error(
     subject_info.sdtm(obj, NA_character_),
-    "id must not contain NA"
+    "`id` must not contain NA"
   )
   expect_error(
     subject_info.sdtm(obj, c("SUBJ-001", NA_character_)),
-    "id must not contain NA"
+    "`id` must not contain NA"
   )
 })
 

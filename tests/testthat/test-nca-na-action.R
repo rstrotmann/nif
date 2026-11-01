@@ -93,7 +93,7 @@ test_that("nca() rejects an invalid na_action", {
       na_action = "drop",
       silent = TRUE
     ),
-    "na_action must be exclude, zero or error"
+    "`na_action` must be exclude, zero or error"
   )
 })
 

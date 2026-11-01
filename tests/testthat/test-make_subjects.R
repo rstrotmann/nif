@@ -91,15 +91,15 @@ test_that("make_subjects validates subject_filter and keep", {
 
   expect_error(
     make_subjects(dm, subject_filter = 1),
-    "subject_filter must be a character value"
+    "`subject_filter` must be a character value"
   )
   expect_error(
     make_subjects(dm, subject_filter = NULL),
-    "subject_filter must not be NULL"
+    "`subject_filter` must not be NULL"
   )
   expect_error(
     make_subjects(dm, keep = 1),
-    "keep must be a character value"
+    "`keep` must be a character value"
   )
 })
 

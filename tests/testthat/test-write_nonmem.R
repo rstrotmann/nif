@@ -312,27 +312,27 @@ test_that("write_nonmem rejects invalid inputs", {
   )
   expect_error(
     write_nonmem(test_data, filename = 1),
-    "filename must be a character value"
+    "`filename` must be a character value"
   )
   expect_error(
     write_nonmem(test_data, sep = 1),
-    "sep must be a character value"
+    "`sep` must be a character value"
   )
   expect_error(
     write_nonmem(test_data, sep = ""),
-    "sep must be a non-empty string"
+    "`sep` must be a non-empty string"
   )
   expect_error(
     write_nonmem(test_data, fields = ""),
-    "fields must be a non-empty string"
+    "`fields` must be a non-empty string"
   )
   expect_error(
     write_nonmem(test_data, numeric_fields_only = "yes"),
-    "numeric_fields_only must be a logical value"
+    "`numeric_fields_only` must be a logical value"
   )
   expect_error(
     write_nonmem(test_data, dot_columns = ""),
-    "dot_columns must be a non-empty string"
+    "`dot_columns` must be a non-empty string"
   )
 })
 

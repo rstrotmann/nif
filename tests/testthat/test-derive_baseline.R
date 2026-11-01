@@ -366,11 +366,11 @@ test_that("derive_baseline errors on invalid input", {
 
   expect_error(
     derive_baseline(test_nif, summary_function = "median"),
-    "summary_function must be a function")
+    "`summary_function` must be a function")
 
   expect_error(
     derive_baseline(test_nif, default_baseline = "NA"),
-    "default_baseline must be a numeric value")
+    "`default_baseline` must be a numeric value")
 })
 
 

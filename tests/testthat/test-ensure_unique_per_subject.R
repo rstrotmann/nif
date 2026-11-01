@@ -186,12 +186,12 @@ test_that("ensure_unique_per_subject validates field argument", {
 
   expect_error(
     ensure_unique_per_subject(test_nif, "BMI"),
-    "field must be"
+    "`field` must be"
   )
 
   expect_error(
     ensure_unique_per_subject(test_nif, 1),
-    "field must be a character value"
+    "`field` must be a character value"
   )
 })
 

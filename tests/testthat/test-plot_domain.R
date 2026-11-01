@@ -24,31 +24,31 @@ test_that("plot.sdtm_domain validates input parameters correctly", {
   # Test with invalid testcd parameter
   expect_error(
     plot.sdtm_domain(test_dm, testcd = 123),
-    "testcd must be a character value"
+    "`testcd` must be a character value"
   )
 
   # Test with invalid points parameter
   expect_error(
     plot.sdtm_domain(test_dm, points = "TRUE"),
-    "points must be a logical value"
+    "`points` must be a logical value"
   )
 
   # Test with invalid lines parameter
   expect_error(
     plot.sdtm_domain(test_dm, lines = "FALSE"),
-    "lines must be a logical value"
+    "`lines` must be a logical value"
   )
 
   # Test with invalid legend parameter
   expect_error(
     plot.sdtm_domain(test_dm, legend = "TRUE"),
-    "legend must be a logical value"
+    "`legend` must be a logical value"
   )
 
   # Test with invalid color parameter
   expect_error(
     plot.sdtm_domain(test_dm, color = 123),
-    "color must be a character value"
+    "`color` must be a character value"
   )
 
   # Test with color field not in domain

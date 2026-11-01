@@ -100,19 +100,19 @@ test_that("read_sdtm validates data_path", {
   )
   expect_error(
     read_sdtm(NULL),
-    "data_path must not be NULL"
+    "`data_path` must not be NULL"
   )
   expect_error(
     read_sdtm(123),
-    "data_path must be a character value"
+    "`data_path` must be a character value"
   )
   expect_error(
     read_sdtm(""),
-    "data_path must be a non-empty string"
+    "`data_path` must be a non-empty string"
   )
   expect_error(
     read_sdtm(c(tempdir(), tempdir())),
-    "data_path must be a single value"
+    "`data_path` must be a single value"
   )
 
   path_is_file <- tempfile("sdtm_file")
@@ -128,31 +128,31 @@ test_that("read_sdtm validates data_path", {
 test_that("read_sdtm validates format", {
   expect_error(
     read_sdtm(tempdir(), format = "invalid"),
-    "format must be sas, xpt or csv!"
+    "`format` must be sas, xpt or csv!"
   )
   expect_error(
     read_sdtm(tempdir(), format = "xlsx"),
-    "format must be sas, xpt or csv!"
+    "`format` must be sas, xpt or csv!"
   )
   expect_error(
     read_sdtm(tempdir(), format = NULL),
-    "format must not be NULL"
+    "`format` must not be NULL"
   )
   expect_error(
     read_sdtm(tempdir(), format = ""),
-    "format must be a non-empty string"
+    "`format` must be a non-empty string"
   )
   expect_error(
     read_sdtm(tempdir(), format = c("csv", "sas")),
-    "format must be a single value"
+    "`format` must be a single value"
   )
   expect_error(
     read_sdtm(tempdir(), format = NA_character_),
-    "format must not contain NA"
+    "`format` must not contain NA"
   )
   expect_error(
     read_sdtm(tempdir(), format = "SAS"),
-    "format must be sas, xpt or csv!"
+    "`format` must be sas, xpt or csv!"
   )
 })
 
@@ -160,19 +160,19 @@ test_that("read_sdtm validates format", {
 test_that("read_sdtm validates domain argument", {
   expect_error(
     read_sdtm(tempdir(), domain = 123),
-    "domain must be a character value"
+    "`domain` must be a character value"
   )
   expect_error(
     read_sdtm(tempdir(), domain = ""),
-    "domain must be a non-empty string"
+    "`domain` must be a non-empty string"
   )
   expect_error(
     read_sdtm(tempdir(), domain = NA_character_),
-    "domain must not contain NA"
+    "`domain` must not contain NA"
   )
   expect_error(
     read_sdtm(tempdir(), domain = c("dm", "")),
-    "domain must be a non-empty string"
+    "`domain` must be a non-empty string"
   )
 })
 
@@ -472,19 +472,19 @@ test_that("read_sdtm is silent when silent is TRUE", {
 test_that("read_sdtm validates silent", {
   expect_error(
     read_sdtm(tempdir(), silent = "yes"),
-    "silent must be a logical value"
+    "`silent` must be a logical value"
   )
   expect_error(
     read_sdtm(tempdir(), silent = c(TRUE, FALSE)),
-    "silent must be a single value"
+    "`silent` must be a single value"
   )
   expect_error(
     read_sdtm(tempdir(), silent = NA),
-    "silent must not contain NA"
+    "`silent` must not contain NA"
   )
   expect_error(
     read_sdtm(tempdir(), silent = 1),
-    "silent must be a logical value"
+    "`silent` must be a logical value"
   )
 })
 

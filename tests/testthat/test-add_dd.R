@@ -259,7 +259,7 @@ test_that("add_dd validates name is character", {
       type = "character",
       description = "A custom covariate"
     ),
-    "name must be a character value"
+    "`name` must be a character value"
   )
 })
 
@@ -278,7 +278,7 @@ test_that("add_dd validates definition is character", {
       type = "character",
       description = "A custom covariate"
     ),
-    "definition must be a character value"
+    "`definition` must be a character value"
   )
 })
 
@@ -297,7 +297,7 @@ test_that("add_dd validates type is character", {
       type = 1,
       description = "A custom covariate"
     ),
-    "type must be a character value"
+    "`type` must be a character value"
   )
 })
 
@@ -316,7 +316,7 @@ test_that("add_dd validates description is character", {
       type = "character",
       description = 1
     ),
-    "description must be a character value"
+    "`description` must be a character value"
   )
 })
 
@@ -336,7 +336,7 @@ test_that("add_dd validates unit is character", {
       description = "A custom covariate",
       unit = 1
     ),
-    "unit must be a character value"
+    "`unit` must be a character value"
   )
 })
 
@@ -356,7 +356,7 @@ test_that("add_dd validates source is character", {
       description = "A custom covariate",
       source = 1
     ),
-    "source must be a character value"
+    "`source` must be a character value"
   )
 })
 
@@ -376,6 +376,6 @@ test_that("add_dd rejects NA source", {
       description = "A custom covariate",
       source = NA_character_
     ),
-    "source must not contain NA"
+    "`source` must not contain NA"
   )
 })

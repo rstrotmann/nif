@@ -281,7 +281,7 @@ test_that("add_bintime rejects invalid method", {
 
   expect_error(
     add_bintime(test_data, method = "invalid_method", time = "TIME"),
-    "method must be"
+    "`method` must be"
   )
 })
 

@@ -146,7 +146,7 @@ test_that("index_rich_sampling_intervals validates inputs", {
 
   expect_error(
     index_rich_sampling_intervals(nif_obj, min_n = "four"),
-    "min_n must be a numeric value"
+    "`min_n` must be a numeric value"
   )
 })
 

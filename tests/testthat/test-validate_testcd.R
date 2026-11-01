@@ -215,11 +215,11 @@ test_that("validate_testcd handles input validation correctly", {
   # Test with invalid testcd parameter
   expect_error(
     validate_testcd(test_sdtm, 123),
-    "testcd must be a character value"
+    "`testcd` must be a character value"
   )
   expect_error(
     validate_testcd(test_sdtm, TRUE),
-    "testcd must be a character value"
+    "`testcd` must be a character value"
   )
   expect_error(
     validate_testcd(test_sdtm, NULL),
@@ -229,11 +229,11 @@ test_that("validate_testcd handles input validation correctly", {
   # Test with invalid domain parameter
   expect_error(
     validate_testcd(test_sdtm, "RS2023", 123),
-    "domain must be a character value"
+    "`domain` must be a character value"
   )
   expect_error(
     validate_testcd(test_sdtm, "RS2023", TRUE),
-    "domain must be a character value"
+    "`domain` must be a character value"
   )
   expect_error(
     validate_testcd(test_sdtm, "RS2023", c("pc", "dm")),
