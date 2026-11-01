@@ -295,7 +295,7 @@ test_that("add_time_window_flag handles non-data.frame window", {
 
   expect_error(
     add_time_window_flag(test_data, window = "not a data frame"),
-    "window must be a data.frame"
+    "`window` must be a data frame"
   )
 })
 

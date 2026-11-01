@@ -882,7 +882,6 @@ add_observation <- function(
   # coding table
   validate_argument(factor, "numeric")
   # ntime_lookup
-  validate_argument(ntime_method, "character", values = c())
   validate_argument(
     ntime_method, "character",
     values = c('TPT', 'TPTNUM', 'ELTM', 'VISITDY', 'DY')

@@ -799,7 +799,7 @@ test_that("optional ID, TIME, and EXTRT appear in warning output when present", 
 test_that("NULL input is rejected", {
   expect_error(
     remove_duplicate_administrations(NULL, silent = TRUE),
-    "must not be NULL"
+    "must be a data frame, not `NULL`"
   )
 })
 
@@ -807,11 +807,11 @@ test_that("NULL input is rejected", {
 test_that("non-data.frame input is rejected", {
   expect_error(
     remove_duplicate_administrations(list(), silent = TRUE),
-    "must be a data.frame"
+    "must be a data frame"
   )
   expect_error(
     remove_duplicate_administrations(1:3, silent = TRUE),
-    "must be a data.frame"
+    "must be a data frame"
   )
 })
 

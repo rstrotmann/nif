@@ -270,10 +270,10 @@ test_that("sdtm_domain() re-wraps an existing sdtm_domain from the columns", {
 
 
 test_that("sdtm_domain() rejects NULL and non-data-frame input", {
-  expect_error(sdtm_domain(NULL), "data must not be NULL")
-  expect_error(sdtm_domain(list(USUBJID = "SUBJ-001")), "data must be a data.frame")
-  expect_error(sdtm_domain("DM"), "data must be a data.frame")
-  expect_error(sdtm_domain(1:3), "data must be a data.frame")
+  expect_error(sdtm_domain(NULL), "`data` must be a data frame, not `NULL`")
+  expect_error(sdtm_domain(list(USUBJID = "SUBJ-001")), "`data` must be a data frame")
+  expect_error(sdtm_domain("DM"), "`data` must be a data frame")
+  expect_error(sdtm_domain(1:3), "`data` must be a data frame")
 })
 
 

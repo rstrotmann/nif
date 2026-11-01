@@ -194,7 +194,7 @@ test_that("remove_duplicate_administrations validates required fields", {
   )
   expect_error(
     remove_duplicate_administrations(NULL, silent = TRUE),
-    "must not be NULL"
+    "must be a data frame, not `NULL`"
   )
   expect_error(
     remove_duplicate_administrations(

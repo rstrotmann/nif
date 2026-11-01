@@ -104,22 +104,6 @@ validate_dataset <- function(obj) {
 }
 
 
-#' Check whether domains of sdtm object are compliant with SDTM standard
-#'
-#' @param sdtm SDTM object.
-#' @param silent Suppress optional messages, as logical. Defaults to global
-#'   nif_options if NULL.
-#'
-#' @return Invisibly returns TRUE if validation passes, or stops with an error
-#'  if required columns are missing.
-#' @noRd
-validate_sdtm_domains <- function(sdtm, silent = NULL) {
-  for (d in as.list(sdtm)) {
-    validate_domain(d, silent = silent)
-  }
-}
-
-
 #' Validate sdtm argument
 #'
 #' @param obj A stdm object.
@@ -233,39 +217,65 @@ validate_argument <- function(
 }
 
 
+#' Check that required columns are present in a data frame
+#'
+#' Shared core of `validate_df_argument()`, `validate_fields()` and
+#' `validate_nif_argument()`. Assumes that `x` has already been confirmed to be
+#' a data frame.
+#'
+#' @param x A data frame.
+#' @param fields Required columns, as character, or NULL.
+#' @param msg_prefix The beginning of the error message, up to and including
+#'   the colon and trailing space. The missing columns are appended.
+#' @param call The execution environment of the function to report in the error
+#'   message, i.e., the user-facing function.
+#'
+#' @returns Nothing or abort.
+#' @noRd
+check_df_columns <- function(
+    x,
+    fields = NULL,
+    msg_prefix = "Missing columns: ",
+    call = rlang::caller_env()
+) {
+  missing_fields <- setdiff(fields, names(x))
+  if (length(missing_fields) > 0) {
+    rlang::abort(
+      paste0(msg_prefix, nice_enumeration(missing_fields)),
+      call = call
+    )
+  }
+  invisible(NULL)
+}
+
+
 #' Validate function argument as data frame
 #'
 #' @param param The argument.
 #' @param expected_fields Expected columns in the data frame.
 #' @param allow_null Allow NULL.
+#' @param arg The argument name to use in error messages. Defaults to the
+#'   expression passed as `param`.
+#' @param call The execution environment of the function to report in error
+#'   messages. Defaults to the caller.
 #'
 #' @returns Nothing or stop.
 #' @noRd
 validate_df_argument <- function(
     param,
     expected_fields = NULL,
-    allow_null = FALSE
+    allow_null = FALSE,
+    arg = rlang::caller_arg(param),
+    call = rlang::caller_env()
 ) {
-  param_name <- deparse(substitute(param))
+  check_data_frame(param, allow_null = allow_null, arg = arg, call = call)
 
-  # Check for NULL first
-  if (is.null(param)) {
-    if (allow_null) {
-      return(invisible(NULL))
-    } else {
-      stop(paste0(param_name, " must not be NULL"))
-    }
-  }
-
-  if (!inherits(param, "data.frame"))
-    stop(paste0(param_name, " must be a data.frame"))
-
-  missing_fields <- setdiff(expected_fields, names(param))
-  if (length(missing_fields) > 0) {
-    stop(paste0(
-      "Missing columns in ", param_name, ": ",
-      nice_enumeration(missing_fields)
-    ))
+  if (!is.null(param)) {
+    check_df_columns(
+      param, expected_fields,
+      msg_prefix = paste0("Missing columns in ", arg, ": "),
+      call = call
+    )
   }
   invisible(NULL)
 }
@@ -275,26 +285,30 @@ validate_df_argument <- function(
 #'
 #' @param obj A data frame.
 #' @param fields Required fields as character.
+#' @param arg The argument name to use in error messages. Defaults to the
+#'   expression passed as `obj`.
+#' @param call The execution environment of the function to report in error
+#'   messages. Defaults to the caller.
 #'
 #' @returns Nothing or stop.
 #' @noRd
-validate_fields <- function(obj, fields = NULL) {
+validate_fields <- function(
+    obj,
+    fields = NULL,
+    arg = rlang::caller_arg(obj),
+    call = rlang::caller_env()
+) {
   # input validation
-  if (!is.data.frame(obj)) {
-    stop("Input must be a data frame!")
-  }
+  check_data_frame(obj, arg = arg, call = call)
   validate_argument(
     fields, "character", allow_null = TRUE, allow_multiple = TRUE)
 
   # business logic
-  missing_additional_fields <- setdiff(fields, names(obj))
-  if (length(missing_additional_fields) > 0) {
-    stop(paste0(
-      "Missing required fields: ",
-      nice_enumeration(missing_additional_fields)
-    ))
-  }
-  invisible(NULL)
+  check_df_columns(
+    obj, fields,
+    msg_prefix = "Missing required fields: ",
+    call = call
+  )
 }
 
 
@@ -309,25 +323,27 @@ validate_fields <- function(obj, fields = NULL) {
 #'
 #' @returns Nothing or stop.
 #' @noRd
-validate_nif_argument <- function(obj, fields = NULL) {
+validate_nif_argument <- function(
+    obj,
+    fields = NULL,
+    call = rlang::caller_env()
+) {
   # input validation
   if (!inherits(obj, "nif")) {
-    stop("Input must be a nif object")
+    rlang::abort("Input must be a nif object", call = call)
   }
 
   validate_argument(
     fields, "character", allow_null = TRUE, allow_multiple = TRUE)
 
   # business logic
-  missing_minimal_fields <- setdiff(minimal_nif_fields, names(obj))
-  if (length(missing_minimal_fields) > 0) {
-    stop(paste0(
-      "Missing essential fields in nif object: ",
-      nice_enumeration(missing_minimal_fields)
-    ))
-  }
+  check_df_columns(
+    obj, minimal_nif_fields,
+    msg_prefix = "Missing essential fields in nif object: ",
+    call = call
+  )
 
-  validate_fields(obj, fields)
+  validate_fields(obj, fields, call = call)
 
   invisible(NULL)
 }

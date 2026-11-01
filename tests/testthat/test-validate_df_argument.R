@@ -40,31 +40,31 @@ test_that("validate_df_argument passes for single-column and multi-column frames
 
 test_that("validate_df_argument rejects non-data.frame values", {
   x <- list(a = 1)
-  expect_error(validate_df_argument(x), "x must be a data.frame")
+  expect_error(validate_df_argument(x), "`x` must be a data frame")
 
   x <- matrix(1:4, nrow = 2)
-  expect_error(validate_df_argument(x), "x must be a data.frame")
+  expect_error(validate_df_argument(x), "`x` must be a data frame")
 
   x <- c(a = 1, b = 2)
-  expect_error(validate_df_argument(x), "x must be a data.frame")
+  expect_error(validate_df_argument(x), "`x` must be a data frame")
 
   x <- "not a frame"
-  expect_error(validate_df_argument(x), "x must be a data.frame")
+  expect_error(validate_df_argument(x), "`x` must be a data frame")
 
   x <- 1
-  expect_error(validate_df_argument(x), "x must be a data.frame")
+  expect_error(validate_df_argument(x), "`x` must be a data frame")
 
   x <- TRUE
-  expect_error(validate_df_argument(x), "x must be a data.frame")
+  expect_error(validate_df_argument(x), "`x` must be a data frame")
 
   x <- function(z) z
-  expect_error(validate_df_argument(x), "x must be a data.frame")
+  expect_error(validate_df_argument(x), "`x` must be a data frame")
 })
 
 
 test_that("validate_df_argument handles NULL", {
   x <- NULL
-  expect_error(validate_df_argument(x), "x must not be NULL")
+  expect_error(validate_df_argument(x), "`x` must be a data frame, not `NULL`")
   expect_invisible(validate_df_argument(x, allow_null = TRUE))
   expect_null(validate_df_argument(x, allow_null = TRUE))
 
@@ -156,10 +156,10 @@ test_that("validate_df_argument is case-sensitive for column names", {
 
 test_that("validate_df_argument uses the parameter name in error messages", {
   dm <- list(a = 1)
-  expect_error(validate_df_argument(dm), "dm must be a data.frame")
+  expect_error(validate_df_argument(dm), "`dm` must be a data frame")
 
   vs <- NULL
-  expect_error(validate_df_argument(vs), "vs must not be NULL")
+  expect_error(validate_df_argument(vs), "`vs` must be a data frame, not `NULL`")
 
   subjects <- data.frame(USUBJID = "S1", stringsAsFactors = FALSE)
   expect_error(
@@ -194,4 +194,26 @@ test_that("validate_df_argument does not require rows, only structure", {
   # Column presence is independent of NA values in cells
   x <- data.frame(a = NA_real_, b = NA_character_, stringsAsFactors = FALSE)
   expect_invisible(validate_df_argument(x, expected_fields = c("a", "b")))
+})
+
+
+test_that("validate_df_argument reports the calling function in errors", {
+  f <- function(dm) validate_df_argument(dm, expected_fields = "SEX")
+
+  err <- expect_error(f(list(a = 1)), "`dm` must be a data frame")
+  expect_equal(err$call, quote(f(list(a = 1))))
+
+  err <- expect_error(f(data.frame(a = 1)), "Missing columns in dm: SEX")
+  expect_equal(err$call, quote(f(data.frame(a = 1))))
+})
+
+
+test_that("validate_fields checks data frame and required fields", {
+  x <- data.frame(a = 1, b = 2)
+
+  expect_invisible(validate_fields(x))
+  expect_invisible(validate_fields(x, c("a", "b")))
+  expect_error(validate_fields(x, c("a", "z")), "Missing required fields: z")
+  expect_error(validate_fields(list(a = 1)), "`list\\(a = 1\\)` must be a data frame")
+  expect_error(validate_fields(x, 1), "fields must be a character value")
 })

@@ -179,7 +179,7 @@ test_that("make_subjects validates inputs correctly", {
   # Test with non-data frame input
   expect_error(
     make_subjects(list(a = 1, b = 2)),
-    "dm must be a data.frame"
+    "`dm` must be a data frame"
   )
 
   # Test with missing required columns in dm
@@ -212,7 +212,7 @@ test_that("make_subjects validates inputs correctly", {
   # Test with non-data frame vs
   expect_error(
     make_subjects(valid_dm, vs = list(a = 1)),
-    "vs must be a data.frame"
+    "`vs` must be a data frame"
   )
 
   # Test with missing RFSTDTC when needed

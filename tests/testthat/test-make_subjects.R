@@ -48,9 +48,9 @@ make_subjects_vs_dates <- function() {
 # Validation --------------------------------------------------------------
 
 test_that("make_subjects validates dm input", {
-  expect_error(make_subjects("not a dataframe"), "dm must be a data.frame")
-  expect_error(make_subjects(list(a = 1)), "dm must be a data.frame")
-  expect_error(make_subjects(NULL), "dm must not be NULL")
+  expect_error(make_subjects("not a dataframe"), "`dm` must be a data frame")
+  expect_error(make_subjects(list(a = 1)), "`dm` must be a data frame")
+  expect_error(make_subjects(NULL), "`dm` must be a data frame, not `NULL`")
 
   incomplete <- tibble::tribble(
     ~USUBJID, ~ACTARMCD,
@@ -68,11 +68,11 @@ test_that("make_subjects validates vs input", {
 
   expect_error(
     make_subjects(dm, vs = "not a dataframe"),
-    "vs must be a data.frame"
+    "`vs` must be a data frame"
   )
   expect_error(
     make_subjects(dm, vs = list(a = 1)),
-    "vs must be a data.frame"
+    "`vs` must be a data frame"
   )
 
   incomplete_vs <- tibble::tribble(

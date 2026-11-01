@@ -26,7 +26,7 @@ Imports:
     haven,
     lubridate,
     PKNCA,
-    rlang,
+    rlang (>= 1.1.0),
     stringr,
     tidyr,
     utils,

@@ -221,7 +221,7 @@ test_that("add_dd rejects non-data-frame input", {
       type = "character",
       description = "A custom covariate"
     ),
-    "must be a data.frame"
+    "must be a data frame"
   )
 })
 
