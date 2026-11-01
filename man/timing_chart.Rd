@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_dtc_plot.R
 \name{timing_chart}
 \alias{timing_chart}
-\title{Nif timing plot}
+\title{Nif event timing chart}
 \usage{
 timing_chart(x, id = NULL, analyte = NULL, ...)
 }
