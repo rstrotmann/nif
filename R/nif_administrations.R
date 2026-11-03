@@ -514,32 +514,26 @@ add_administration <- function(
   }
   imputation <- resolve_imputation_rules(imputation)
 
-  # conditional_cli(
-  #   cli_alert_info(paste0(
-  #     "Imputation model '", imputation_label,
-  #     "' applied to administration of ", extrt)),
-  #   silent = silent
-  # )
-
   debug <- isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if (isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
 
-  bind_rows(
-    nif,
-    make_administration(
-      sdtm, extrt,
-      analyte = analyte,
-      pctestcd = pctestcd,
-      cmt = cmt,
-      subject_filter = subject_filter,
-      cut_off_date = cut_off_date,
-      keep = keep,
-      imputation = imputation,
-      iv_admin = iv_admin,
-      duration = duration,
-      silent = silent
-    )
-  ) |>
+  new_admin <- make_administration(
+    sdtm, extrt,
+    analyte = analyte,
+    pctestcd = pctestcd,
+    cmt = cmt,
+    subject_filter = subject_filter,
+    cut_off_date = cut_off_date,
+    keep = keep,
+    imputation = imputation,
+    iv_admin = iv_admin,
+    duration = duration,
+    silent = silent
+  )
+
+  stop_if_already_added(nif, new_admin, evid = 1)
+
+  bind_rows(nif, new_admin) |>
     normalize_nif(keep = keep) |>
     restore_nif(nif)
 }

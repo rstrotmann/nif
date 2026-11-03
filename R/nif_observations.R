@@ -1066,6 +1066,8 @@ add_observation <- function(
     }
   }
 
+  stop_if_already_added(nif, observation, evid = 0)
+
   obj <- bind_rows(nif, observation) |>
     # make ID field
     arrange(.data$USUBJID, .data$DTC) |>

@@ -344,6 +344,47 @@ order_nif_columns <- function(obj) {
 }
 
 
+#' Identify whether new rows already exist and abort
+#'
+#' The function requires USUBJID, ANALYTE and DTC to be both in the nif and the
+#' new lines.
+#'
+#' @param nif A nif object.
+#' @param new New lines as tibble.
+#' @param evid The EVID.
+#' @param call The call.
+#'
+#' @returns Nothing or abort.
+#' @noRd
+stop_if_already_added <- function(
+    nif,
+    new,
+    evid,
+    call = rlang::caller_env()
+) {
+  key <- c("USUBJID", "ANALYTE", "DTC")
+  if (nrow(nif) == 0 || !all(key %in% names(nif)) || !all(key %in% names(new))) {
+    return(invisible(NULL))
+  }
+
+  overlap <- dplyr::semi_join(
+    dplyr::filter(new, .data$EVID == evid),
+    dplyr::filter(nif, .data$EVID == evid),
+    by = key
+  )
+  if (nrow(overlap) > 0) {
+    rlang::abort(
+      paste0(nrow(overlap), " ",
+             if (evid == 1) "administration" else "observation",
+             " row(s) for analyte ", nice_enumeration(unique(overlap$ANALYTE)),
+             " are already in the nif object."),
+      call = call,
+      class = "nif_already_added"
+    )
+  }
+}
+
+
 #' print() implementation for nif objects
 #'
 #' @param x A nif object.
