@@ -30,76 +30,7 @@ fillable_nif_fields <- unique(c(
 ))
 
 
-#' Order nif rows and add REF column
-#'
-#' Order rows by ID, TIME/DTC and EVID and then assign sequential REF
-#'
-#' @param obj A nif object.
-#'
-#' @returns A nif object.
-#' @noRd
-arrange_and_add_ref <- function(obj) {
-  # Create temporary column for descending EVID sort
-  if ("EVID" %in% names(obj)) {
-    obj <- obj |>
-      dplyr::mutate(.EVID_sort = -.data$EVID)
-  }
 
-  obj <- obj |>
-    dplyr::arrange(across(any_of(c("ID", "TIME", "DTC", ".EVID_sort"))))
-
-  # Remove temporary column
-  if (".EVID_sort" %in% names(obj)) {
-    obj <- obj |>
-      dplyr::select(-".EVID_sort")
-  }
-
-  obj |>
-    dplyr::mutate(REF = row_number()) |>
-    dplyr::relocate("REF")
-}
-
-
-#' Assign unique ID
-#'
-#' Re-assign unique IDs per subject based on USUBJID or SUBJID, and STUDYID,
-#' if available.
-#'
-#' @param obj A nif object
-#'
-#' @returns A inf object with unique IDs
-#' @noRd
-index_id <- function(obj) {
-  if (!any(c("USUBJID", "SUBJID", "ID") %in% names(obj))) {
-    stop("Input must have at least one of USUBJID, SUBJID or ID columns!")
-  }
-
-  # prefer USUBJID over SUBJID over ID to identify subjects
-  if ("USUBJID" %in% names(obj)) {
-    obj <- mutate(obj, .temp_id = .data$USUBJID)
-  } else {
-    if ("SUBJID" %in% names(obj)) {
-      obj <- mutate(obj, .temp_id = .data$SUBJID)
-    } else {
-      obj <- mutate(obj, .temp_id = .data$ID)
-    }
-  }
-
-  out <- obj |>
-    unite(".temp_id", any_of(any_of(c("STUDYID", ".temp_id"))),
-      remove = FALSE
-    ) |>
-    arrange(across(any_of(c("STUDYID", "USUBJID", "SUBJID", "ID")))) |>
-    mutate(ID = as.numeric(
-      factor(
-        .data$.temp_id,
-        levels = unique(.data$.temp_id)
-      )
-    )) |>
-    select(-".temp_id")
-
-  restore_nif(out, obj)
-}
 
 
 #' Resolve imputation rules
@@ -132,21 +63,7 @@ resolve_imputation_rules <- function(x) {
 }
 
 
-#' Rebuild a nif object, copying metadata from a template
-#'
-#' @param data A data frame.
-#' @param template A nif object (or any object with nif attributes).
-#'
-#' @returns A nif object.
-#' @noRd
-restore_nif <- function(data, template) {
-  new_nif(
-    data,
-    nif_version = attr(template, "nif_version"),
-    creation_date = attr(template, "creation_date"),
-    imputation_rules = attr(template, "imputation_rules")
-  )
-}
+
 
 
 #' nif constructor
@@ -178,6 +95,30 @@ new_nif <- function(
     creation_date = creation_date,
     imputation_rules = resolve_imputation_rules(imputation_rules)
   )
+}
+
+
+#' Rebuild a nif object, copying metadata from a template
+#'
+#' @param data A data frame.
+#' @param template A nif object (or any object with nif attributes).
+#'
+#' @returns A nif object.
+#' @noRd
+restore_nif <- function(data, template) {
+  new_nif(
+    data,
+    nif_version = attr(template, "nif_version"),
+    creation_date = attr(template, "creation_date"),
+    imputation_rules = attr(template, "imputation_rules")
+  )
+}
+
+
+#' @exportS3Method dplyr::dplyr_reconstruct
+#' @noRd
+dplyr_reconstruct.nif <- function(data, template) {
+  restore_nif(data, template)
 }
 
 
@@ -220,7 +161,7 @@ nif <- function(
     ...,
     imputation_rules = "imputation_rules_standard",
     silent = NULL
-  ) {
+) {
   # Case 1: Empty minimal nif object
   if (is.null(obj)) {
     data <- tibble(
@@ -296,7 +237,7 @@ nif <- function(
       nif_version = attr(obj, "nif_version"),
       creation_date = attr(obj, "creation_date"),
       imputation_rules = attr(obj, "imputation_rules")
-      ))
+    ))
   }
 
   # Case 4: Nif object from data frame
@@ -313,13 +254,6 @@ nif <- function(
   }
 
   stop("obj must be a data frame or sdtm object")
-}
-
-
-#' @exportS3Method dplyr::dplyr_reconstruct
-#' @noRd
-dplyr_reconstruct.nif <- function(data, template) {
-  restore_nif(data, template)
 }
 
 
@@ -382,6 +316,78 @@ stop_if_already_added <- function(
       class = "nif_already_added"
     )
   }
+}
+
+
+#' Order nif rows and add REF column
+#'
+#' Order rows by ID, TIME/DTC and EVID and then assign sequential REF
+#'
+#' @param obj A nif object.
+#'
+#' @returns A nif object.
+#' @noRd
+arrange_and_add_ref <- function(obj) {
+  # Create temporary column for descending EVID sort
+  if ("EVID" %in% names(obj)) {
+    obj <- obj |>
+      dplyr::mutate(.EVID_sort = -.data$EVID)
+  }
+
+  obj <- obj |>
+    dplyr::arrange(across(any_of(c("ID", "TIME", "DTC", ".EVID_sort"))))
+
+  # Remove temporary column
+  if (".EVID_sort" %in% names(obj)) {
+    obj <- obj |>
+      dplyr::select(-".EVID_sort")
+  }
+
+  obj |>
+    dplyr::mutate(REF = row_number()) |>
+    dplyr::relocate("REF")
+}
+
+
+#' Assign unique ID
+#'
+#' Re-assign unique IDs per subject based on USUBJID or SUBJID, and STUDYID,
+#' if available.
+#'
+#' @param obj A nif object
+#'
+#' @returns A inf object with unique IDs
+#' @noRd
+index_id <- function(obj) {
+  if (!any(c("USUBJID", "SUBJID", "ID") %in% names(obj))) {
+    stop("Input must have at least one of USUBJID, SUBJID or ID columns!")
+  }
+
+  # prefer USUBJID over SUBJID over ID to identify subjects
+  if ("USUBJID" %in% names(obj)) {
+    obj <- mutate(obj, .temp_id = .data$USUBJID)
+  } else {
+    if ("SUBJID" %in% names(obj)) {
+      obj <- mutate(obj, .temp_id = .data$SUBJID)
+    } else {
+      obj <- mutate(obj, .temp_id = .data$ID)
+    }
+  }
+
+  out <- obj |>
+    unite(".temp_id", any_of(any_of(c("STUDYID", ".temp_id"))),
+          remove = FALSE
+    ) |>
+    arrange(across(any_of(c("STUDYID", "USUBJID", "SUBJID", "ID")))) |>
+    mutate(ID = as.numeric(
+      factor(
+        .data$.temp_id,
+        levels = unique(.data$.temp_id)
+      )
+    )) |>
+    select(-".temp_id")
+
+  restore_nif(out, obj)
 }
 
 

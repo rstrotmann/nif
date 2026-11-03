@@ -164,3 +164,131 @@ test_that("validate_domain works with example data", {
     expect_true(validate_domain(dm_domain, silent = TRUE))
   }
 })
+
+
+test_that("validate_domain signals sdtm_arg_error for non-data frame input", {
+  expect_error(validate_domain("not a data frame"), class = "sdtm_arg_error")
+  expect_error(validate_domain(NULL), class = "sdtm_arg_error")
+  expect_error(validate_domain(list(DOMAIN = "DM")), class = "sdtm_arg_error")
+})
+
+
+test_that("validate_domain signals sdtm_arg_error for missing DOMAIN column", {
+  no_domain <- tibble::tribble(
+    ~STUDYID, ~USUBJID,
+    "STUDY1", "SUBJ-001"
+  )
+
+  expect_error(validate_domain(no_domain), class = "sdtm_arg_error")
+})
+
+
+test_that("validate_domain signals sdtm_arg_error for empty DOMAIN column", {
+  # zero rows
+  no_rows <- tibble::tribble(
+    ~DOMAIN, ~STUDYID, ~USUBJID
+  )
+  expect_error(validate_domain(no_rows), class = "sdtm_arg_error")
+
+  # only empty strings
+  blank <- tibble::tribble(
+    ~DOMAIN, ~STUDYID, ~USUBJID,
+    "",      "STUDY1", "SUBJ-001",
+    "",      "STUDY1", "SUBJ-002"
+  )
+  expect_error(
+    validate_domain(blank),
+    "The DOMAIN column is empty",
+    class = "sdtm_arg_error"
+  )
+})
+
+
+test_that("validate_domain signals sdtm_arg_error for multiple domains", {
+  mixed <- tibble::tribble(
+    ~DOMAIN, ~USUBJID,
+    "DM",    "SUBJ-001",
+    "VS",    "SUBJ-002",
+    "LB",    "SUBJ-003"
+  )
+
+  expect_error(
+    validate_domain(mixed, silent = TRUE),
+    "Multiple domain values found: DM, VS and LB",
+    class = "sdtm_arg_error"
+  )
+})
+
+
+test_that("validate_domain reports error in the calling function", {
+  check_input <- function(x) validate_domain(x)
+
+  err <- expect_error(check_input(1), class = "sdtm_arg_error")
+  expect_equal(rlang::call_name(err$call), "check_input")
+
+  explicit_call <- function(x) validate_domain(x, call = rlang::current_env())
+  err <- expect_error(explicit_call(1), class = "sdtm_arg_error")
+  expect_equal(rlang::call_name(err$call), "explicit_call")
+})
+
+
+test_that("validate_domain does not error on unknown domain and returns TRUE", {
+  unknown <- tibble::tribble(
+    ~DOMAIN, ~STUDYID, ~USUBJID,
+    "XYZ",   "STUDY1", "SUBJ-001"
+  )
+
+  expect_no_error(validate_domain(unknown, silent = TRUE))
+  expect_invisible(validate_domain(unknown, silent = TRUE))
+  expect_true(validate_domain(unknown, silent = TRUE))
+  expect_no_message(validate_domain(unknown, silent = TRUE))
+})
+
+
+test_that("validate_domain reports missing required columns", {
+  # COUNTRY and ACTARM are required for DM
+  incomplete_dm <- tibble::tribble(
+    ~DOMAIN, ~STUDYID, ~USUBJID,   ~SUBJID, ~SITEID, ~SEX, ~ARMCD, ~ARM,              ~ACTARMCD,
+    "DM",    "STUDY1", "SUBJ-001", "001",   "001",   "M",  "ARM1", "Treatment arm 1", "ARM1"
+  )
+
+  msgs <- testthat::capture_messages(
+    validate_domain(incomplete_dm, silent = FALSE)
+  )
+  expect_true(
+    any(grepl(
+      "The following required columns are missing in DM: ACTARM, COUNTRY",
+      msgs, fixed = TRUE
+    ))
+  )
+
+  # required columns are reported, but do not cause an error
+  expect_true(validate_domain(incomplete_dm, silent = TRUE))
+  expect_no_message(validate_domain(incomplete_dm, silent = TRUE))
+})
+
+
+test_that("validate_domain reports no required-column message for valid DM", {
+  dm <- tibble::tribble(
+    ~DOMAIN, ~STUDYID, ~USUBJID,   ~SUBJID, ~SITEID, ~SEX, ~ARMCD, ~ARM,              ~ACTARMCD, ~ACTARM,           ~COUNTRY,
+    "DM",    "STUDY1", "SUBJ-001", "001",   "001",   "M",  "ARM1", "Treatment arm 1", "ARM1",     "Treatment arm 1", "USA"
+  )
+
+  msgs <- testthat::capture_messages(validate_domain(dm, silent = FALSE))
+  expect_false(any(grepl("required columns", msgs)))
+})
+
+
+test_that("validate_domain honours the global silent option", {
+  unknown <- tibble::tribble(
+    ~DOMAIN, ~STUDYID, ~USUBJID,
+    "XYZ",   "STUDY1", "SUBJ-001"
+  )
+
+  # explicit silent argument wins
+  expect_message(
+    validate_domain(unknown, silent = FALSE),
+    "Unknown domain 'XYZ' cannot be validated!"
+  )
+  expect_no_message(validate_domain(unknown, silent = TRUE))
+})
