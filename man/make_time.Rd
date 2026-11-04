@@ -21,6 +21,8 @@ an administration or observation event.
 of the respective parent. Note that if a subject has received multiple drugs
 (parents), the 'TAFD' field refers to the respective first administration.
 \item 'TAD' is the time in hours relative to the most recent administration of
-the parent compound.
+the parent compound. An observation at the same time as an administration
+is considered a trough, i.e., it relates to the previous administration. The
+result does not depend on the order of the records.
 }
 }

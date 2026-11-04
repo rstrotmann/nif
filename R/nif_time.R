@@ -37,6 +37,182 @@ last_ex_dtc <- function(ex) {
 }
 
 
+# ---- time calculation ----
+#
+# All derived time fields are calculated in one place:
+#
+# * `calc_tafd()` and `calc_tad()` are vector functions for the records of one
+#   subject and one parent. They do not depend on the order of the records.
+# * `add_time_fields()` is the only function that applies them, grouped by ID
+#   and PARENT.
+# * `add_time_from_dtc()` derives TIME from DTC.
+# * `make_time()`, `make_time_from_time()`, `add_tad()` and `add_tafd()` only
+#   validate their input and call these functions.
+#
+# Convention: an observation at the same time as an administration is a
+# trough, i.e., it relates to the previous administration.
+
+
+#' Time after first dose
+#'
+#' Calculates the time after the first administration for all records of one
+#' subject and one parent. Row order does not matter.
+#'
+#' @param time Event times in hours, as numeric.
+#' @param evid Event IDs, as numeric. Only `EVID == 1` is a dose.
+#'
+#' @returns The TAFD as numeric vector of the same length as `time`, rounded to
+#'   three digits. NA if there is no administration.
+#' @noRd
+calc_tafd <- function(time, evid) {
+  is_dose <- !is.na(evid) & evid == 1 & !is.na(time)
+
+  if (!any(is_dose)) {
+    return(rep(NA_real_, length(time)))
+  }
+
+  round(time - min(time[is_dose]), digits = 3)
+}
+
+
+#' Time after dose, independent of row order
+#'
+#' Calculates the time after the most recent administration for all records of
+#' one subject and one parent. Row order does not matter.
+#'
+#' A sample taken at the same time as a dose is considered a trough, i.e., it
+#' is related to the previous dose, not to the dose given at that time.
+#' Administration records have TAD 0. Records without an earlier dose (before or
+#' at the first dose) are related to the first dose, so TAD is negative before
+#' and 0 at the first dose. Without any administration, TAD is NA.
+#'
+#' The function does not know about subjects or parents. Call it grouped, as
+#' done in `add_time_fields()`.
+#'
+#' @param time Event times in hours, as numeric.
+#' @param evid Event IDs, as numeric. Only `EVID == 1` is a dose.
+#'
+#' @returns The TAD as numeric vector of the same length as `time`.
+#' @noRd
+calc_tad <- function(time, evid) {
+  is_dose <- !is.na(evid) & evid == 1
+  dose_times <- sort(unique(time[is_dose & !is.na(time)]))
+
+  if (length(dose_times) == 0) {
+    return(rep(NA_real_, length(time)))
+  }
+
+  # number of dose times strictly before each record, i.e., coincident doses do
+  # not count
+  n_before <- findInterval(time, dose_times, left.open = TRUE)
+  reference <- dose_times[pmax(n_before, 1L)]
+
+  ifelse(is_dose & !is.na(time), 0, time - reference)
+}
+
+
+#' Add time fields relative to administrations
+#'
+#' The one place where TAFD and TAD are calculated. Fields are calculated
+#' separately for every combination of ID and PARENT, independent of the order
+#' of the records. The row order is not changed.
+#'
+#' The function does not validate its input. It requires ID, PARENT, TIME and
+#' EVID.
+#'
+#' @param obj A nif object with ID, PARENT, TIME and EVID.
+#' @param fields The fields to calculate, any of "TAFD" and "TAD".
+#'
+#' @returns A nif object with the requested fields added or replaced.
+#' @noRd
+add_time_fields <- function(obj, fields = c("TAFD", "TAD")) {
+  fields <- match.arg(fields, c("TAFD", "TAD"), several.ok = TRUE)
+
+  out <- group_by(obj, .data$ID, .data$PARENT)
+  if ("TAFD" %in% fields) {
+    out <- mutate(out, TAFD = calc_tafd(.data$TIME, .data$EVID))
+  }
+  if ("TAD" %in% fields) {
+    out <- mutate(out, TAD = calc_tad(.data$TIME, .data$EVID))
+  }
+
+  out |>
+    ungroup() |>
+    dplyr::dplyr_reconstruct(obj)
+}
+
+
+#' Add TIME from DTC
+#'
+#' TIME is the time in hours relative to the subject's first record, rounded to
+#' three digits.
+#'
+#' @param obj A nif object with ID and DTC as POSIXct.
+#'
+#' @returns A nif object with TIME added or replaced.
+#' @noRd
+add_time_from_dtc <- function(obj) {
+  obj |>
+    group_by(.data$ID) |>
+    mutate(
+      TIME = round(
+        as.numeric(
+          difftime(.data$DTC, min(.data$DTC, na.rm = TRUE), units = "hours")
+        ),
+        digits = 3
+      )
+    ) |>
+    ungroup() |>
+    dplyr::dplyr_reconstruct(obj)
+}
+
+
+#' Stop if columns are missing
+#'
+#' @param obj A data frame.
+#' @param required Required column names.
+#'
+#' @returns Nothing or stop.
+#' @noRd
+check_time_columns <- function(obj, required) {
+  missing_cols <- setdiff(required, names(obj))
+  if (length(missing_cols) > 0) {
+    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
+  }
+}
+
+
+#' Stop if columns are not numeric
+#'
+#' @param obj A data frame.
+#' @param cols Column names, as character.
+#'
+#' @returns Nothing or stop.
+#' @noRd
+check_numeric_columns <- function(obj, cols = c("TIME", "EVID", "ID")) {
+  for (col in cols) {
+    if (!is.numeric(obj[[col]])) {
+      stop(col, " column must contain numeric values")
+    }
+  }
+}
+
+
+#' Add empty time fields to an empty nif object
+#'
+#' @param obj An empty nif object.
+#' @param fields The fields to add, as character.
+#'
+#' @returns The nif object with empty numeric fields.
+#' @noRd
+add_empty_time_fields <- function(obj, fields) {
+  for (field in fields) {
+    obj[[field]] <- numeric(0)
+  }
+  dplyr::dplyr_reconstruct(obj, obj)
+}
+
+
 #' Calculate time fields based on DTC
 #'
 #' @description
@@ -50,28 +226,18 @@ last_ex_dtc <- function(ex) {
 #' (parents), the 'TAFD' field refers to the respective first administration.
 #'
 #' * 'TAD' is the time in hours relative to the most recent administration of
-#' the parent compound.
+#' the parent compound. An observation at the same time as an administration
+#' is considered a trough, i.e., it relates to the previous administration. The
+#' result does not depend on the order of the records.
 #'
 #' @param obj A nif object.
 #' @return A nif object with TIME, TAFD, and TAD fields added.
 #' @export
 make_time <- function(obj) {
-  required_cols <- c("ID", "DTC", "ANALYTE", "PARENT", "EVID")
-  missing_cols <- setdiff(required_cols, names(obj))
-  if (length(missing_cols) > 0) {
-    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
-  }
+  check_time_columns(obj, c("ID", "DTC", "ANALYTE", "PARENT", "EVID"))
 
   if (nrow(obj) == 0) {
-    return(
-      mutate(
-        obj,
-        TIME = numeric(0),
-        TAFD = numeric(0),
-        TAD = numeric(0)
-      ) |>
-        dplyr::dplyr_reconstruct(obj)
-    )
+    return(add_empty_time_fields(obj, c("TIME", "TAFD", "TAD")))
   }
 
   if (!is.POSIXct(obj$DTC)) {
@@ -79,47 +245,8 @@ make_time <- function(obj) {
   }
 
   obj |>
-    mutate(.row = dplyr::row_number()) |>
-    group_by(.data$ID) |>
-    mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) |>
-    ungroup() |>
-    mutate(
-      TIME = round(
-        as.numeric(difftime(.data$DTC, .data$FIRSTDTC, units = "hours")),
-        digits = 3
-      )
-    ) |>
-    group_by(.data$ID, .data$PARENT) |>
-    mutate(
-      FIRSTADMIN = if (any(.data$EVID == 1)) {
-        min(.data$DTC[.data$EVID == 1], na.rm = TRUE)
-      } else {
-        NA_POSIXct_
-      }
-    ) |>
-    mutate(
-      TAFD = ifelse(
-        is.na(.data$FIRSTADMIN),
-        NA_real_,
-        round(
-          as.numeric(difftime(.data$DTC, .data$FIRSTADMIN, units = "hours")),
-          digits = 3
-        )
-      )
-    ) |>
-    arrange(.data$ID, .data$PARENT, .data$TIME, .data$EVID) |>
-    mutate(
-      admin_time = case_when(
-        .data$EVID == 1 ~ .data$TIME,
-        TRUE ~ NA_real_
-      )
-    ) |>
-    tidyr::fill("admin_time", .direction = "downup") |>
-    mutate(TAD = .data$TIME - .data$admin_time) |>
-    ungroup() |>
-    arrange(.data$.row) |>
-    select(-c("FIRSTDTC", "FIRSTADMIN", "admin_time", ".row")) |>
-    dplyr::dplyr_reconstruct(obj)
+    add_time_from_dtc() |>
+    add_time_fields(c("TAFD", "TAD"))
 }
 
 
@@ -130,69 +257,18 @@ make_time <- function(obj) {
 #' @return A nif object.
 #' @noRd
 make_time_from_time <- function(obj) {
-  # input validation
   validate_nif_argument(obj)
-
-  # Ensure PARENT column exists
   obj <- ensure_parent(obj)
 
-  # Check for required columns
-  required_cols <- c("ID", "TIME", "EVID")
-  missing_cols <- setdiff(required_cols, names(obj))
-  if (length(missing_cols) > 0) {
-    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
-  }
+  check_time_columns(obj, c("ID", "TIME", "EVID"))
 
-  # Handle empty data frame
   if (nrow(obj) == 0) {
-    return(
-      mutate(
-        obj,
-        TAFD = numeric(0),
-        TAD = numeric(0)
-      ) |>
-        dplyr::dplyr_reconstruct(obj)
-    )
+    return(add_empty_time_fields(obj, c("TAFD", "TAD")))
   }
 
-  # Validate data types
-  if (!is.numeric(obj$TIME)) {
-    stop("TIME column must contain numeric values")
-  }
-  if (!is.numeric(obj$EVID)) {
-    stop("EVID column must contain numeric values")
-  }
-  if (!is.numeric(obj$ID)) {
-    stop("ID column must contain numeric values")
-  }
+  check_numeric_columns(obj)
 
-  # Calculate time fields
-  result <- obj |>
-    mutate(.row = dplyr::row_number()) |>
-    arrange(.data$ID, .data$PARENT, .data$TIME, -.data$EVID) |>
-    group_by(.data$ID, .data$PARENT) |>
-    mutate(.first_admin = if (any(.data$EVID == 1)) {
-      min(.data$TIME[.data$EVID == 1], na.rm = TRUE)
-    } else {
-      NA_real_
-    }) |>
-    mutate(TAFD = ifelse(
-      is.na(.data$.first_admin),
-      NA_real_,
-      round(.data$TIME - .data$.first_admin, digits = 3)
-    )) |>
-    mutate(.admin_time = case_when(
-      .data$EVID == 1 ~ .data$TIME,
-      TRUE ~ NA_real_
-    )) |>
-    tidyr::fill(".admin_time", .direction = "downup") |>
-    mutate(TAD = .data$TIME - .data$.admin_time) |>
-    ungroup() |>
-    arrange(.data$.row) |>
-    select(-c(".first_admin", ".admin_time", ".row")) |>
-    dplyr::dplyr_reconstruct(obj)
-
-  result
+  add_time_fields(obj, c("TAFD", "TAD"))
 }
 
 
@@ -201,7 +277,8 @@ make_time_from_time <- function(obj) {
 #' This function adds a time-after-dose (TAD) field to a NIF object. TAD
 #' represents the time elapsed since the most recent administration of the
 #' parent compound. For observations before the first dose, TAD will be
-#' negative.
+#' negative. An observation at the same time as an administration is
+#' considered a trough, i.e., it relates to the previous administration.
 #'
 #' @param nif A NIF object.
 #' @return A NIF object with an added TAD column.
@@ -210,51 +287,16 @@ make_time_from_time <- function(obj) {
 #' # Add TAD to a NIF object
 #' add_tad(examplinib_poc_nif)
 add_tad <- function(nif) {
-  # Input validation
   validate_nif_argument(nif)
+  check_time_columns(nif, c("ID", "TIME", "EVID", "PARENT"))
 
-  required_cols <- c("ID", "TIME", "EVID", "PARENT")
-  missing_cols <- setdiff(required_cols, names(nif))
-  if (length(missing_cols) > 0) {
-    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
-  }
-
-  # Handle empty data frame
   if (nrow(nif) == 0) {
-    return(
-      mutate(nif, TAD = numeric(0)) |>
-        dplyr::dplyr_reconstruct(nif)
-    )
+    return(add_empty_time_fields(nif, "TAD"))
   }
 
-  # Validate data types
-  if (!is.numeric(nif$TIME)) {
-    stop("TIME column must contain numeric values")
-  }
-  if (!is.numeric(nif$EVID)) {
-    stop("EVID column must contain numeric values")
-  }
-  if (!is.numeric(nif$ID)) {
-    stop("ID column must contain numeric values")
-  }
+  check_numeric_columns(nif)
 
-  # Calculate TAD
-  result <- nif |>
-    mutate(.row = dplyr::row_number()) |>
-    arrange(.data$ID, .data$PARENT, .data$TIME, .data$EVID) |>
-    mutate(admin_time = case_when(
-      .data$EVID == 1 ~ .data$TIME,
-      TRUE ~ NA_real_
-    )) |>
-    group_by(.data$ID, .data$PARENT) |>
-    tidyr::fill("admin_time", .direction = "downup") |>
-    mutate(TAD = .data$TIME - .data$admin_time) |>
-    ungroup() |>
-    arrange(.data$.row) |>
-    select(-c("admin_time", ".row")) |>
-    dplyr::dplyr_reconstruct(nif)
-
-  result
+  add_time_fields(nif, "TAD")
 }
 
 
@@ -266,44 +308,26 @@ add_tad <- function(nif) {
 #' @examples
 #' add_tafd(examplinib_poc_nif)
 add_tafd <- function(nif) {
-  # Input validation
   if (!inherits(nif, "nif")) {
     stop("Input must be a NIF object")
   }
 
-  required_cols <- c("ID", "TIME", "EVID")
-  missing_cols <- setdiff(required_cols, names(nif))
-  if (length(missing_cols) > 0) {
-    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
-  }
+  check_time_columns(nif, c("ID", "TIME", "EVID"))
 
   if (any(is.na(nif$ID))) {
     stop("ID colum must not contain NA values!")
   }
 
-  # Handle empty data frame
   if (nrow(nif) == 0) {
-    return(mutate(nif, TAFD = numeric(0)))
+    return(add_empty_time_fields(nif, "TAFD"))
   }
 
-  # Validate data types
-  if (!is.numeric(nif$TIME)) {
-    stop("TIME column must contain numeric values")
-  }
-  if (!is.numeric(nif$EVID)) {
-    stop("EVID column must contain numeric values")
-  }
-  if (!is.numeric(nif$ID)) {
-    stop("ID column must contain numeric values")
-  }
+  check_numeric_columns(nif)
 
-  # Check for dosing events
   if (nrow(filter(nif, .data$EVID == 1)) == 0) {
     stop("No dosing event, TAFD cannot be calculated")
   }
 
-  # business code
-  # Safely ensure parent exists
   tryCatch(
     {
       out <- ensure_parent(nif)
@@ -313,16 +337,7 @@ add_tafd <- function(nif) {
     }
   )
 
-  out |>
-    arrange(.data$ID, .data$PARENT, .data$TIME) |>
-    group_by(.data$ID, .data$PARENT) |>
-    mutate(first_admin = safe_min(.data$TIME[.data$EVID == 1])) |>
-    mutate(TAFD = .data$TIME - .data$first_admin) |>
-    select(-c("first_admin")) |>
-    ungroup() |>
-    # nif()
-    arrange_and_add_ref() |>
-    restore_nif(nif)
+  add_time_fields(out, "TAFD")
 }
 
 
@@ -354,4 +369,3 @@ add_trtdy <- function(obj) {
     arrange_and_add_ref() |>
     restore_nif(obj)
 }
-
