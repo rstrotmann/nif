@@ -213,7 +213,11 @@ test_that("index_dosing_interval works with real-life data set", {
     as.data.frame()
 
   expect_equal(unique(filter(temp, TIME <= 168, EVID == 0)$DI), 1)
-  expect_equal(unique(filter(temp, TIME > 168, EVID == 0)$DI), 2)
+
+  # the sample at TIME 264 coincides with the second dose of the parent and is
+  # a trough, i.e. it relates to the previous dose and stays in interval 1
+  expect_equal(unique(filter(temp, TIME == 264, EVID == 0)$DI), 1)
+  expect_equal(unique(filter(temp, TIME > 264, EVID == 0)$DI), 2)
 })
 
 

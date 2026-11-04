@@ -339,7 +339,7 @@ plot.nif <- function(
     p <- dplyr::bind_rows(p, dplyr::mutate(admin_data, DV = NA))
 
   p <- p |>
-    arrange(.data$GROUP, .data$active_time, -.data$EVID) |>
+    arrange_events(.data$GROUP, .data$active_time) |>
     ggplot2::ggplot(ggplot2::aes(
       x = .data$active_time,
       y = .data$DV,

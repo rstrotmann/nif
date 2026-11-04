@@ -309,15 +309,18 @@ test_that("index_rich_sampling_intervals works", {
       10L,   1,    72,     1,  100,    1,  NA,               NA,
       11L,   1,    72,     0,    0,    2,  60,               NA,
       12L,   1,    96,     1,  100,    1,  NA,               NA,
-      13L,   1,    96,     0,    0,    2,  70,               2L,
+      13L,   1,    96,     0,    0,    2,  70,               NA,
       14L,   1,    97,     0,    0,    2,  80,               2L,
       15L,   1,    98,     0,    0,    2,  90,               2L,
-      16L,   1,   100,     0,    0,    2, 100,               2L,
-      17L,   1,   102,     0,    0,    2, 110,               2L,
-      18L,   1,   104,     0,    0,    2, 120,               2L
+      16L,   1,    99,     0,    0,    2,  95,               2L,
+      17L,   1,   100,     0,    0,    2, 100,               2L,
+      18L,   1,   102,     0,    0,    2, 110,               2L,
+      19L,   1,   104,     0,    0,    2, 120,               2L
      ) |>
     nif(silent = TRUE)
 
+  # Samples at the time of a dose (72 and 96) are troughs and belong to the
+  # previous dosing interval.
   temp <- as.data.frame(index_rich_sampling_intervals(nif))
   expect_equal(temp$RICH_N, temp$expected_rich_n)
   temp1 <- distinct(temp, OPDI, RICH_N)
@@ -388,10 +391,15 @@ test_that("add_rtb works", {
   ) %>%
     nif(silent = TRUE)
 
+  # Samples at the time of a dose are ordered before the dose (trough).
   temp <- as.data.frame(add_rtb(nif))
   expect_equal(
+    temp$EVID,
+    c(0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0)
+  )
+  expect_equal(
     temp$DVRTB,
-    c(NA, 1, 2, 3, NA, NA, NA, 4, NA, 1, 2, 3, 4)
+    c(1, NA, 2, 3, NA, NA, 4, NA, 1, NA, 2, 3, 4)
   )
 })
 

@@ -110,8 +110,8 @@ nif %>%
 #>   PARENT  min  max  mean  median  
 #>   RS2023  1    101  42.1  61
 #> 
-#> NIF version: 0.66.2
-#> Creation date: 2026-10-23
+#> NIF version: 0.66.4
+#> Creation date: 2026-11-04
 #> Hash: de450fa8035e3eb120506c7cfdc81831
 #> Last DTC: 2001-08-15 09:01:00
 ```

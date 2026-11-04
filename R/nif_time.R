@@ -228,7 +228,9 @@ add_empty_time_fields <- function(obj, fields) {
 #' * 'TAD' is the time in hours relative to the most recent administration of
 #' the parent compound. An observation at the same time as an administration
 #' is considered a trough, i.e., it relates to the previous administration. The
-#' result does not depend on the order of the records.
+#' result does not depend on the order of the records. In the nif object, such
+#' a sample is also placed before the dose (see [nif::nif()]), so that row
+#' order and 'TAD' agree.
 #'
 #' @param obj A nif object.
 #' @return A nif object with TIME, TAFD, and TAD fields added.

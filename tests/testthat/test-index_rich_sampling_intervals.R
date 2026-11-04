@@ -41,12 +41,16 @@ test_that("index_rich_sampling_intervals indexes rich intervals with default min
       1,    96,     0,    2,    0,  70,     "A",      "A",
       1,    97,     0,    2,    0,  80,     "A",      "A",
       1,    98,     0,    2,    0,  90,     "A",      "A",
+      1,    99,     0,    2,    0,  95,     "A",      "A",
       1,   100,     0,    2,    0, 100,     "A",      "A",
       1,   102,     0,    2,    0, 110,     "A",      "A",
       1,   104,     0,    2,    0, 120,     "A",      "A"
   ) |>
     nif(silent = TRUE)
 
+  # The samples at 72 and 96 coincide with a dose. They are troughs and belong
+  # to the previous dosing interval, so interval 5 has the six samples
+  # 97 - 104.
   result <- index_rich_sampling_intervals(nif_obj) |>
     as.data.frame()
 

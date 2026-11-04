@@ -23,14 +23,14 @@ complex analyses like population-level PK and PK/PD analyses may include
 further data, e.g., clinical laboratory, vital sign, or biomarker data.
 
 NONMEM and other modeling software packages expect the input data
-provided in (long) tabular arrangement with strict requirements to the
+provided in (long) tabular arrangement with strict requirements for the
 formatting and nomenclature of the variables (see, e.g., Bauer, CPT
 Pharmacometrics Syst. Pharmacol. (2019). The input data file for these
 analyses is sometimes casually referred to as a ‘NONMEM input format’ or
 ‘NIF’ file, hence the name of this package.
 
 Contingent on the downstream analyses, some of the variables in the
-analysis data set can be easily and automatically derived from the SDTM
+analysis data set can be derived easily and automatically from the SDTM
 source data, e.g., ‘DOSE’ (the administered dose) or ‘DV’ (the dependent
 variable for observations), or demographic covariates like ‘AGE’, ‘SEX’
 or ‘RACE’. Other fields of the input data set may require study-specific
@@ -40,11 +40,11 @@ study arm, or the encoding of adverse events or concomitant medications,
 as categorical covariates.
 
 While the latter variables often need manual and study-specific data
-programming, the core NIF data set can in most cases be generated in a
-quite standardized way. But also the manual addition of further
+programming, the core NIF data set can be generated in most cases in a
+standardized way. But also the manual addition of further
 analysis-specific fields is substantially simplified by the functions
-that the `nif` package provides. Often, analysis data sets can be thus
-be created with only a handful of lines of code.
+that the `nif` package provides. Often, analysis data sets can be
+created with only a handful of lines of code.
 
 Even for basic NIF data sets, missing data or data inconsistencies,
 specifically those relating to date and time fields, need to be resolved
@@ -60,7 +60,7 @@ analysis data sets (‘NIF data sets’) from SDTM-formatted clinical data.
 ### Outline
 
 The [first](#sdtm-data) part of this tutorial describes how to import
-SDTM data into a `sdtm` object, and how to explore clinical data on the
+SDTM data into a `sdtm` object, and how to explore clinical data at the
 SDTM level.
 
 The [second](#nif-data-sets) part walks through the generation of a
@@ -172,8 +172,8 @@ examplinib_fe
 #> Last DTC: 2001-02-27 11:06:00
 ```
 
-High-level subject-level disposition data for a specific subject can be
-extracted using [`subject_info()`](../reference/subject_info.md):
+A high-level data summary for a specific subject can be extracted using
+[`subject_info()`](../reference/subject_info.md):
 
 ``` r
 
@@ -231,7 +231,7 @@ domain(examplinib_sad, "dm") %>%
 ```
 
 [`summary()`](https://rdrr.io/r/base/summary.html) generates a
-high-level data disposition overview on a specific domain:
+high-level data summary of a specific domain:
 
 ``` r
 
@@ -285,9 +285,9 @@ may be encoded in a non-standardized way, e.g., information on study
 parts, cohorts, treatment conditions, etc..
 
 Such data fields may need study-specific considerations and manual
-imputations during the creating of the analysis data set. To help
-deciding which study-specific factors need to be addressed, the `nif`
-package includes functions to explore the structure of SDTM data.
+imputations during the creation of the analysis data set. To help decide
+which study-specific factors need to be addressed, the `nif` package
+includes functions to explore the structure of SDTM data.
 
 As we will see in [NIF DATA SETS](#nif-data-sets), nif objects are built
 sequentially from the SDTM data set. Based on the actual data
@@ -464,9 +464,9 @@ nif1 <- nif() %>%
   add_observation(sdtm, "pc", "RS2023487A", analyte = "M1", parent = "RS2023")
 ```
 
-In analogy to PK observations, observations from any SDTM domain, e.g.,
-LB, VS, MB, TR, etc., can be added in very much the same way. Please see
-the documentation to
+By analogy with PK observations, observations from any SDTM domain,
+e.g., LB, VS, MB, TR, etc., can be added in very much the same way.
+Please see the documentation to
 [`add_observation()`](../reference/add_observation.md) for details. This
 is a powerful feature that allows effortless construction of analysis
 data sets for population PK/PD modeling.
@@ -480,10 +480,10 @@ EXAMPLINIB, under fasted or fed conditions in a randomized sequence (see
 EX domain provides information on the current treatment period. It
 should be noted that the way such information is encoded in the SDTM
 data varies considerably. This is an example, and the specifics of how
-covariate information can extracted from a SDTM data set will differ
+covariate information can be extracted from a SDTM data set will differ
 across studies. However, `nif` objects are essentially data frame
-objects and can thus be easily manipulated, e.g., using functions from
-the `dplyr` package.
+objects and can be easily manipulated, e.g., using functions from the
+`dplyr` package.
 
 The following code shows how in this specific case, covariates relating
 to the current treatment period (‘PERIOD’) and current treatment
@@ -547,8 +547,7 @@ into more complex analyses. The `nif` package provides a host of
 functions to this end. The following section shows some basic examples.
 
 The [`summary()`](https://rdrr.io/r/base/summary.html) function
-generates a general overview on the data disposition in a `nif` data
-set:
+generates a general overview of the data in a `nif` data set:
 
 ``` r
 
@@ -597,8 +596,8 @@ summary(nif)
 #>   PARENT  min  max  mean  median  
 #>   RS2023  2    2    2     2
 #> 
-#> NIF version: 0.66.2
-#> Creation date: 2026-10-23
+#> NIF version: 0.66.4
+#> Creation date: 2026-11-04
 #> Hash: 44434e5857020c436fb7dc0ccef7f3ef
 #> Last DTC: 2001-02-27 10:06:00
 ```
@@ -622,7 +621,7 @@ invisible(capture.output(
 
 ### Plasma concentration data
 
-`nif` objects can be easily plotted as time series charts using the
+`nif` objects can be plotted easily as time series charts using the
 generic [`plot()`](https://rdrr.io/r/graphics/plot.default.html)
 function. While the output is a standard ggplot2 object that can be
 further extended using ggplot2 functionality, the
@@ -651,7 +650,7 @@ nif %>%
 
 ![](nif_files/figure-html/unnamed-chunk-18-1.png)
 
-To demonstrate the food effect on Cmax and Tmax on the individual level,
+To demonstrate the food effect on Cmax and Tmax at the individual level,
 the below figure focuses on the first 24 hours on the linear scale and
 introduces coloring based on the ‘FASTED’ covariate field:
 
@@ -663,7 +662,7 @@ nif %>%
 
 ![](nif_files/figure-html/unnamed-chunk-19-1.png)
 
-The following compares the mean plasma concentration profiles:
+The following code shows the mean plasma concentration profiles:
 
 ``` r
 
@@ -679,8 +678,8 @@ for further options.
 ### NIF viewer
 
 [`nif_viewer()`](../reference/nif_viewer.md) is a powerful exploratory
-tool that lets you interactively explore all analyte profiles on an
-individual level. As the static nature of a vignette does not allow to
+tool that lets you interactively explore all analyte profiles at the
+individual level. As the static nature of a vignette does not let you
 fully appreciate its potential, you are encouraged to test
 [`nif_viewer()`](../reference/nif_viewer.md) within your RStudio.
 

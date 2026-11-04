@@ -68,8 +68,11 @@ test_that("add_tafd handles multiple parent compounds", {
 
   result <- add_tafd(test_data)
 
-  # Check TAFD values for each parent
-  expect_equal(result$TAFD, c(0, 0, 1, 2, 1, 2))
+  # Rows are ordered by ID, TIME, EVID, i.e. the DRUG1 sample at TIME 1 comes
+  # before the DRUG2 dose at TIME 1. TAFD is calculated per parent.
+  expect_equal(result$TIME, c(0, 1, 1, 2, 2, 3))
+  expect_equal(result$PARENT, c("DRUG1", "DRUG1", "DRUG2", "DRUG1", "DRUG2", "DRUG2"))
+  expect_equal(result$TAFD, c(0, 1, 0, 2, 1, 2))
 })
 
 

@@ -1,4 +1,4 @@
-# Nif timing plot
+# Nif event timing chart
 
 **\[experimental\]**
 

@@ -20,18 +20,18 @@ test_that("arrange_and_add_ref works with all standard columns", {
   # Check REF values are sequential
   expect_equal(result$REF, 1:nrow(result))
 
-  # Check ordering: ID, TIME, DTC, EVID (descending)
+  # Check ordering: ID, TIME, DTC, EVID (ascending; sample before dose)
   # Expected order:
-  # ID=1, TIME=0, DTC="2024-01-01 08:00:00", EVID=1 (REF=1)
-  # ID=1, TIME=0, DTC="2024-01-01 08:00:00", EVID=0 (REF=2)
+  # ID=1, TIME=0, DTC="2024-01-01 08:00:00", EVID=0 (REF=1)
+  # ID=1, TIME=0, DTC="2024-01-01 08:00:00", EVID=1 (REF=2)
   # ID=1, TIME=2, DTC="2024-01-01 10:00:00", EVID=0 (REF=3)
-  # ID=2, TIME=0, DTC="2024-01-01 09:00:00", EVID=1 (REF=4)
-  # ID=2, TIME=0, DTC="2024-01-01 09:00:00", EVID=0 (REF=5)
+  # ID=2, TIME=0, DTC="2024-01-01 09:00:00", EVID=0 (REF=4)
+  # ID=2, TIME=0, DTC="2024-01-01 09:00:00", EVID=1 (REF=5)
   # ID=2, TIME=1, DTC="2024-01-01 10:00:00", EVID=0 (REF=6)
   expect_equal(result$ID[1:3], c(1, 1, 1))
   expect_equal(result$ID[4:6], c(2, 2, 2))
-  expect_equal(result$EVID[1], 1)  # EVID=1 should come before EVID=0 at same TIME
-  expect_equal(result$EVID[2], 0)
+  expect_equal(result$EVID[1], 0)  # EVID=0 should come before EVID=1 at same TIME
+  expect_equal(result$EVID[2], 1)
 
   # Check all original columns are preserved
   expect_true(all(c("ID", "TIME", "DTC", "EVID", "DV", "AMT") %in% names(result)))
@@ -59,18 +59,18 @@ test_that("arrange_and_add_ref works without DTC column", {
   # Check REF values are sequential
   expect_equal(result$REF, 1:nrow(result))
 
-  # Check ordering: ID, TIME, EVID (descending)
+  # Check ordering: ID, TIME, EVID (ascending; sample before dose)
   # Expected order:
-  # ID=1, TIME=0, EVID=1 (REF=1)
-  # ID=1, TIME=0, EVID=0 (REF=2)
+  # ID=1, TIME=0, EVID=0 (REF=1)
+  # ID=1, TIME=0, EVID=1 (REF=2)
   # ID=1, TIME=2, EVID=0 (REF=3)
-  # ID=2, TIME=0, EVID=1 (REF=4)
-  # ID=2, TIME=0, EVID=0 (REF=5)
+  # ID=2, TIME=0, EVID=0 (REF=4)
+  # ID=2, TIME=0, EVID=1 (REF=5)
   # ID=2, TIME=1, EVID=0 (REF=6)
   expect_equal(result$ID[1:3], c(1, 1, 1))
   expect_equal(result$ID[4:6], c(2, 2, 2))
-  expect_equal(result$EVID[1], 1)
-  expect_equal(result$EVID[2], 0)
+  expect_equal(result$EVID[1], 0)
+  expect_equal(result$EVID[2], 1)
 
   # Check DTC is not in result
   expect_false("DTC" %in% names(result))
@@ -97,11 +97,11 @@ test_that("arrange_and_add_ref works without TIME column", {
   # Check REF values are sequential
   expect_equal(result$REF, 1:nrow(result))
 
-  # Check ordering: ID, DTC, EVID (descending)
+  # Check ordering: ID, DTC, EVID (ascending; sample before dose)
   expect_equal(result$ID[1:2], c(1, 1))
   expect_equal(result$ID[3:4], c(2, 2))
-  expect_equal(result$EVID[1], 1)  # EVID=1 should come before EVID=0 at same DTC
-  expect_equal(result$EVID[2], 0)
+  expect_equal(result$EVID[1], 0)  # EVID=0 should come before EVID=1 at same DTC
+  expect_equal(result$EVID[2], 1)
 
   # Check TIME is not in result
   expect_false("TIME" %in% names(result))
@@ -128,11 +128,11 @@ test_that("arrange_and_add_ref works without ID column", {
   # Check REF values are sequential
   expect_equal(result$REF, 1:nrow(result))
 
-  # Check ordering: TIME, DTC, EVID (descending)
+  # Check ordering: TIME, DTC, EVID (ascending; sample before dose)
   expect_equal(result$TIME[1:2], c(0.0, 0.0))
   expect_equal(result$TIME[3:4], c(1.0, 2.0))
-  expect_equal(result$EVID[1], 1)  # EVID=1 should come before EVID=0 at same TIME/DTC
-  expect_equal(result$EVID[2], 0)
+  expect_equal(result$EVID[1], 0)  # EVID=0 should come before EVID=1 at same TIME/DTC
+  expect_equal(result$EVID[2], 1)
 
   # Check ID is not in result
   expect_false("ID" %in% names(result))
@@ -280,7 +280,8 @@ test_that("arrange_and_add_ref preserves additional columns", {
 
   # Check values are preserved
   expect_equal(result$PARENT, c("A", "A", "A"))
-  expect_equal(result$CMT, c(1, 2, 2))
+  # the sample at TIME 0 is ordered before the dose at TIME 0
+  expect_equal(result$CMT, c(2, 1, 2))
 })
 
 
@@ -303,9 +304,9 @@ test_that("arrange_and_add_ref handles duplicate times correctly", {
   # Check REF values are sequential
   expect_equal(result$REF, 1:nrow(result))
 
-  # At same TIME, EVID=1 should come before EVID=0
-  expect_equal(result$EVID[1], 1)
-  expect_equal(result$EVID[2:3], c(0, 0))
+  # At same TIME, EVID=0 should come before EVID=1
+  expect_equal(result$EVID[1:2], c(0, 0))
+  expect_equal(result$EVID[3], 1)
 })
 
 
@@ -366,8 +367,8 @@ test_that("arrange_and_add_ref handles DTC ordering correctly", {
   # Check ordering: ID, TIME, DTC, EVID
   # At same ID and TIME, should order by DTC, then EVID
   expect_equal(result$DTC[1], as.POSIXct("2024-01-01 08:00:00"))
-  expect_equal(result$EVID[1], 1)  # EVID=1 at earliest DTC
-  expect_equal(result$EVID[2], 0)  # EVID=0 at same DTC
+  expect_equal(result$EVID[1], 0)  # EVID=0 at earliest DTC, before the dose
+  expect_equal(result$EVID[2], 1)  # EVID=1 at same DTC
   expect_equal(result$DTC[3], as.POSIXct("2024-01-01 09:00:00"))
   expect_equal(result$DTC[4], as.POSIXct("2024-01-01 10:00:00"))
 })
@@ -420,14 +421,14 @@ test_that("arrange_and_add_ref works with tibble input", {
 })
 
 
-test_that("arrange_and_add_ref handles EVID descending order correctly", {
-  # Create test data to specifically test EVID descending order
+test_that("arrange_and_add_ref handles EVID ascending order correctly", {
+  # Create test data to specifically test EVID ascending order
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~DV,
-    1,   0.0,   0,     5,   # Observation
-    1,   0.0,   1,     NA,  # Dose event - should come first
-    1,   1.0,   0,     10,
-    1,   1.0,   1,     NA   # Dose event - should come first
+    1,   0.0,   1,     NA,  # Dose event - should come second
+    1,   0.0,   0,     5,   # Observation (trough) - should come first
+    1,   1.0,   1,     NA,  # Dose event - should come second
+    1,   1.0,   0,     10   # Observation (trough) - should come first
   )
 
   result <- arrange_and_add_ref(test_data)
@@ -439,11 +440,11 @@ test_that("arrange_and_add_ref handles EVID descending order correctly", {
   # Check REF values are sequential
   expect_equal(result$REF, 1:nrow(result))
 
-  # At same ID and TIME, EVID=1 should come before EVID=0
-  expect_equal(result$EVID[1], 1)  # TIME=0, EVID=1
-  expect_equal(result$EVID[2], 0)  # TIME=0, EVID=0
-  expect_equal(result$EVID[3], 1)  # TIME=1, EVID=1
-  expect_equal(result$EVID[4], 0)  # TIME=1, EVID=0
+  # At same ID and TIME, EVID=0 should come before EVID=1
+  expect_equal(result$EVID[1], 0)  # TIME=0, EVID=0
+  expect_equal(result$EVID[2], 1)  # TIME=0, EVID=1
+  expect_equal(result$EVID[3], 0)  # TIME=1, EVID=0
+  expect_equal(result$EVID[4], 1)  # TIME=1, EVID=1
 })
 
 

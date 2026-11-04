@@ -211,8 +211,8 @@
   object
 - [`time_plot()`](time_plot.md) : Plot time metrics against each other
   for observations
-- [`timing_chart()`](timing_chart.md) **\[experimental\]** : Nif timing
-  plot
+- [`timing_chart()`](timing_chart.md) **\[experimental\]** : Nif event
+  timing chart
 - [`treatments()`](treatments.md) : Treatments in a nif or sdtm object
 - [`trial_dco()`](trial_dco.md) : Cut-off date
 - [`trial_title()`](trial_title.md) : Trial title

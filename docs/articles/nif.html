@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -91,13 +91,13 @@ complex analyses like population-level PK and PK/PD analyses may include
 further data, e.g., clinical laboratory, vital sign, or biomarker
 data.</p>
 <p>NONMEM and other modeling software packages expect the input data
-provided in (long) tabular arrangement with strict requirements to the
+provided in (long) tabular arrangement with strict requirements for the
 formatting and nomenclature of the variables (see, e.g., Bauer, CPT
 Pharmacometrics Syst. Pharmacol. (2019). The input data file for these
 analyses is sometimes casually referred to as a ‘NONMEM input format’ or
 ‘NIF’ file, hence the name of this package.</p>
 <p>Contingent on the downstream analyses, some of the variables in the
-analysis data set can be easily and automatically derived from the SDTM
+analysis data set can be derived easily and automatically from the SDTM
 source data, e.g., ‘DOSE’ (the administered dose) or ‘DV’ (the dependent
 variable for observations), or demographic covariates like ‘AGE’, ‘SEX’
 or ‘RACE’. Other fields of the input data set may require study-specific
@@ -106,11 +106,11 @@ function categories, definition of specific treatment conditions by
 study arm, or the encoding of adverse events or concomitant medications,
 as categorical covariates.</p>
 <p>While the latter variables often need manual and study-specific data
-programming, the core NIF data set can in most cases be generated in a
-quite standardized way. But also the manual addition of further
+programming, the core NIF data set can be generated in most cases in a
+standardized way. But also the manual addition of further
 analysis-specific fields is substantially simplified by the functions
 that the <code>nif</code> package provides. Often, analysis data sets
-can be thus be created with only a handful of lines of code.</p>
+can be created with only a handful of lines of code.</p>
 <p>Even for basic NIF data sets, missing data or data inconsistencies,
 specifically those relating to date and time fields, need to be resolved
 to get to analysis-ready data sets. This is frequently encountered when
@@ -128,7 +128,7 @@ clinical data.</p>
 </h3>
 <p>The <a href="#sdtm-data">first</a> part of this tutorial describes
 how to import SDTM data into a <code>sdtm</code> object, and how to
-explore clinical data on the SDTM level.</p>
+explore clinical data at the SDTM level.</p>
 <p>The <a href="#nif-data-sets">second</a> part walks through the
 generation of a sample <code>nif</code> data set from SDTM data to
 illustrate the general workflow for building analysis data sets.</p>
@@ -221,8 +221,8 @@ information:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Hash: d292543d8f210c3163379028bac1bccc</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-02-27 11:06:00</span></span></code></pre></div>
-<p>High-level subject-level disposition data for a specific subject can
-be extracted using <code><a href="../reference/subject_info.html">subject_info()</a></code>:</p>
+<p>A high-level data summary for a specific subject can be extracted
+using <code><a href="../reference/subject_info.html">subject_info()</a></code>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">examplinib_fe</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/subject_info.html">subject_info</a></span><span class="op">(</span><span class="st">"20230004001050001"</span><span class="op">)</span></span>
@@ -271,8 +271,8 @@ be extracted using <code><a href="../reference/subject_info.html">subject_info()
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> WHITE                     <span style="color: #949494;">""</span>     2000-12-31T10:18</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> WHITE                     <span style="color: #949494;">""</span>     2000-12-29T10:30</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BLACK OR AFRICAN AMERICAN <span style="color: #949494;">""</span>     2000-12-29T09:22</span></span></code></pre></div>
-<p><code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> generates a high-level data disposition
-overview on a specific domain:</p>
+<p><code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> generates a high-level data summary of a
+specific domain:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="../reference/domain.html">domain</a></span><span class="op">(</span><span class="va">examplinib_sad</span>, <span class="st">"pc"</span><span class="op">)</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ──────── SDTM domain summary ──────── </span></span>
@@ -319,10 +319,9 @@ yet been fully cleaned are analyzed. In addition, some study-specific
 data may be encoded in a non-standardized way, e.g., information on
 study parts, cohorts, treatment conditions, etc..</p>
 <p>Such data fields may need study-specific considerations and manual
-imputations during the creating of the analysis data set. To help
-deciding which study-specific factors need to be addressed, the
-<code>nif</code> package includes functions to explore the structure of
-SDTM data.</p>
+imputations during the creation of the analysis data set. To help decide
+which study-specific factors need to be addressed, the <code>nif</code>
+package includes functions to explore the structure of SDTM data.</p>
 <p>As we will see in <a href="#nif-data-sets">NIF DATA SETS</a>, nif
 objects are built sequentially from the SDTM data set. Based on the
 actual data disposition, the <code><a href="../reference/suggest.html">suggest()</a></code> function provide
@@ -483,7 +482,7 @@ using the ‘parent’ parameter:</p>
 <span>  <span class="fu"><a href="../reference/add_administration.html">add_administration</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"EXAMPLINIB"</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"pc"</span>, <span class="st">"RS2023"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"pc"</span>, <span class="st">"RS2023487A"</span>, analyte <span class="op">=</span> <span class="st">"M1"</span>, parent <span class="op">=</span> <span class="st">"RS2023"</span><span class="op">)</span></span></code></pre></div>
-<p>In analogy to PK observations, observations from any SDTM domain,
+<p>By analogy with PK observations, observations from any SDTM domain,
 e.g., LB, VS, MB, TR, etc., can be added in very much the same way.
 Please see the documentation to <code><a href="../reference/add_observation.html">add_observation()</a></code> for
 details. This is a powerful feature that allows effortless construction
@@ -498,10 +497,10 @@ EXAMPLINIB, under fasted or fed conditions in a randomized sequence (see
 the ‘EPOCH’ field in the EX domain provides information on the current
 treatment period. It should be noted that the way such information is
 encoded in the SDTM data varies considerably. This is an example, and
-the specifics of how covariate information can extracted from a SDTM
+the specifics of how covariate information can be extracted from a SDTM
 data set will differ across studies. However, <code>nif</code> objects
-are essentially data frame objects and can thus be easily manipulated,
-e.g., using functions from the <code>dplyr</code> package.</p>
+are essentially data frame objects and can be easily manipulated, e.g.,
+using functions from the <code>dplyr</code> package.</p>
 <p>The following code shows how in this specific case, covariates
 relating to the current treatment period (‘PERIOD’) and current
 treatment (‘TREATMENT’) are sequentially derived and eventually used to
@@ -558,8 +557,8 @@ parameter in <code><a href="../reference/add_administration.html">add_administra
 proceeding into more complex analyses. The <code>nif</code> package
 provides a host of functions to this end. The following section shows
 some basic examples.</p>
-<p>The <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> function generates a general overview on
-the data disposition in a <code>nif</code> data set:</p>
+<p>The <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> function generates a general overview of
+the data in a <code>nif</code> data set:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ──────── NONMEM Input Format (NIF) data summary ────────</span></span>
@@ -606,8 +605,8 @@ the data disposition in a <code>nif</code> data set:</p>
 <span><span class="co">#&gt;   PARENT  min  max  mean  median  </span></span>
 <span><span class="co">#&gt;   RS2023  2    2    2     2</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; NIF version: 0.66.2</span></span>
-<span><span class="co">#&gt; Creation date: 2026-10-23</span></span>
+<span><span class="co">#&gt; NIF version: 0.66.4</span></span>
+<span><span class="co">#&gt; Creation date: 2026-11-04</span></span>
 <span><span class="co">#&gt; Hash: 44434e5857020c436fb7dc0ccef7f3ef</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-02-27 10:06:00</span></span></code></pre></div>
 <p>Plotting the summary yields histograms of the baseline demographic
@@ -626,7 +625,7 @@ some non-graphical output:</p>
 <div class="section level3">
 <h3 id="plasma-concentration-data">Plasma concentration data<a class="anchor" aria-label="anchor" href="#plasma-concentration-data"></a>
 </h3>
-<p><code>nif</code> objects can be easily plotted as time series charts
+<p><code>nif</code> objects can be plotted easily as time series charts
 using the generic <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function. While the output is a
 standard ggplot2 object that can be further extended using ggplot2
 functionality, the <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function itself includes
@@ -642,14 +641,14 @@ the analyte concentrations over time-after-dose (TAD):</p>
 <code class="sourceCode R"><span><span class="va">nif</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>time <span class="op">=</span> <span class="st">"TAD"</span>, points <span class="op">=</span> <span class="cn">TRUE</span>, lines <span class="op">=</span> <span class="cn">FALSE</span>, log <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="nif_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" alt="" width="480"></p>
-<p>To demonstrate the food effect on Cmax and Tmax on the individual
+<p>To demonstrate the food effect on Cmax and Tmax at the individual
 level, the below figure focuses on the first 24 hours on the linear
 scale and introduces coloring based on the ‘FASTED’ covariate field:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"FASTED"</span>, max_time <span class="op">=</span> <span class="fl">24</span>, points <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="nif_files/figure-html/unnamed-chunk-19-1.png" class="r-plt" alt="" width="480"></p>
-<p>The following compares the mean plasma concentration profiles:</p>
+<p>The following code shows the mean plasma concentration profiles:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"FASTED"</span>, max_time <span class="op">=</span> <span class="fl">24</span>, mean <span class="op">=</span> <span class="cn">TRUE</span>, points <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
@@ -661,10 +660,10 @@ options.</p>
 <h3 id="nif-viewer">NIF viewer<a class="anchor" aria-label="anchor" href="#nif-viewer"></a>
 </h3>
 <p><code><a href="../reference/nif_viewer.html">nif_viewer()</a></code> is a powerful exploratory tool that lets
-you interactively explore all analyte profiles on an individual level.
-As the static nature of a vignette does not allow to fully appreciate
-its potential, you are encouraged to test <code><a href="../reference/nif_viewer.html">nif_viewer()</a></code>
-within your RStudio.</p>
+you interactively explore all analyte profiles at the individual level.
+As the static nature of a vignette does not let you fully appreciate its
+potential, you are encouraged to test <code><a href="../reference/nif_viewer.html">nif_viewer()</a></code> within
+your RStudio.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/nif_viewer.html">nif_viewer</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span></span></code></pre></div>
 </div>

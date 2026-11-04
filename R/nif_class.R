@@ -141,6 +141,18 @@ dplyr_reconstruct.nif <- function(data, template) {
 #' `obj` is already a nif, that stored set is kept: `imputation_rules` is
 #' ignored. The wrap still re-sorts rows and refreshes `REF`.
 #'
+#' @section Row order and records at the same time:
+#' Rows are ordered by `ID`, `TIME`, `DTC` and `EVID`, in this order. If a
+#' sample (`EVID = 0`) and a dose (`EVID = 1`) have the same `ID`, `TIME` and
+#' `DTC`, the **sample is placed before the dose**. By convention, such a sample
+#' is a trough: it relates to the previous dose, and its time after dose (`TAD`)
+#' is calculated accordingly. The order matters for the analysis software:
+#' NONMEM does not re-sort records but processes them in file order, so a
+#' sample listed before a dose is evaluated before that dose is given. The row
+#' order and `TAD` therefore always agree, and `REF` follows the row order.
+#' Records with other `EVID` values are ordered numerically after samples and
+#' doses.
+#'
 #' @param obj A data frame, a sdtm object, or an existing nif object.
 #' @param silent suppress messages.
 #' @param imputation_rules Default imputation rule set for
@@ -319,31 +331,46 @@ stop_if_already_added <- function(
 }
 
 
+#' Arrange records by time keys, with a fixed tie-break on EVID
+#'
+#' Single place that defines how records with identical time keys are ordered.
+#' Within identical keys, records are sorted by EVID **ascending**: samples
+#' (EVID 0) come before doses (EVID 1). A sample taken at the same time as a
+#' dose is by convention a trough, i.e. it relates to the previous dose. This
+#' agrees with the TAD calculation in `calc_tad()` and matters because NONMEM
+#' does not re-sort records: it processes records in file order, so a sample
+#' listed before a dose is evaluated before that dose.
+#'
+#' Other EVID values (2, 3, 4) are simply ordered numerically after 0 and 1.
+#'
+#' @param data A data frame or nif object.
+#' @param ... Time keys to sort by first, as for `dplyr::arrange()`. EVID is
+#'   always added as the last key if present.
+#'
+#' @returns The arranged object.
+#' @noRd
+arrange_events <- function(data, ...) {
+  if ("EVID" %in% names(data)) {
+    dplyr::arrange(data, ..., .data$EVID)
+  } else {
+    dplyr::arrange(data, ...)
+  }
+}
+
+
 #' Order nif rows and add REF column
 #'
-#' Order rows by ID, TIME/DTC and EVID and then assign sequential REF
+#' Order rows by ID, TIME/DTC and EVID and then assign sequential REF. At
+#' identical ID, TIME and DTC, samples (EVID 0) are placed before doses
+#' (EVID 1), see `arrange_events()`.
 #'
 #' @param obj A nif object.
 #'
 #' @returns A nif object.
 #' @noRd
 arrange_and_add_ref <- function(obj) {
-  # Create temporary column for descending EVID sort
-  if ("EVID" %in% names(obj)) {
-    obj <- obj |>
-      dplyr::mutate(.EVID_sort = -.data$EVID)
-  }
-
-  obj <- obj |>
-    dplyr::arrange(across(any_of(c("ID", "TIME", "DTC", ".EVID_sort"))))
-
-  # Remove temporary column
-  if (".EVID_sort" %in% names(obj)) {
-    obj <- obj |>
-      dplyr::select(-".EVID_sort")
-  }
-
   obj |>
+    arrange_events(across(any_of(c("ID", "TIME", "DTC")))) |>
     dplyr::mutate(REF = row_number()) |>
     dplyr::relocate("REF")
 }

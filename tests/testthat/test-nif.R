@@ -43,10 +43,10 @@ test_that("nif() with valid data frame creates proper nif object", {
   # Check REF values are sequential
   expect_equal(result$REF, 1:nrow(result))
 
-  # Check data is arranged correctly (by ID, TIME, EVID descending)
+  # Check data is arranged correctly (by ID, TIME, EVID ascending)
   expect_equal(result$ID, c(1, 1, 1, 2, 2))
   expect_equal(result$TIME[1:3], c(0, 1, 2))
-  expect_equal(result$EVID[1], 1)  # EVID=1 should come before EVID=0 at same TIME
+  expect_equal(result$EVID[1], 1)  # the only record at TIME=0 is the dose
 
   # Check all original columns are preserved
   expect_true(all(c("ID", "TIME", "AMT", "CMT", "EVID", "DV") %in% names(result)))
@@ -192,11 +192,11 @@ test_that("nif() arranges data correctly with arrange_and_add_ref", {
 
   result <- nif(test_data)
 
-  # Check sorting: ID, TIME, EVID (descending)
+  # Check sorting: ID, TIME, EVID (ascending); no ties in this data set
   expect_equal(result$ID, c(1, 1, 1, 2, 2))
   expect_equal(result$TIME[1:3], c(0, 1, 2))
-  expect_equal(result$EVID[1], 1)  # EVID=1 before EVID=0 at same TIME
-  expect_equal(result$EVID[2], 0)
+  expect_equal(result$EVID[1], 1)  # dose at TIME=0
+  expect_equal(result$EVID[2], 0)  # sample at TIME=1
 
   # Check REF is sequential
   expect_equal(result$REF, 1:5)
@@ -217,12 +217,13 @@ test_that("nif() handles DTC column in arrangement", {
   # Should be sorted by ID, TIME, DTC, EVID
   expect_equal(result$DTC[1], as.POSIXct("2024-01-01 08:00:00"))
   expect_equal(result$EVID[1], 1)  # EVID=1 at earliest DTC
-  expect_equal(result$EVID[2], 0)  # EVID=0 at same DTC
+  expect_equal(result$EVID[2], 0)  # EVID=0 at the next DTC
 })
 
 
 test_that("nif() handles EVID sorting correctly", {
-  # Test that EVID=1 comes before EVID=0 at same TIME
+  # Test that EVID=0 comes before EVID=1 at same TIME (a sample at the time of
+  # a dose is a trough, i.e. it precedes the dose)
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   0,     0,    2,    0,     10,  # observation
@@ -232,9 +233,9 @@ test_that("nif() handles EVID sorting correctly", {
 
   result <- nif(test_data)
 
-  # EVID=1 should come before EVID=0 at TIME=0
-  expect_equal(result$EVID[1], 1)
-  expect_equal(result$EVID[2], 0)
+  # EVID=0 should come before EVID=1 at TIME=0
+  expect_equal(result$EVID[1], 0)
+  expect_equal(result$EVID[2], 1)
   expect_equal(result$TIME[1:2], c(0, 0))
 })
 

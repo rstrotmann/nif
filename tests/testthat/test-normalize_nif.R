@@ -524,7 +524,7 @@ test_that("normalize_nif adds sequential REF and places it first", {
 })
 
 
-test_that("normalize_nif orders rows by ID, TIME, and EVID with doses first", {
+test_that("normalize_nif orders rows by ID, TIME, and EVID with samples first", {
   test_nif <- as_dtc_nif(tibble::tribble(
     ~USUBJID,    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,      ~ANALYTE, ~PARENT, ~DTC,
     "SUBJ-002",  2,   0,     0,    2,    0,     8,        "DRUG",   "DRUG",  "2024-01-01 08:00:00",
@@ -536,7 +536,7 @@ test_that("normalize_nif orders rows by ID, TIME, and EVID with doses first", {
   result <- normalize_nif(test_nif)
 
   expect_equal(result$USUBJID, c("SUBJ-001", "SUBJ-001", "SUBJ-002", "SUBJ-002"))
-  expect_equal(result$EVID, c(1, 0, 1, 0))
+  expect_equal(result$EVID, c(0, 1, 0, 1))
   expect_equal(result$ID, c(1, 1, 2, 2))
 })
 

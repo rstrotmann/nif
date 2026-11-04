@@ -130,7 +130,7 @@ ensure_parent <- function(obj, silent = NULL) {
   result <- obj |>
     as.data.frame() |>
     # Ensure proper ordering for fill operations
-    arrange(.data$ID, .data$TIME, -.data$EVID) |>
+    arrange_events(.data$ID, .data$TIME) |>
     # Create temporary column with ANALYTE for administrations
     mutate(.last_admin_analyte = case_when(
       .data$EVID == 1 ~ .data$ANALYTE,

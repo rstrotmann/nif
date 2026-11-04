@@ -11,7 +11,10 @@ This function generates the following time fields:
   respective first administration.
 
 - 'TAD' is the time in hours relative to the most recent administration
-  of the parent compound.
+  of the parent compound. An observation at the same time as an
+  administration is considered a trough, i.e., it relates to the
+  previous administration. The result does not depend on the order of
+  the records.
 
 ## Usage
 

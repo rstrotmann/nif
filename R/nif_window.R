@@ -55,7 +55,7 @@ add_time_deviation <- function(obj, silent = NULL) {
 
   # calculate time deviation
   obj |>
-    arrange(.data$USUBJID, .data$DTC, -.data$EVID) |>
+    arrange_events(.data$USUBJID, .data$DTC) |>
     group_by(.data$PARENT, .data$USUBJID) |>
     # identify DTC of next administration
     mutate(next_admin = case_when(.data$EVID == 1 ~ .data$DTC)) |>

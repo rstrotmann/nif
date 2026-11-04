@@ -46,6 +46,20 @@ stores \code{imputation_rules} (default \code{\link[=imputation_rules_standard]{
 \code{obj} is already a nif, that stored set is kept: \code{imputation_rules} is
 ignored. The wrap still re-sorts rows and refreshes \code{REF}.
 }
+\section{Row order and records at the same time}{
+
+Rows are ordered by \code{ID}, \code{TIME}, \code{DTC} and \code{EVID}, in this order. If a
+sample (\code{EVID = 0}) and a dose (\code{EVID = 1}) have the same \code{ID}, \code{TIME} and
+\code{DTC}, the \strong{sample is placed before the dose}. By convention, such a sample
+is a trough: it relates to the previous dose, and its time after dose (\code{TAD})
+is calculated accordingly. The order matters for the analysis software:
+NONMEM does not re-sort records but processes them in file order, so a
+sample listed before a dose is evaluated before that dose is given. The row
+order and \code{TAD} therefore always agree, and \code{REF} follows the row order.
+Records with other \code{EVID} values are ordered numerically after samples and
+doses.
+}
+
 \examples{
 nif(silent = TRUE)
 }

@@ -44,6 +44,12 @@ All fields are converted to character, and NA-values are converted to '.'.
 
 Further, in the columns specified by the 'dot_columns' argument, zero values
 are also converted to '.'.
+
+The records are written in the order of the nif object. This matters
+because NONMEM does not re-sort records but processes them in file order. In
+a nif object, a sample at the same time as a dose is placed before the dose
+(a trough, relating to the previous dose), see \code{\link[=nif]{nif()}}. No re-ordering
+takes place when writing.
 }
 \examples{
 write_nonmem(examplinib_fe_nif)

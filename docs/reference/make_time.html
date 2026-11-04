@@ -6,7 +6,9 @@ an administration or observation event.
 of the respective parent. Note that if a subject has received multiple drugs
 (parents), the 'TAFD' field refers to the respective first administration.
 'TAD' is the time in hours relative to the most recent administration of
-the parent compound.
+the parent compound. An observation at the same time as an administration
+is considered a trough, i.e., it relates to the previous administration. The
+result does not depend on the order of the records.
 
 "><meta property="og:description" content="This function generates the following time fields:
 'TIME' is the time in hours relative to the subject's first record, be it
@@ -15,7 +17,9 @@ an administration or observation event.
 of the respective parent. Note that if a subject has received multiple drugs
 (parents), the 'TAFD' field refers to the respective first administration.
 'TAD' is the time in hours relative to the most recent administration of
-the parent compound.
+the parent compound. An observation at the same time as an administration
+is considered a trough, i.e., it relates to the previous administration. The
+result does not depend on the order of the records.
 
 "></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -25,7 +29,7 @@ the parent compound.
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,7 +70,9 @@ an administration or observation event.</p></li>
 of the respective parent. Note that if a subject has received multiple drugs
 (parents), the 'TAFD' field refers to the respective first administration.</p></li>
 <li><p>'TAD' is the time in hours relative to the most recent administration of
-the parent compound.</p></li>
+the parent compound. An observation at the same time as an administration
+is considered a trough, i.e., it relates to the previous administration. The
+result does not depend on the order of the records.</p></li>
 </ul></div>
 
     <div class="section level2">

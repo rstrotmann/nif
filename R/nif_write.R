@@ -11,6 +11,12 @@
 #' Further, in the columns specified by the 'dot_columns' argument, zero values
 #' are also converted to '.'.
 #'
+#' The records are written in the order of the nif object. This matters
+#' because NONMEM does not re-sort records but processes them in file order. In
+#' a nif object, a sample at the same time as a dose is placed before the dose
+#' (a trough, relating to the previous dose), see [nif::nif()]. No re-ordering
+#' takes place when writing.
+#'
 #' @param obj The NIF object.
 #' @param fields The fields to export in addition to the minimally required
 #' fields. If NULL (default), all fields will be exported.
