@@ -14,7 +14,8 @@ This function generates the following time fields:
   of the parent compound. An observation at the same time as an
   administration is considered a trough, i.e., it relates to the
   previous administration. The result does not depend on the order of
-  the records.
+  the records. In the nif object, such a sample is also placed before
+  the dose (see [`nif()`](nif.md)), so that row order and 'TAD' agree.
 
 ## Usage
 

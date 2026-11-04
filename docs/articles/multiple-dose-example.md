@@ -141,14 +141,14 @@ head(nif_poc, 3)
 #  3     3     1 2023000022 20230000221010001    49     1 WHITE   180.   103.  31.5
 #    DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE   
 #    <dttm>              <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>     
-#  1 2001-01-05 10:25:00     0     0     0     0     1   500     1    NA RS2023    
-#  2 2001-01-05 10:25:00     0     0     0     0     0     0     2     0 RS2023    
-#  3 2001-01-05 10:25:00     0     0     0     0     0     0     3     0 RS2023487A
+#  1 2001-01-05 10:25:00     0     0     0     0     0     0     2     0 RS2023    
+#  2 2001-01-05 10:25:00     0     0     0     0     0     0     3     0 RS2023487A
+#  3 2001-01-05 10:25:00     0     0     0     0     1   500     1    NA RS2023    
 #    PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD  IMPUTATION                
 #    <chr>  <dbl> <lgl>      <dbl> <dbl> <chr>     <chr>                     
-#  1 RS2023     1 FALSE        500     1 TREATMENT "time copied from EXSTDTC"
+#  1 RS2023     1 FALSE        500     0 TREATMENT ""                        
 #  2 RS2023     1 FALSE        500     0 TREATMENT ""                        
-#  3 RS2023     1 FALSE        500     0 TREATMENT ""                        
+#  3 RS2023     1 FALSE        500     1 TREATMENT "time copied from EXSTDTC"
 #    BL_CREAT BL_CRCL
 #       <dbl>   <dbl>
 #  1     58.8    166.
@@ -225,7 +225,7 @@ summary(nif_poc)
 #  
 #  NIF version: 0.66.4
 #  Creation date: 2026-11-04
-#  Hash: a0e0953ea5cb78ff61e1d9fd57146192
+#  Hash: 7754c593b477293315614e0402210a79
 #  Last DTC: 2001-08-15 09:01:00
 ```
 
@@ -448,5 +448,5 @@ nca %>%
 |:---|---:|:---|:---|:---|:---|:---|
 | 1 | 12 | 18559.49 (32) | 17034.86 (30) | 3130.56 (28) | 3.01 (9) | 2.48 (2.12; 3.02) |
 | 2 | 12 | 18822.38 (32) | 17261.24 (31) | 3110.41 (28) | 3.01 (9) | 2.49 (2.18; 3.02) |
-| NA | 173 | NA | 5744.66 (186) | NA | NA | NA |
-| NA | 176 | NA | NA | 1221.45 (607) | NA | 2.15 (1.62; 47.98) |
+| NA | 174 | NA | 5686.31 (187) | NA | NA | NA |
+| NA | 178 | NA | NA | 1150.9 (725) | NA | 2.16 (1.62; 72) |

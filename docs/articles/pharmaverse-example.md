@@ -157,7 +157,7 @@ summary(nif)
 #> 
 #> NIF version: 0.66.4
 #> Creation date: 2026-11-04
-#> Hash: 6f9baba1ab07916e4aa1d3699f9ad66b
+#> Hash: 7901be3f6531b025c574cdcc46e0f350
 #> Last DTC: 2015-03-05 14:40:00
 
 invisible(capture.output(

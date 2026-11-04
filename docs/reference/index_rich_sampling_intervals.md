@@ -56,9 +56,9 @@ index_rich_sampling_intervals(examplinib_poc_nif)
 #> 10    10     1 2023000022 20230000221010001    49     1 WHITE   180.   103.
 #>      BMI DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV
 #>    <dbl> <dttm>              <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
-#>  1  31.5 2001-01-05 10:25:00  0      0    0     0        1   500     1   NA 
-#>  2  31.5 2001-01-05 10:25:00  0      0    0     0        0     0     2    0 
-#>  3  31.5 2001-01-05 10:25:00  0      0    0     0        0     0     3    0 
+#>  1  31.5 2001-01-05 10:25:00  0      0    0     0        0     0     2    0 
+#>  2  31.5 2001-01-05 10:25:00  0      0    0     0        0     0     3    0 
+#>  3  31.5 2001-01-05 10:25:00  0      0    0     0        1   500     1   NA 
 #>  4  31.5 2001-01-05 11:31:00  1.1    0.5  1.1   1.1      0     0     2  553.
 #>  5  31.5 2001-01-05 11:31:00  1.1    0.5  1.1   1.1      0     0     3  121.
 #>  6  31.5 2001-01-05 12:00:00  1.58   1    1.58  1.58     0     0     2 1484.
@@ -68,9 +68,9 @@ index_rich_sampling_intervals(examplinib_poc_nif)
 #> 10  31.5 2001-01-05 13:00:00  2.58   2    2.58  2.58     0     0     2 2032.
 #>    ANALYTE    PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD 
 #>    <chr>      <chr>  <dbl> <lgl>      <dbl> <dbl> <chr>    
-#>  1 RS2023     RS2023     1 FALSE        500     1 TREATMENT
-#>  2 RS2023     RS2023     1 FALSE        500     0 TREATMENT
-#>  3 RS2023487A RS2023     1 FALSE        500     0 TREATMENT
+#>  1 RS2023     RS2023     1 FALSE        500     0 TREATMENT
+#>  2 RS2023487A RS2023     1 FALSE        500     0 TREATMENT
+#>  3 RS2023     RS2023     1 FALSE        500     1 TREATMENT
 #>  4 RS2023     RS2023     1 FALSE        500     0 TREATMENT
 #>  5 RS2023487A RS2023     1 FALSE        500     0 TREATMENT
 #>  6 RS2023     RS2023     1 FALSE        500     0 TREATMENT
@@ -80,9 +80,9 @@ index_rich_sampling_intervals(examplinib_poc_nif)
 #> 10 RS2023     RS2023     1 FALSE        500     0 TREATMENT
 #>    IMPUTATION                 BL_CREAT BL_CRCL    DI  OPDI RICH_N
 #>    <chr>                         <dbl>   <dbl> <int> <int>  <int>
-#>  1 "time copied from EXSTDTC"     58.8    166.     1    11      1
+#>  1 ""                             58.8    166.     1    11      1
 #>  2 ""                             58.8    166.     1    11      1
-#>  3 ""                             58.8    166.     1    11      1
+#>  3 "time copied from EXSTDTC"     58.8    166.     1    11      1
 #>  4 ""                             58.8    166.     1    11      1
 #>  5 ""                             58.8    166.     1    11      1
 #>  6 ""                             58.8    166.     1    11      1

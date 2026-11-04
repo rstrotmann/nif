@@ -168,7 +168,7 @@ examplinib_fe
 #>   RS2023      RS2023      
 #>   RS2023487A  RS2023487A
 #> 
-#> Hash: d292543d8f210c3163379028bac1bccc
+#> Hash: 1da9bb59de131d443e185e76ceb135ae
 #> Last DTC: 2001-02-27 11:06:00
 ```
 
@@ -429,15 +429,15 @@ head(nif, 5)
 #> 5     5     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2
 #>   DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE
 #>   <dttm>              <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>  
-#> 1 2001-01-15 08:24:00   0     0     0     0       1   500     1   NA  RS2023 
-#> 2 2001-01-15 08:24:00   0     0     0     0       0     0     2    0  RS2023 
+#> 1 2001-01-15 08:24:00   0     0     0     0       0     0     2    0  RS2023 
+#> 2 2001-01-15 08:24:00   0     0     0     0       1   500     1   NA  RS2023 
 #> 3 2001-01-15 08:54:00   0.5   0.5   0.5   0.5     0     0     2  624. RS2023 
 #> 4 2001-01-15 09:24:00   1     1     1     1       0     0     2 1740. RS2023 
 #> 5 2001-01-15 09:54:00   1.5   1.5   1.5   1.5     0     0     2 2670. RS2023 
 #>   PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD IMPUTATION                
 #>   <chr>  <dbl> <lgl>      <dbl> <dbl> <chr>    <chr>                     
-#> 1 RS2023     1 FALSE        500     1 BA       "time copied from EXSTDTC"
-#> 2 RS2023     1 FALSE        500     0 BA       ""                        
+#> 1 RS2023     1 FALSE        500     0 BA       ""                        
+#> 2 RS2023     1 FALSE        500     1 BA       "time copied from EXSTDTC"
 #> 3 RS2023     1 FALSE        500     0 BA       ""                        
 #> 4 RS2023     1 FALSE        500     0 BA       ""                        
 #> 5 RS2023     1 FALSE        500     0 BA       ""
@@ -523,13 +523,13 @@ head(nif, 3)
 #> 3     3     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2
 #>   DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE
 #>   <dttm>              <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>  
-#> 1 2001-01-15 08:24:00   0     0     0     0       1   500     1   NA  RS2023 
-#> 2 2001-01-15 08:24:00   0     0     0     0       0     0     2    0  RS2023 
+#> 1 2001-01-15 08:24:00   0     0     0     0       0     0     2    0  RS2023 
+#> 2 2001-01-15 08:24:00   0     0     0     0       1   500     1   NA  RS2023 
 #> 3 2001-01-15 08:54:00   0.5   0.5   0.5   0.5     0     0     2  624. RS2023 
 #>   PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD IMPUTATION                
 #>   <chr>  <dbl> <lgl>      <dbl> <dbl> <chr>    <chr>                     
-#> 1 RS2023     1 FALSE        500     1 BA       "time copied from EXSTDTC"
-#> 2 RS2023     1 FALSE        500     0 BA       ""                        
+#> 1 RS2023     1 FALSE        500     0 BA       ""                        
+#> 2 RS2023     1 FALSE        500     1 BA       "time copied from EXSTDTC"
 #> 3 RS2023     1 FALSE        500     0 BA       ""                        
 #>   EPOCH                  PERIOD TREATMENT FASTED
 #>   <chr>                  <chr>  <chr>      <dbl>
@@ -598,7 +598,7 @@ summary(nif)
 #> 
 #> NIF version: 0.66.4
 #> Creation date: 2026-11-04
-#> Hash: 44434e5857020c436fb7dc0ccef7f3ef
+#> Hash: f5cff5a63a6e1ecbc6fee16d92d7e562
 #> Last DTC: 2001-02-27 10:06:00
 ```
 

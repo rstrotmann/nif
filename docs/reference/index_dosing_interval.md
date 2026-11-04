@@ -46,8 +46,8 @@ index_dosing_interval(examplinib_fe_nif)
 #> 10    10     1 2023000400 20230004001010002    55     1 WHITE    173   90.3
 #>      BMI DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV
 #>    <dbl> <dttm>              <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
-#>  1  30.2 2001-01-15 08:24:00   0     0     0     0       1   500     1   NA 
-#>  2  30.2 2001-01-15 08:24:00   0     0     0     0       0     0     2    0 
+#>  1  30.2 2001-01-15 08:24:00   0     0     0     0       0     0     2    0 
+#>  2  30.2 2001-01-15 08:24:00   0     0     0     0       1   500     1   NA 
 #>  3  30.2 2001-01-15 08:54:00   0.5   0.5   0.5   0.5     0     0     2  624.
 #>  4  30.2 2001-01-15 09:24:00   1     1     1     1       0     0     2 1740.
 #>  5  30.2 2001-01-15 09:54:00   1.5   1.5   1.5   1.5     0     0     2 2670.
@@ -58,8 +58,8 @@ index_dosing_interval(examplinib_fe_nif)
 #> 10  30.2 2001-01-15 16:24:00   8     8     8     8       0     0     2  813.
 #>    ANALYTE PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD
 #>    <chr>   <chr>  <dbl> <lgl>      <dbl> <dbl> <chr>   
-#>  1 RS2023  RS2023     1 FALSE        500     1 BA      
-#>  2 RS2023  RS2023     1 FALSE        500     0 BA      
+#>  1 RS2023  RS2023     1 FALSE        500     0 BA      
+#>  2 RS2023  RS2023     1 FALSE        500     1 BA      
 #>  3 RS2023  RS2023     1 FALSE        500     0 BA      
 #>  4 RS2023  RS2023     1 FALSE        500     0 BA      
 #>  5 RS2023  RS2023     1 FALSE        500     0 BA      
@@ -70,8 +70,8 @@ index_dosing_interval(examplinib_fe_nif)
 #> 10 RS2023  RS2023     1 FALSE        500     0 BA      
 #>    IMPUTATION                 EPOCH                  PERIOD TREATMENT FASTED
 #>    <chr>                      <chr>                   <dbl> <chr>      <dbl>
-#>  1 "time copied from EXSTDTC" OPEN LABEL TREATMENT 1      1 B              0
-#>  2 ""                         OPEN LABEL TREATMENT 1      1 B              0
+#>  1 ""                         OPEN LABEL TREATMENT 1      1 B              0
+#>  2 "time copied from EXSTDTC" OPEN LABEL TREATMENT 1      1 B              0
 #>  3 ""                         OPEN LABEL TREATMENT 1      1 B              0
 #>  4 ""                         OPEN LABEL TREATMENT 1      1 B              0
 #>  5 ""                         OPEN LABEL TREATMENT 1      1 B              0

@@ -58,6 +58,19 @@ object), it stores `imputation_rules` (default
 is already a nif, that stored set is kept: `imputation_rules` is
 ignored. The wrap still re-sorts rows and refreshes `REF`.
 
+## Row order and records at the same time
+
+Rows are ordered by `ID`, `TIME`, `DTC` and `EVID`, in this order. If a
+sample (`EVID = 0`) and a dose (`EVID = 1`) have the same `ID`, `TIME`
+and `DTC`, the **sample is placed before the dose**. By convention, such
+a sample is a trough: it relates to the previous dose, and its time
+after dose (`TAD`) is calculated accordingly. The order matters for the
+analysis software: NONMEM does not re-sort records but processes them in
+file order, so a sample listed before a dose is evaluated before that
+dose is given. The row order and `TAD` therefore always agree, and `REF`
+follows the row order. Records with other `EVID` values are ordered
+numerically after samples and doses.
+
 ## See also
 
 [`nif_auto()`](nif_auto.md)

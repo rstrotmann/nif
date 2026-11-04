@@ -36,17 +36,17 @@ head(add_trtdy(examplinib_poc_nif))
 #> 6     6     1 2023000022 20230000221010001    49     1 WHITE   180.   103.  31.5
 #>   DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE   
 #>   <dttm>              <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>     
-#> 1 2001-01-05 10:25:00  0      0    0     0        1   500     1   NA  RS2023    
-#> 2 2001-01-05 10:25:00  0      0    0     0        0     0     2    0  RS2023    
-#> 3 2001-01-05 10:25:00  0      0    0     0        0     0     3    0  RS2023487A
+#> 1 2001-01-05 10:25:00  0      0    0     0        0     0     2    0  RS2023    
+#> 2 2001-01-05 10:25:00  0      0    0     0        0     0     3    0  RS2023487A
+#> 3 2001-01-05 10:25:00  0      0    0     0        1   500     1   NA  RS2023    
 #> 4 2001-01-05 11:31:00  1.1    0.5  1.1   1.1      0     0     2  553. RS2023    
 #> 5 2001-01-05 11:31:00  1.1    0.5  1.1   1.1      0     0     3  121. RS2023487A
 #> 6 2001-01-05 12:00:00  1.58   1    1.58  1.58     0     0     2 1484. RS2023    
 #>   PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD  IMPUTATION                
 #>   <chr>  <dbl> <lgl>      <dbl> <dbl> <chr>     <chr>                     
-#> 1 RS2023     1 FALSE        500     1 TREATMENT "time copied from EXSTDTC"
+#> 1 RS2023     1 FALSE        500     0 TREATMENT ""                        
 #> 2 RS2023     1 FALSE        500     0 TREATMENT ""                        
-#> 3 RS2023     1 FALSE        500     0 TREATMENT ""                        
+#> 3 RS2023     1 FALSE        500     1 TREATMENT "time copied from EXSTDTC"
 #> 4 RS2023     1 FALSE        500     0 TREATMENT ""                        
 #> 5 RS2023     1 FALSE        500     0 TREATMENT ""                        
 #> 6 RS2023     1 FALSE        500     0 TREATMENT ""                        

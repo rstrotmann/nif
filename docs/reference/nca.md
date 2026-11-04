@@ -112,11 +112,5 @@ head(nca(examplinib_fe_nif, time = "TIME", group = "FASTED"))
 #> ℹ Parent set to RS2023
 #> ! 6 negative concentrations set to zero!
 #> ℹ NCA: Group by FASTED
-#>   FASTED ID DI start end  PPTESTCD      PPORRES exclude DOSE
-#> 1      0  1  1     0  24   auclast 1.758944e+04    <NA>  500
-#> 2      0  1  1     0 Inf      cmax 2.842672e+03    <NA>  500
-#> 3      0  1  1     0 Inf      tmax 2.000000e+00    <NA>  500
-#> 4      0  1  1     0 Inf     tlast 1.680000e+02    <NA>  500
-#> 5      0  1  1     0 Inf clast.obs 2.153413e-05    <NA>  500
-#> 6      0  1  1     0 Inf  lambda.z 9.668765e-02    <NA>  500
+#> Error in seq_len(length(time.dosing) - 1): argument must be coercible to non-negative integer
 ```

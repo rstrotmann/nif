@@ -43,9 +43,9 @@ add_obs_per_dosing_interval(examplinib_poc_nif)
 #> 10    10     1 2023000022 20230000221010001    49     1 WHITE   180.   103.
 #>      BMI DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV
 #>    <dbl> <dttm>              <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
-#>  1  31.5 2001-01-05 10:25:00  0      0    0     0        1   500     1   NA 
-#>  2  31.5 2001-01-05 10:25:00  0      0    0     0        0     0     2    0 
-#>  3  31.5 2001-01-05 10:25:00  0      0    0     0        0     0     3    0 
+#>  1  31.5 2001-01-05 10:25:00  0      0    0     0        0     0     2    0 
+#>  2  31.5 2001-01-05 10:25:00  0      0    0     0        0     0     3    0 
+#>  3  31.5 2001-01-05 10:25:00  0      0    0     0        1   500     1   NA 
 #>  4  31.5 2001-01-05 11:31:00  1.1    0.5  1.1   1.1      0     0     2  553.
 #>  5  31.5 2001-01-05 11:31:00  1.1    0.5  1.1   1.1      0     0     3  121.
 #>  6  31.5 2001-01-05 12:00:00  1.58   1    1.58  1.58     0     0     2 1484.
@@ -55,9 +55,9 @@ add_obs_per_dosing_interval(examplinib_poc_nif)
 #> 10  31.5 2001-01-05 13:00:00  2.58   2    2.58  2.58     0     0     2 2032.
 #>    ANALYTE    PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD 
 #>    <chr>      <chr>  <dbl> <lgl>      <dbl> <dbl> <chr>    
-#>  1 RS2023     RS2023     1 FALSE        500     1 TREATMENT
-#>  2 RS2023     RS2023     1 FALSE        500     0 TREATMENT
-#>  3 RS2023487A RS2023     1 FALSE        500     0 TREATMENT
+#>  1 RS2023     RS2023     1 FALSE        500     0 TREATMENT
+#>  2 RS2023487A RS2023     1 FALSE        500     0 TREATMENT
+#>  3 RS2023     RS2023     1 FALSE        500     1 TREATMENT
 #>  4 RS2023     RS2023     1 FALSE        500     0 TREATMENT
 #>  5 RS2023487A RS2023     1 FALSE        500     0 TREATMENT
 #>  6 RS2023     RS2023     1 FALSE        500     0 TREATMENT
@@ -67,9 +67,9 @@ add_obs_per_dosing_interval(examplinib_poc_nif)
 #> 10 RS2023     RS2023     1 FALSE        500     0 TREATMENT
 #>    IMPUTATION                 BL_CREAT BL_CRCL    DI  OPDI
 #>    <chr>                         <dbl>   <dbl> <int> <int>
-#>  1 "time copied from EXSTDTC"     58.8    166.     1    11
+#>  1 ""                             58.8    166.     1    11
 #>  2 ""                             58.8    166.     1    11
-#>  3 ""                             58.8    166.     1    11
+#>  3 "time copied from EXSTDTC"     58.8    166.     1    11
 #>  4 ""                             58.8    166.     1    11
 #>  5 ""                             58.8    166.     1    11
 #>  6 ""                             58.8    166.     1    11
@@ -85,9 +85,9 @@ add_obs_per_dosing_interval(examplinib_poc_min_nif)
 #> # A tibble: 7,494 × 11
 #>       ID  TIME   AMT  EVID    DV   CMT   MDV ANALYTE PARENT    DI  OPDI
 #>    <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>   <chr>  <int> <int>
-#>  1     1  0      500     1   NA      1     1 CMT1    CMT1       1     0
-#>  2     1  0        0     0    0      2     0 CMT2    CMT1       1    11
-#>  3     1  0        0     0    0      3     0 CMT3    CMT1       1    11
+#>  1     1  0        0     0    0      2     0 CMT2    CMT1       1    11
+#>  2     1  0        0     0    0      3     0 CMT3    CMT1       1    11
+#>  3     1  0      500     1   NA      1     1 CMT1    CMT1       1     0
 #>  4     1  1.1      0     0  553.     2     0 CMT2    CMT1       1    11
 #>  5     1  1.1      0     0  121.     3     0 CMT3    CMT1       1    11
 #>  6     1  1.58     0     0 1484.     2     0 CMT2    CMT1       1    11

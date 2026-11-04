@@ -101,6 +101,21 @@ stores <code>imputation_rules</code> (default <code><a href="imputation_rules_st
 ignored. The wrap still re-sorts rows and refreshes <code>REF</code>.</p>
     </div>
     <div class="section level2">
+    <h2 id="row-order-and-records-at-the-same-time">Row order and records at the same time<a class="anchor" aria-label="anchor" href="#row-order-and-records-at-the-same-time"></a></h2>
+
+
+<p>Rows are ordered by <code>ID</code>, <code>TIME</code>, <code>DTC</code> and <code>EVID</code>, in this order. If a
+sample (<code>EVID = 0</code>) and a dose (<code>EVID = 1</code>) have the same <code>ID</code>, <code>TIME</code> and
+<code>DTC</code>, the <strong>sample is placed before the dose</strong>. By convention, such a sample
+is a trough: it relates to the previous dose, and its time after dose (<code>TAD</code>)
+is calculated accordingly. The order matters for the analysis software:
+NONMEM does not re-sort records but processes them in file order, so a
+sample listed before a dose is evaluated before that dose is given. The row
+order and <code>TAD</code> therefore always agree, and <code>REF</code> follows the row order.
+Records with other <code>EVID</code> values are ordered numerically after samples and
+doses.</p>
+    </div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="nif_auto.html">nif_auto()</a></code></p></div>
     </div>

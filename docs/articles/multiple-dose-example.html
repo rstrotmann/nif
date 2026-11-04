@@ -195,14 +195,14 @@ creatinine clearance:</p>
 <span><span class="co">#  <span style="color: #BCBCBC;">3</span>     3     1 2023000022 20230000221010001    49     1 WHITE   180.   103.  31.5</span></span>
 <span><span class="co">#    DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE   </span></span>
 <span><span class="co">#    <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span></span>
-<span><span class="co">#  <span style="color: #BCBCBC;">1</span> 2001-01-05 <span style="color: #949494;">10:25:00</span>     0     0     0     0     1   500     1    <span style="color: #BB0000;">NA</span> RS2023    </span></span>
-<span><span class="co">#  <span style="color: #BCBCBC;">2</span> 2001-01-05 <span style="color: #949494;">10:25:00</span>     0     0     0     0     0     0     2     0 RS2023    </span></span>
-<span><span class="co">#  <span style="color: #BCBCBC;">3</span> 2001-01-05 <span style="color: #949494;">10:25:00</span>     0     0     0     0     0     0     3     0 RS2023487A</span></span>
+<span><span class="co">#  <span style="color: #BCBCBC;">1</span> 2001-01-05 <span style="color: #949494;">10:25:00</span>     0     0     0     0     0     0     2     0 RS2023    </span></span>
+<span><span class="co">#  <span style="color: #BCBCBC;">2</span> 2001-01-05 <span style="color: #949494;">10:25:00</span>     0     0     0     0     0     0     3     0 RS2023487A</span></span>
+<span><span class="co">#  <span style="color: #BCBCBC;">3</span> 2001-01-05 <span style="color: #949494;">10:25:00</span>     0     0     0     0     1   500     1    <span style="color: #BB0000;">NA</span> RS2023    </span></span>
 <span><span class="co">#    PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD  IMPUTATION                </span></span>
 <span><span class="co">#    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span></span>
-<span><span class="co">#  <span style="color: #BCBCBC;">1</span> RS2023     1 FALSE        500     1 TREATMENT <span style="color: #949494;">"</span>time copied from EXSTDTC<span style="color: #949494;">"</span></span></span>
+<span><span class="co">#  <span style="color: #BCBCBC;">1</span> RS2023     1 FALSE        500     0 TREATMENT <span style="color: #949494;">""</span>                        </span></span>
 <span><span class="co">#  <span style="color: #BCBCBC;">2</span> RS2023     1 FALSE        500     0 TREATMENT <span style="color: #949494;">""</span>                        </span></span>
-<span><span class="co">#  <span style="color: #BCBCBC;">3</span> RS2023     1 FALSE        500     0 TREATMENT <span style="color: #949494;">""</span>                        </span></span>
+<span><span class="co">#  <span style="color: #BCBCBC;">3</span> RS2023     1 FALSE        500     1 TREATMENT <span style="color: #949494;">"</span>time copied from EXSTDTC<span style="color: #949494;">"</span></span></span>
 <span><span class="co">#    BL_CREAT BL_CRCL</span></span>
 <span><span class="co">#       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#  <span style="color: #BCBCBC;">1</span>     58.8    166.</span></span>
@@ -277,7 +277,7 @@ impaired renal function:</p>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  NIF version: 0.66.4</span></span>
 <span><span class="co">#  Creation date: 2026-11-04</span></span>
-<span><span class="co">#  Hash: a0e0953ea5cb78ff61e1d9fd57146192</span></span>
+<span><span class="co">#  Hash: 7754c593b477293315614e0402210a79</span></span>
 <span><span class="co">#  Last DTC: 2001-08-15 09:01:00</span></span></code></pre></div>
 <p>For a visual overview of the NIF data set <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> can be
 applied to the nif summary object. Ignore the
@@ -509,15 +509,15 @@ Essentially, <code><a href="../reference/nca.html">nca()</a></code> is a wrapper
 <span><span class="va">nca</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/nca_summary_table.html">nca_summary_table</a></span><span class="op">(</span>group <span class="op">=</span> <span class="st">"RICH_N"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<table style="width:100%;" class="table">
+<table class="table">
 <colgroup>
 <col width="8%">
-<col width="4%">
+<col width="5%">
 <col width="17%">
 <col width="17%">
-<col width="17%">
+<col width="16%">
 <col width="12%">
-<col width="23%">
+<col width="22%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">RICH_N</th>
@@ -549,21 +549,21 @@ Essentially, <code><a href="../reference/nca.html">nca()</a></code> is a wrapper
 </tr>
 <tr class="odd">
 <td align="left">NA</td>
-<td align="right">173</td>
+<td align="right">174</td>
 <td align="left">NA</td>
-<td align="left">5744.66 (186)</td>
+<td align="left">5686.31 (187)</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">NA</td>
-<td align="right">176</td>
+<td align="right">178</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="left">1221.45 (607)</td>
+<td align="left">1150.9 (725)</td>
 <td align="left">NA</td>
-<td align="left">2.15 (1.62; 47.98)</td>
+<td align="left">2.16 (1.62; 72)</td>
 </tr>
 </tbody>
 </table>

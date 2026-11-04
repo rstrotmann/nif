@@ -120,14 +120,14 @@ head(nif, 3)
 #> 3     3     1 2023000001 20230000011010001    43     0 WHITE   187.     77  21.9
 #>   DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE   
 #>   <dttm>              <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>     
-#> 1 2000-12-31 10:18:00     0     0     0     0     1     5     1    NA RS2023    
-#> 2 2000-12-31 10:18:00     0     0     0     0     0     0     2     0 RS2023    
-#> 3 2000-12-31 10:18:00     0     0     0     0     0     0     3     0 RS2023487A
+#> 1 2000-12-31 10:18:00     0     0     0     0     0     0     2     0 RS2023    
+#> 2 2000-12-31 10:18:00     0     0     0     0     0     0     3     0 RS2023487A
+#> 3 2000-12-31 10:18:00     0     0     0     0     1     5     1    NA RS2023    
 #>   PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD IMPUTATION                
 #>   <chr>  <dbl> <lgl>      <dbl> <dbl> <chr>    <chr>                     
-#> 1 RS2023     1 FALSE          5     1 C1       "time copied from EXSTDTC"
-#> 2 RS2023     1 FALSE          5     0 C1       ""                        
-#> 3 RS2023     1 TRUE           5     0 C1       ""                        
+#> 1 RS2023     1 FALSE          5     0 C1       ""                        
+#> 2 RS2023     1 TRUE           5     0 C1       ""                        
+#> 3 RS2023     1 FALSE          5     1 C1       "time copied from EXSTDTC"
 #>   BL_CREAT BL_CRCL BL_RENAL
 #>      <dbl>   <dbl> <fct>   
 #> 1     89.0    103. normal  
