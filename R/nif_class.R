@@ -915,47 +915,80 @@ treatments.nif <- function(obj) {
 }
 
 
-
-
+calc_di <- function(time, evid) {
+  is_dose <- !is.na(evid) & evid == 1 & !is.na(time)
+  dose_times <- sort(unique(time[is_dose]))
+  if (length(dose_times) == 0) {
+    return(rep(NA_integer_, length(time)))
+  }
+  # observations at a dose time count as before that dose (trough rule); those
+  # before or at the first dose are assigned to the first interval
+  di <- pmax(findInterval(time, dose_times, left.open = TRUE), 1L)
+  # an administration row opens its own interval
+  di[is_dose] <- match(time[is_dose], dose_times)
+  di
+}
 
 #' Index dosing intervals
 #'
-#' This function adds a column 'DI' that indicates the dosing interval per
-#' parent. All baseline observations before the first dosing interval get
-#' assigned to the first dosing interval.
+#' Add the column 'DI' that numbers the dosing intervals per subject and
+#' parent.
 #'
-#' @param obj The NIF object.
-#' @param parent The treatments to filter for. Defaults to all parents, if NULL.
+#' @details
+#' Each administration of a parent starts a new interval, numbered 1, 2, ...
+#' in time order. An interval covers the time from its administration up to
+#' and including the time of the next administration. Two administrations at
+#' the same time count as one.
 #'
-#' @return A NIF object with the DI column added.
+#' * An observation belongs to the most recent administration before it.
+#' * An observation at exactly the time of an administration is a trough: it
+#'   belongs to the *previous* administration, the same convention as for
+#'   `TAD`. The administration itself starts the new interval.
+#' * Observations at or before the first administration are assigned to the
+#'   first interval.
+#' * A parent without any administration gets `DI = NA`.
+#'
+#' `DI` is calculated from the times only. It does not depend on the order of
+#' the rows, and the row order is not changed. In a nif object, an observation
+#' at the time of an administration is ordered before the administration.
+#'
+#' Example for administrations at 0 and 12 h:
+#'
+#' | TIME | Record      | DI |
+#' |-----:|:------------|---:|
+#' | 0    | observation | 1  |
+#' | 0    | dose        | 1  |
+#' | 6    | observation | 1  |
+#' | 12   | observation | 1  |
+#' | 12   | dose        | 2  |
+#' | 24   | observation | 2  |
+#'
+#' @param obj A nif object.
+#' @param parent The parents whose administrations are indexed, as character.
+#'   If NULL (default), all parents are indexed. Parents that are not listed get
+#'   `DI = NA`.
+#'
+#' @return A nif object with the `DI` column added. An existing `DI` column is
+#'   replaced.
 #' @export
 #' @examples
 #' index_dosing_interval(examplinib_fe_nif)
 index_dosing_interval <- function(obj, parent = NULL) {
-  # input validation
   validate_nif_argument(obj)
   validate_argument(parent, "character", allow_null = TRUE,
                     allow_multiple = TRUE)
 
-  # business logic
-  obj <- obj |>
-    ensure_parent() |>
-    select(-any_of("DI"))
-
   obj |>
+    ensure_parent() |>
+    select(-any_of("DI")) |>
     mutate(
-      DI = dplyr::dense_rank(
-        replace(
-          .data$TIME,
-          .data$EVID != 1 |
-            (!is.null(parent) & !.data$PARENT %in% parent),
-          NA
-        )
-      ),
+      DI = if (is.null(parent) || .data$PARENT[1] %in% parent) {
+        calc_di(.data$TIME, .data$EVID)
+      } else {
+        NA_integer_
+      },
       .by = c("ID", "PARENT")
-    ) |>
-    arrange(.data$ID, .data$PARENT, .data$TIME) |>
-    tidyr::fill("DI", .direction = "downup", .by = c("ID", "PARENT"))
+    )
 }
 
 

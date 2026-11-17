@@ -619,57 +619,68 @@ make_sd_pc <- function(dm, ex, vs, lb, sampling_scheme) {
 make_fe_pc <- function(ex, dm, vs, lb, sampling_scheme) {
   sbs <- subject_baseline_data(dm, vs, lb)
 
-  temp <- sbs %>%
-    group_by_all() %>%
-    tidyr::expand(PERIOD = c(1, 2)) %>%
-    ungroup() %>%
-    mutate(EXDY = case_when(.data$PERIOD == 1 ~ 1, .data$PERIOD == 2 ~ 14)) %>%
-    mutate(TREATMENT = str_sub(.data$ACTARMCD, .data$PERIOD, .data$PERIOD)) %>%
-    mutate(FOOD = case_when(.data$TREATMENT == "B" ~ 1, .default = 0)) %>%
-    mutate(EXDOSE = 500) %>%
-    as.data.frame()
+  temp <- sbs |>
+    mutate(EXDOSE = 500) |>
+    select(id = ID, EXDOSE, AGE, WEIGHT, SEX, EGFR, ACTARMCD, RFSTDTC)
 
-  ev <- rxode2::et() %>%
+  sampling <- bind_rows(
+    sampling_scheme,
+    mutate(
+      filter(sampling_scheme, time != 0),
+      time = time + 312
+    )
+  )
+
+  ev <- rxode2::et() |>
     rxode2::add.dosing(
-      dose = 500, dosing.to = "depot",
-      rate = -2, start.time = 0
-    ) %>%
-    rxode2::add.sampling(sampling_scheme$time) %>%
-    rxode2::et(id = sbs$ID) %>%
-    as.data.frame() %>%
-    mutate(NTIME = .data$time) %>%
-    group_by_all() %>%
-    tidyr::expand(PERIOD = c(1, 2)) %>%
-    mutate(time = .data$time + 13 * 24 * (.data$PERIOD - 1)) %>%
+      dose = 500,
+      dosing.to = "depot",
+      rate = -2,
+      start.time = c(0, 312)
+    ) |>
+    rxode2::add.sampling(sampling$time) |>
+    rxode2::et(id = sbs$ID) |>
+    mutate(NTIME = .data$time) |>
+    left_join(sampling, by = "time") |>
     left_join(
-      temp %>%
-        select(id = ID, PERIOD, FOOD, EXDOSE, AGE, WEIGHT, SEX, EGFR),
-      by = c("id", "PERIOD")
-    ) %>%
-    as.data.frame() %>%
-    mutate(amt = case_when(!is.na(.data$amt) ~ .data$EXDOSE, .default = NA)) %>%
-    arrange(.data$id, .data$time, .data$evid)
+      temp,
+      by = c("id")
+    ) |>
+    mutate(
+      PERIOD = case_when(
+        time < 312 ~ 1,
+        time >= 312 ~ 2
+      )
+    ) |>
+    mutate(EXDY = case_when(
+      .data$PERIOD == 1 ~ 1,
+      .data$PERIOD == 2 ~ 14
+    )) |>
+    mutate(
+      TREATMENT = str_sub(.data$ACTARMCD, .data$PERIOD, .data$PERIOD)) |>
+    mutate(FOOD = case_when(.data$TREATMENT == "B" ~ 1, .default = 0)) |>
+    mutate(EXDOSE = 500)
 
   sim <- pk_sim(ev)
 
-  pc <- sim %>%
+  pc <- sim |>
     dplyr::select(id, time, c_centr, c_metab, PERIOD, NTIME) %>%
     mutate(RS2023 = c_centr * 1000, RS2023487A = c_metab * 1000) %>%
     tidyr::pivot_longer(c("RS2023", "RS2023487A"),
       names_to = "PCTESTCD",
       values_to = "PCSTRESN"
-    ) %>%
+    ) |>
     mutate(PCTEST = case_when(
       PCTESTCD == "RS2023" ~ "RS2023",
       PCTESTCD == "RS2023487A" ~ "RS2023487A"
-    )) %>%
-    left_join(temp %>% distinct(.data$ID, .data$USUBJID, .data$RFSTDTC),
+    )) |>
+    left_join(distinct(sbs, .data$ID, .data$USUBJID, .data$RFSTDTC),
       by = c("id" = "ID")
-    ) %>%
-    mutate(STUDYID = unique(dm$STUDYID), DOMAIN = "PC") %>%
+    ) |>
+    mutate(STUDYID = unique(dm$STUDYID), DOMAIN = "PC") |>
     mutate(PCELTM = paste0("PT", as.character(.data$NTIME), "H")) %>%
     mutate(PCTPTNUM = .data$NTIME) %>%
-    left_join(sampling_scheme, by = c("NTIME" = "time")) %>%
+    left_join(sampling, by = c("NTIME" = "time")) %>%
     mutate(PCDTC = .data$RFSTDTC + time * 60 * 60) %>%
     arrange(.data$id, .data$PCDTC, .data$PCTESTCD) %>%
     group_by(id) %>%
@@ -677,17 +688,6 @@ make_fe_pc <- function(ex, dm, vs, lb, sampling_scheme) {
     ungroup() %>%
     mutate(PCSPEC = "PLASMA") %>%
     mutate(PCRFTDTC = .data$RFSTDTC) %>%
-
-    # mutate(EPOCH = case_match(
-    #   .data$PERIOD, 1 ~ "OPEN LABEL TREATMENT 1",
-    #   2 ~ "OPEN LABEL TREATMENT 2"
-    # )) %>%
-
-    # mutate(EPOCH = recode_values(
-    #   .data$PERIOD, 1 ~ "OPEN LABEL TREATMENT 1",
-    #   2 ~ "OPEN LABEL TREATMENT 2"
-    # )) %>%
-
     mutate(EPOCH = case_when(
       .data$PERIOD == 1 ~ "OPEN LABEL TREATMENT 1",
       .data$PERIOD == 2 ~ "OPEN LABEL TREATMENT 2"

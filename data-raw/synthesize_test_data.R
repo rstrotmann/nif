@@ -21,45 +21,45 @@ examplinib_poc <- synthesize_sdtm_poc_study()
 examplinib_fe <- synthesize_sdtm_food_effect_study()
 examplinib_iv <- synthesize_sdtm_iv_study()
 
-examplinib_sad_nif <- nif() %>%
-  add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023") %>%
-  add_observation(examplinib_sad, "pc", "RS2023", cmt = 2) %>%
-  add_baseline(examplinib_sad, "lb", "CREAT") %>%
+examplinib_sad_nif <- nif() |>
+  add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023") |>
+  add_observation(examplinib_sad, "pc", "RS2023", cmt = 2) |>
+  add_baseline(examplinib_sad, "lb", "CREAT") |>
   add_bl_crcl()
 
-examplinib_sad[["pp"]] <- examplinib_sad_nif %>%
-  index_rich_sampling_intervals() %>%
-  # as.data.frame() %>%
-  filter(!is.na("RICH_N")) %>%
+examplinib_sad[["pp"]] <- examplinib_sad_nif |>
+  index_rich_sampling_intervals() |>
+  # as.data.frame() |>
+  filter(!is.na("RICH_N")) |>
   synthesize_pp()
 
-examplinib_poc_nif <- nif() %>%
-  add_administration(examplinib_poc, "EXAMPLINIB", analyte = "RS2023") %>%
-  add_observation(examplinib_poc, "pc", "RS2023", cmt = 2) %>%
+examplinib_poc_nif <- nif() |>
+  add_administration(examplinib_poc, "EXAMPLINIB", analyte = "RS2023") |>
+  add_observation(examplinib_poc, "pc", "RS2023", cmt = 2) |>
   add_observation(examplinib_poc, "pc", "RS2023487A",
     parent = "RS2023",
     cmt = 3
-  ) %>%
-  add_baseline(examplinib_poc, "lb", "CREAT") %>%
+  ) |>
+  add_baseline(examplinib_poc, "lb", "CREAT") |>
   add_bl_crcl()
 
-examplinib_poc[["pp"]] <- examplinib_poc_nif %>%
-  index_rich_sampling_intervals() %>%
-  # as.data.frame() %>%
-  filter(!is.na("RICH_N")) %>%
+examplinib_poc[["pp"]] <- examplinib_poc_nif |>
+  index_rich_sampling_intervals() |>
+  # as.data.frame() |>
+  filter(!is.na("RICH_N")) |>
   synthesize_pp()
 
-examplinib_fe_nif <- nif() %>%
-  add_administration(examplinib_fe, "EXAMPLINIB", analyte = "RS2023", keep = "EPOCH") %>%
-  add_observation(examplinib_fe, "pc", "RS2023", cmt = 2, keep = "EPOCH") %>%
-  mutate(PERIOD = as.numeric(str_sub(EPOCH, -1, -1))) %>%
-  mutate(TREATMENT = str_sub(ACTARMCD, PERIOD, PERIOD)) %>%
+examplinib_fe_nif <- nif() |>
+  add_administration(examplinib_fe, "EXAMPLINIB", analyte = "RS2023", keep = "EPOCH") |>
+  add_observation(examplinib_fe, "pc", "RS2023", cmt = 2, keep = "EPOCH") |>
+  mutate(PERIOD = as.numeric(str_sub(EPOCH, -1, -1))) |>
+  mutate(TREATMENT = str_sub(ACTARMCD, PERIOD, PERIOD)) |>
   mutate(FASTED = case_when(TREATMENT == "A" ~ 1, .default = 0))
 
-examplinib_fe[["pp"]] <- examplinib_fe_nif %>%
-  index_rich_sampling_intervals() %>%
-  # as.data.frame() %>%
-  filter(!is.na("RICH_N")) %>%
+examplinib_fe[["pp"]] <- examplinib_fe_nif |>
+  index_rich_sampling_intervals() |>
+  # as.data.frame() |>
+  filter(!is.na("RICH_N")) |>
   synthesize_pp()
 
 usethis::use_data(examplinib_sad, overwrite = T)

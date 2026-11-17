@@ -65,7 +65,7 @@ nca <- function(
     values = names(nif))
   validate_argument(
     time, "character", allow_null = FALSE,
-    values = intersect(names(nif), c("TIME", "NTIME", "TAFD", "TAD")))
+    values = intersect(names(nif), c("TIME", "NTIME")))
   validate_argument(
     duplicates, "character",
     values = c("stop", "identify", "resolve"))
@@ -224,8 +224,9 @@ nca <- function(
       mutate(DV = case_when(.data$DV < 0 ~ 0, .default = .data$DV))
   }
 
-  # dealing with duplicates
-  dupl_fields <- c("ID", "ANALYTE", "selected_time")
+  # deal with duplicates
+  # dupl_fields <- c("ID", "ANALYTE", "selected_time")
+  dupl_fields <- c("ID", "ANALYTE", "selected_time", "DI")
 
   n_dupl <- find_duplicates(
     conc, fields = dupl_fields, count_only = TRUE)

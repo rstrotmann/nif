@@ -7,17 +7,48 @@
 index_dosing_interval(obj, parent = NULL)
 }
 \arguments{
-\item{obj}{The NIF object.}
+\item{obj}{A nif object.}
 
-\item{parent}{The treatments to filter for. Defaults to all parents, if NULL.}
+\item{parent}{The parents whose administrations are indexed, as character.
+If NULL (default), all parents are indexed. Parents that are not listed get
+\code{DI = NA}.}
 }
 \value{
-A NIF object with the DI column added.
+A nif object with the \code{DI} column added. An existing \code{DI} column is
+replaced.
 }
 \description{
-This function adds a column 'DI' that indicates the dosing interval per
-parent. All baseline observations before the first dosing interval get
-assigned to the first dosing interval.
+Add the column 'DI' that numbers the dosing intervals per subject and
+parent.
+}
+\details{
+Each administration of a parent starts a new interval, numbered 1, 2, ...
+in time order. An interval covers the time from its administration up to
+and including the time of the next administration. Two administrations at
+the same time count as one.
+\itemize{
+\item An observation belongs to the most recent administration before it.
+\item An observation at exactly the time of an administration is a trough: it
+belongs to the \emph{previous} administration, the same convention as for
+\code{TAD}. The administration itself starts the new interval.
+\item Observations at or before the first administration are assigned to the
+first interval.
+\item A parent without any administration gets \code{DI = NA}.
+}
+
+\code{DI} is calculated from the times only. It does not depend on the order of
+the rows, and the row order is not changed. In a nif object, an observation
+at the time of an administration is ordered before the administration.
+
+Example for administrations at 0 and 12 h:\tabular{rlr}{
+   TIME \tab Record \tab DI \cr
+   0 \tab observation \tab 1 \cr
+   0 \tab dose \tab 1 \cr
+   6 \tab observation \tab 1 \cr
+   12 \tab observation \tab 1 \cr
+   12 \tab dose \tab 2 \cr
+   24 \tab observation \tab 2 \cr
+}
 }
 \examples{
 index_dosing_interval(examplinib_fe_nif)
