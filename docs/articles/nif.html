@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -194,11 +194,11 @@ information:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Data disposition:</span></span>
 <span><span class="co">#&gt;   DOMAIN  SUBJECTS  OBSERVATIONS  </span></span>
-<span><span class="co">#&gt;   dm      30        30            </span></span>
-<span><span class="co">#&gt;   vs      30        60            </span></span>
+<span><span class="co">#&gt;   dm      22        22            </span></span>
+<span><span class="co">#&gt;   vs      22        44            </span></span>
 <span><span class="co">#&gt;   ex      20        40            </span></span>
-<span><span class="co">#&gt;   pc      20        1360          </span></span>
-<span><span class="co">#&gt;   lb      30        30            </span></span>
+<span><span class="co">#&gt;   pc      20        1320          </span></span>
+<span><span class="co">#&gt;   lb      22        22            </span></span>
 <span><span class="co">#&gt;   ts      0         0             </span></span>
 <span><span class="co">#&gt;   pp      20        360</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -219,27 +219,27 @@ information:</p>
 <span><span class="co">#&gt;   RS2023      RS2023      </span></span>
 <span><span class="co">#&gt;   RS2023487A  RS2023487A</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hash: 1da9bb59de131d443e185e76ceb135ae</span></span>
-<span><span class="co">#&gt; Last DTC: 2001-02-27 11:06:00</span></span></code></pre></div>
+<span><span class="co">#&gt; Hash: d6f582c341ac3139df47430f9378a7c2</span></span>
+<span><span class="co">#&gt; Last DTC: 2001-02-12 12:09:00</span></span></code></pre></div>
 <p>A high-level data summary for a specific subject can be extracted
 using <code><a href="../reference/subject_info.html">subject_info()</a></code>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">examplinib_fe</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/subject_info.html">subject_info</a></span><span class="op">(</span><span class="st">"20230004001050001"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ──────── Subject information ────────</span></span>
-<span><span class="co">#&gt; SUBJID    1050001            </span></span>
-<span><span class="co">#&gt; USUBJID   20230004001050001  </span></span>
-<span><span class="co">#&gt; ARM       Fed - Fasted       </span></span>
-<span><span class="co">#&gt; ARMCD     BA                 </span></span>
-<span><span class="co">#&gt; ACTARM    Fed - Fasted       </span></span>
-<span><span class="co">#&gt; ACTARMCD  BA                 </span></span>
-<span><span class="co">#&gt; SITEID    105                </span></span>
-<span><span class="co">#&gt; COUNTRY   DEU                </span></span>
-<span><span class="co">#&gt; RFSTDTC   2001-01-06T09:39   </span></span>
-<span><span class="co">#&gt; RFENDTC   2001-01-19T09:39   </span></span>
-<span><span class="co">#&gt; SEX       F                  </span></span>
-<span><span class="co">#&gt; AGE       40                 </span></span>
-<span><span class="co">#&gt; RACE      WHITE              </span></span>
+<span><span class="co">#&gt; SUBJID                                     </span></span>
+<span><span class="co">#&gt; USUBJID                                    </span></span>
+<span><span class="co">#&gt; ARM                                        </span></span>
+<span><span class="co">#&gt; ARMCD                                      </span></span>
+<span><span class="co">#&gt; ACTARM                                     </span></span>
+<span><span class="co">#&gt; ACTARMCD                                   </span></span>
+<span><span class="co">#&gt; SITEID                                     </span></span>
+<span><span class="co">#&gt; COUNTRY                                    </span></span>
+<span><span class="co">#&gt; RFSTDTC                                    </span></span>
+<span><span class="co">#&gt; RFENDTC                                    </span></span>
+<span><span class="co">#&gt; SEX                                        </span></span>
+<span><span class="co">#&gt; AGE                                        </span></span>
+<span><span class="co">#&gt; RACE                                       </span></span>
 <span><span class="co">#&gt; ETHNIC</span></span></code></pre></div>
 <p>The original SDTM data for specific domains can be retrieved from
 <code>sdtm</code> objects with the <code><a href="../reference/domain.html">domain()</a></code> function:</p>
@@ -354,24 +354,13 @@ useful code snippets for the creation of analysis data sets:</p>
 <span><span class="co">#&gt; The PC domain contains multiple fields that the nominal sampling time can be</span></span>
 <span><span class="co">#&gt; derived from:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   PCTPT                PCTPTNUM  PCELTM  </span></span>
-<span><span class="co">#&gt;   PREDOSE              0         PT0H    </span></span>
-<span><span class="co">#&gt;   0.5 HOURS POST-DOSE  0.5       PT0.5H  </span></span>
-<span><span class="co">#&gt;   1 HOURS POST-DOSE    1         PT1H    </span></span>
-<span><span class="co">#&gt;   1.5 HOURS POST-DOSE  1.5       PT1.5H  </span></span>
-<span><span class="co">#&gt;   2 HOURS POST-DOSE    2         PT2H    </span></span>
-<span><span class="co">#&gt;   3 HOURS POST-DOSE    3         PT3H    </span></span>
-<span><span class="co">#&gt;   4 HOURS POST-DOSE    4         PT4H    </span></span>
-<span><span class="co">#&gt;   6 HOURS POST-DOSE    6         PT6H    </span></span>
-<span><span class="co">#&gt;   8 HOURS POST-DOSE    8         PT8H    </span></span>
-<span><span class="co">#&gt;   10 HOURS POST-DOSE   10        PT10H   </span></span>
-<span><span class="co">#&gt;   12 HOURS POST-DOSE   12        PT12H   </span></span>
-<span><span class="co">#&gt;   24 HOURS POST-DOSE   24        PT24H   </span></span>
-<span><span class="co">#&gt;   48 HOURS POST-DOSE   48        PT48H   </span></span>
-<span><span class="co">#&gt;   72 HOURS POST-DOSE   72        PT72H   </span></span>
-<span><span class="co">#&gt;   96 HOURS POST-DOSE   96        PT96H   </span></span>
-<span><span class="co">#&gt;   144 HOURS POST-DOSE  144       PT144H  </span></span>
-<span><span class="co">#&gt;   168 HOURS POST-DOSE  168       PT168H</span></span>
+<span><span class="co">#&gt;   PCTPT                PCTPTNUM  PCELTM    </span></span>
+<span><span class="co">#&gt;   PREDOSE              0         PT0H      </span></span>
+<span><span class="co">#&gt;   0.5 HOURS POST-DOSE  0.5       PT0.5H    </span></span>
+<span><span class="co">#&gt;   1 HOURS POST-DOSE    1         PT1H      </span></span>
+<span><span class="co">#&gt;   1.5 HOURS POST-DOSE  1.5       PT1.5H    </span></span>
+<span><span class="co">#&gt;   2 HOURS POST-DOSE    2         PT2H      </span></span>
+<span><span class="co">#&gt;   (28 more rows)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Consider specifying a suitable 'ntime_method' argument to 'add_observation()'.</span></span>
 <span><span class="co">#&gt; By default, the function will attempt to extract time information from the</span></span>
@@ -444,18 +433,18 @@ the ‘EXTRT’ field is ‘EXAMPLINIB’ while the pharmacokinetic analyte name
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 27</span></span></span>
 <span><span class="co">#&gt;     REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT   BMI</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     1     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     2     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     3     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     4     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     5     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     1     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3  21.7</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     2     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3  21.7</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     3     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3  21.7</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     4     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3  21.7</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     5     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3  21.7</span></span>
 <span><span class="co">#&gt;   DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 2001-01-15 <span style="color: #949494;">08:24:00</span>   0     0     0     0       0     0     2    0  RS2023 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2001-01-15 <span style="color: #949494;">08:24:00</span>   0     0     0     0       1   500     1   <span style="color: #BB0000;">NA</span>  RS2023 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 2001-01-15 <span style="color: #949494;">08:54:00</span>   0.5   0.5   0.5   0.5     0     0     2  624. RS2023 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 2001-01-15 <span style="color: #949494;">09:24:00</span>   1     1     1     1       0     0     2 <span style="text-decoration: underline;">1</span>740. RS2023 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 2001-01-15 <span style="color: #949494;">09:54:00</span>   1.5   1.5   1.5   1.5     0     0     2 <span style="text-decoration: underline;">2</span>670. RS2023 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 2001-01-12 <span style="color: #949494;">09:47:00</span>   0     0     0     0       0     0     2    0  RS2023 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2001-01-12 <span style="color: #949494;">09:47:00</span>   0     0     0     0       1   500     1   <span style="color: #BB0000;">NA</span>  RS2023 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 2001-01-12 <span style="color: #949494;">10:17:00</span>   0.5   0.5   0.5   0.5     0     0     2  707. RS2023 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 2001-01-12 <span style="color: #949494;">10:47:00</span>   1     1     1     1       0     0     2 <span style="text-decoration: underline;">2</span>229. RS2023 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 2001-01-12 <span style="color: #949494;">11:17:00</span>   1.5   1.5   1.5   1.5     0     0     2 <span style="text-decoration: underline;">3</span>420. RS2023 </span></span>
 <span><span class="co">#&gt;   PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD IMPUTATION                </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> RS2023     1 FALSE        500     0 BA       <span style="color: #949494;">""</span>                        </span></span>
@@ -527,14 +516,14 @@ parameter in <code><a href="../reference/add_administration.html">add_administra
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 31</span></span></span>
 <span><span class="co">#&gt;     REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT   BMI</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     1     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     2     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     3     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     1     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3  21.7</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     2     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3  21.7</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     3     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3  21.7</span></span>
 <span><span class="co">#&gt;   DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 2001-01-15 <span style="color: #949494;">08:24:00</span>   0     0     0     0       0     0     2    0  RS2023 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2001-01-15 <span style="color: #949494;">08:24:00</span>   0     0     0     0       1   500     1   <span style="color: #BB0000;">NA</span>  RS2023 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 2001-01-15 <span style="color: #949494;">08:54:00</span>   0.5   0.5   0.5   0.5     0     0     2  624. RS2023 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 2001-01-12 <span style="color: #949494;">09:47:00</span>   0     0     0     0       0     0     2    0  RS2023 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2001-01-12 <span style="color: #949494;">09:47:00</span>   0     0     0     0       1   500     1   <span style="color: #BB0000;">NA</span>  RS2023 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 2001-01-12 <span style="color: #949494;">10:17:00</span>   0.5   0.5   0.5   0.5     0     0     2  707. RS2023 </span></span>
 <span><span class="co">#&gt;   PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD IMPUTATION                </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> RS2023     1 FALSE        500     0 BA       <span style="color: #949494;">""</span>                        </span></span>
@@ -568,8 +557,8 @@ the data in a <code>nif</code> data set:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Sex distribution:</span></span>
 <span><span class="co">#&gt;   SEX     N   percent  </span></span>
-<span><span class="co">#&gt;   male    6   30       </span></span>
-<span><span class="co">#&gt;   female  14  70</span></span>
+<span><span class="co">#&gt;   male    15  75       </span></span>
+<span><span class="co">#&gt;   female  5   25</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatments: RS2023</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -579,13 +568,13 @@ the data in a <code>nif</code> data set:</p>
 <span><span class="co">#&gt;   DL          n   </span></span>
 <span><span class="co">#&gt;   500-RS2023  20</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 680 observations:</span></span>
+<span><span class="co">#&gt; 660 observations:</span></span>
 <span><span class="co">#&gt;   CMT  ANALYTE  n    </span></span>
-<span><span class="co">#&gt;   2    RS2023   680</span></span>
+<span><span class="co">#&gt;   2    RS2023   660</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Observations by NTIME:</span></span>
 <span><span class="co">#&gt;   NTIME  RS2023  </span></span>
-<span><span class="co">#&gt;   0      40      </span></span>
+<span><span class="co">#&gt;   0      20      </span></span>
 <span><span class="co">#&gt;   0.5    40      </span></span>
 <span><span class="co">#&gt;   1      40      </span></span>
 <span><span class="co">#&gt;   1.5    40      </span></span>
@@ -605,10 +594,10 @@ the data in a <code>nif</code> data set:</p>
 <span><span class="co">#&gt;   PARENT  min  max  mean  median  </span></span>
 <span><span class="co">#&gt;   RS2023  2    2    2     2</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; NIF version: 0.66.4</span></span>
-<span><span class="co">#&gt; Creation date: 2026-11-04</span></span>
-<span><span class="co">#&gt; Hash: f5cff5a63a6e1ecbc6fee16d92d7e562</span></span>
-<span><span class="co">#&gt; Last DTC: 2001-02-27 10:06:00</span></span></code></pre></div>
+<span><span class="co">#&gt; NIF version: 0.66.5</span></span>
+<span><span class="co">#&gt; Creation date: 2026-11-17</span></span>
+<span><span class="co">#&gt; Hash: 4b9979591d19e51d80169a49429b0eaa</span></span>
+<span><span class="co">#&gt; Last DTC: 2001-02-12 11:09:00</span></span></code></pre></div>
 <p>Plotting the summary yields histograms of the baseline demographic
 covariates and raw plots of the analytes over time. In the following
 code, ignore the <code>ìnvisible(capture.output())</code> construct

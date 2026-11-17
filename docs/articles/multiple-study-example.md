@@ -35,7 +35,7 @@ nif <- nif() %>%
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
 #> ℹ baseline_filter for BL_CREAT set to LBBLFL == 'Y'
 #> ℹ Default nif imputation rules applied to administration of EXAMPLINIB
-#> ℹ A global cut-off-date of 2001-02-20 10:06:00 was automatically assigned!
+#> ℹ A global cut-off-date of 2001-02-05 11:09:00 was automatically assigned!
 #> ℹ Default nif imputation rules applied to RS2023 observations
 #> ! Compartment 2 is already assigned. Is this intended?
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
@@ -58,13 +58,13 @@ nif %>%
 #> 
 #> Sex distribution:
 #>   SEX     N    percent  
-#>   male    105  70.9     
-#>   female  43   29.1
+#>   male    114  77       
+#>   female  34   23
 #> 
 #> Renal impairment class:
 #>   CLASS     N   percent  
-#>   normal    81  54.7     
-#>   mild      56  37.8     
+#>   normal    80  54.1     
+#>   mild      57  38.5     
 #>   moderate  11  7.4      
 #>   severe    0   0
 #> 
@@ -84,13 +84,13 @@ nif %>%
 #>   800-RS2023   6    
 #>   1000-RS2023  3
 #> 
-#> 2168 observations:
+#> 2148 observations:
 #>   CMT  ANALYTE  n     
-#>   2    RS2023   2168
+#>   2    RS2023   2148
 #> 
 #> Observations by NTIME:
 #>   NTIME  RS2023  
-#>   0      248     
+#>   0      228     
 #>   0.5    112     
 #>   1      112     
 #>   1.5    248     
@@ -110,8 +110,8 @@ nif %>%
 #>   PARENT  min  max  mean  median  
 #>   RS2023  1    101  42.1  61
 #> 
-#> NIF version: 0.66.4
-#> Creation date: 2026-11-04
-#> Hash: 9e7b9d92f9c3aa058d762ad04b9d528e
+#> NIF version: 0.66.5
+#> Creation date: 2026-11-17
+#> Hash: 9c8a16ef837fb75fe0ec92e399809957
 #> Last DTC: 2001-08-15 09:01:00
 ```

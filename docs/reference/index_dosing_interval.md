@@ -1,8 +1,7 @@
 # Index dosing intervals
 
-This function adds a column 'DI' that indicates the dosing interval per
-parent. All baseline observations before the first dosing interval get
-assigned to the first dosing interval.
+Add the column 'DI' that numbers the dosing intervals per subject and
+parent.
 
 ## Usage
 
@@ -14,48 +13,86 @@ index_dosing_interval(obj, parent = NULL)
 
 - obj:
 
-  The NIF object.
+  A nif object.
 
 - parent:
 
-  The treatments to filter for. Defaults to all parents, if NULL.
+  The parents whose administrations are indexed, as character. If NULL
+  (default), all parents are indexed. Parents that are not listed get
+  `DI = NA`.
 
 ## Value
 
-A NIF object with the DI column added.
+A nif object with the `DI` column added. An existing `DI` column is
+replaced.
+
+## Details
+
+Each administration of a parent starts a new interval, numbered 1, 2,
+... in time order. An interval covers the time from its administration
+up to and including the time of the next administration. Two
+administrations at the same time count as one.
+
+- An observation belongs to the most recent administration before it.
+
+- An observation at exactly the time of an administration is a trough:
+  it belongs to the *previous* administration, the same convention as
+  for `TAD`. The administration itself starts the new interval.
+
+- Observations at or before the first administration are assigned to the
+  first interval.
+
+- A parent without any administration gets `DI = NA`.
+
+`DI` is calculated from the times only. It does not depend on the order
+of the rows, and the row order is not changed. In a nif object, an
+observation at the time of an administration is ordered before the
+administration.
+
+Example for administrations at 0 and 12 h:
+
+|      |             |     |
+|------|-------------|-----|
+| TIME | Record      | DI  |
+| 0    | observation | 1   |
+| 0    | dose        | 1   |
+| 6    | observation | 1   |
+| 12   | observation | 1   |
+| 12   | dose        | 2   |
+| 24   | observation | 2   |
 
 ## Examples
 
 ``` r
 index_dosing_interval(examplinib_fe_nif)
 #> ──────── NONMEM Input Format (NIF) data ────────
-#> 680 observations from 20 subjects across 1 study
+#> 660 observations from 20 subjects across 1 study
 #> 
-#> # A tibble: 720 × 32
+#> # A tibble: 700 × 32
 #>      REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT
 #>    <int> <dbl> <chr>      <chr>             <dbl> <dbl> <fct>  <dbl>  <dbl>
-#>  1     1     1 2023000400 20230004001010002    55     1 WHITE    173   90.3
-#>  2     2     1 2023000400 20230004001010002    55     1 WHITE    173   90.3
-#>  3     3     1 2023000400 20230004001010002    55     1 WHITE    173   90.3
-#>  4     4     1 2023000400 20230004001010002    55     1 WHITE    173   90.3
-#>  5     5     1 2023000400 20230004001010002    55     1 WHITE    173   90.3
-#>  6     6     1 2023000400 20230004001010002    55     1 WHITE    173   90.3
-#>  7     7     1 2023000400 20230004001010002    55     1 WHITE    173   90.3
-#>  8     8     1 2023000400 20230004001010002    55     1 WHITE    173   90.3
-#>  9     9     1 2023000400 20230004001010002    55     1 WHITE    173   90.3
-#> 10    10     1 2023000400 20230004001010002    55     1 WHITE    173   90.3
+#>  1     1     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3
+#>  2     2     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3
+#>  3     3     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3
+#>  4     4     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3
+#>  5     5     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3
+#>  6     6     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3
+#>  7     7     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3
+#>  8     8     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3
+#>  9     9     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3
+#> 10    10     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3
 #>      BMI DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV
 #>    <dbl> <dttm>              <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
-#>  1  30.2 2001-01-15 08:24:00   0     0     0     0       0     0     2    0 
-#>  2  30.2 2001-01-15 08:24:00   0     0     0     0       1   500     1   NA 
-#>  3  30.2 2001-01-15 08:54:00   0.5   0.5   0.5   0.5     0     0     2  624.
-#>  4  30.2 2001-01-15 09:24:00   1     1     1     1       0     0     2 1740.
-#>  5  30.2 2001-01-15 09:54:00   1.5   1.5   1.5   1.5     0     0     2 2670.
-#>  6  30.2 2001-01-15 10:24:00   2     2     2     2       0     0     2 2843.
-#>  7  30.2 2001-01-15 11:24:00   3     3     3     3       0     0     2 2492.
-#>  8  30.2 2001-01-15 12:24:00   4     4     4     4       0     0     2 2159.
-#>  9  30.2 2001-01-15 14:24:00   6     6     6     6       0     0     2 1301.
-#> 10  30.2 2001-01-15 16:24:00   8     8     8     8       0     0     2  813.
+#>  1  21.7 2001-01-12 09:47:00   0     0     0     0       0     0     2    0 
+#>  2  21.7 2001-01-12 09:47:00   0     0     0     0       1   500     1   NA 
+#>  3  21.7 2001-01-12 10:17:00   0.5   0.5   0.5   0.5     0     0     2  707.
+#>  4  21.7 2001-01-12 10:47:00   1     1     1     1       0     0     2 2229.
+#>  5  21.7 2001-01-12 11:17:00   1.5   1.5   1.5   1.5     0     0     2 3420.
+#>  6  21.7 2001-01-12 11:47:00   2     2     2     2       0     0     2 3589.
+#>  7  21.7 2001-01-12 12:47:00   3     3     3     3       0     0     2 3319.
+#>  8  21.7 2001-01-12 13:47:00   4     4     4     4       0     0     2 2890.
+#>  9  21.7 2001-01-12 15:47:00   6     6     6     6       0     0     2 1695.
+#> 10  21.7 2001-01-12 17:47:00   8     8     8     8       0     0     2 1254.
 #>    ANALYTE PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD
 #>    <chr>   <chr>  <dbl> <lgl>      <dbl> <dbl> <chr>   
 #>  1 RS2023  RS2023     1 FALSE        500     0 BA      
@@ -92,5 +129,5 @@ index_dosing_interval(examplinib_fe_nif)
 #>  8     1
 #>  9     1
 #> 10     1
-#> # ℹ 710 more rows
+#> # ℹ 690 more rows
 ```

@@ -223,8 +223,8 @@ summary(nif_poc)
 #    PARENT  min  max  mean  median  
 #    RS2023  58   101  76.9  75
 #  
-#  NIF version: 0.66.4
-#  Creation date: 2026-11-04
+#  NIF version: 0.66.5
+#  Creation date: 2026-11-17
 #  Hash: 7754c593b477293315614e0402210a79
 #  Last DTC: 2001-08-15 09:01:00
 ```

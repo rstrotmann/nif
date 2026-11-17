@@ -143,11 +143,11 @@ examplinib_fe
 #> 
 #> Data disposition:
 #>   DOMAIN  SUBJECTS  OBSERVATIONS  
-#>   dm      30        30            
-#>   vs      30        60            
+#>   dm      22        22            
+#>   vs      22        44            
 #>   ex      20        40            
-#>   pc      20        1360          
-#>   lb      30        30            
+#>   pc      20        1320          
+#>   lb      22        22            
 #>   ts      0         0             
 #>   pp      20        360
 #> 
@@ -168,8 +168,8 @@ examplinib_fe
 #>   RS2023      RS2023      
 #>   RS2023487A  RS2023487A
 #> 
-#> Hash: 1da9bb59de131d443e185e76ceb135ae
-#> Last DTC: 2001-02-27 11:06:00
+#> Hash: d6f582c341ac3139df47430f9378a7c2
+#> Last DTC: 2001-02-12 12:09:00
 ```
 
 A high-level data summary for a specific subject can be extracted using
@@ -180,19 +180,19 @@ A high-level data summary for a specific subject can be extracted using
 examplinib_fe %>%
   subject_info("20230004001050001")
 #> ──────── Subject information ────────
-#> SUBJID    1050001            
-#> USUBJID   20230004001050001  
-#> ARM       Fed - Fasted       
-#> ARMCD     BA                 
-#> ACTARM    Fed - Fasted       
-#> ACTARMCD  BA                 
-#> SITEID    105                
-#> COUNTRY   DEU                
-#> RFSTDTC   2001-01-06T09:39   
-#> RFENDTC   2001-01-19T09:39   
-#> SEX       F                  
-#> AGE       40                 
-#> RACE      WHITE              
+#> SUBJID                                     
+#> USUBJID                                    
+#> ARM                                        
+#> ARMCD                                      
+#> ACTARM                                     
+#> ACTARMCD                                   
+#> SITEID                                     
+#> COUNTRY                                    
+#> RFSTDTC                                    
+#> RFENDTC                                    
+#> SEX                                        
+#> AGE                                        
+#> RACE                                       
 #> ETHNIC
 ```
 
@@ -323,24 +323,13 @@ suggest(examplinib_fe)
 #> The PC domain contains multiple fields that the nominal sampling time can be
 #> derived from:
 #> 
-#>   PCTPT                PCTPTNUM  PCELTM  
-#>   PREDOSE              0         PT0H    
-#>   0.5 HOURS POST-DOSE  0.5       PT0.5H  
-#>   1 HOURS POST-DOSE    1         PT1H    
-#>   1.5 HOURS POST-DOSE  1.5       PT1.5H  
-#>   2 HOURS POST-DOSE    2         PT2H    
-#>   3 HOURS POST-DOSE    3         PT3H    
-#>   4 HOURS POST-DOSE    4         PT4H    
-#>   6 HOURS POST-DOSE    6         PT6H    
-#>   8 HOURS POST-DOSE    8         PT8H    
-#>   10 HOURS POST-DOSE   10        PT10H   
-#>   12 HOURS POST-DOSE   12        PT12H   
-#>   24 HOURS POST-DOSE   24        PT24H   
-#>   48 HOURS POST-DOSE   48        PT48H   
-#>   72 HOURS POST-DOSE   72        PT72H   
-#>   96 HOURS POST-DOSE   96        PT96H   
-#>   144 HOURS POST-DOSE  144       PT144H  
-#>   168 HOURS POST-DOSE  168       PT168H
+#>   PCTPT                PCTPTNUM  PCELTM    
+#>   PREDOSE              0         PT0H      
+#>   0.5 HOURS POST-DOSE  0.5       PT0.5H    
+#>   1 HOURS POST-DOSE    1         PT1H      
+#>   1.5 HOURS POST-DOSE  1.5       PT1.5H    
+#>   2 HOURS POST-DOSE    2         PT2H      
+#>   (28 more rows)
 #> 
 #> Consider specifying a suitable 'ntime_method' argument to 'add_observation()'.
 #> By default, the function will attempt to extract time information from the
@@ -422,18 +411,18 @@ head(nif, 5)
 #> # A tibble: 5 × 27
 #>     REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT   BMI
 #>   <int> <dbl> <chr>      <chr>             <dbl> <dbl> <fct>  <dbl>  <dbl> <dbl>
-#> 1     1     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2
-#> 2     2     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2
-#> 3     3     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2
-#> 4     4     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2
-#> 5     5     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2
+#> 1     1     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3  21.7
+#> 2     2     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3  21.7
+#> 3     3     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3  21.7
+#> 4     4     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3  21.7
+#> 5     5     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3  21.7
 #>   DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE
 #>   <dttm>              <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>  
-#> 1 2001-01-15 08:24:00   0     0     0     0       0     0     2    0  RS2023 
-#> 2 2001-01-15 08:24:00   0     0     0     0       1   500     1   NA  RS2023 
-#> 3 2001-01-15 08:54:00   0.5   0.5   0.5   0.5     0     0     2  624. RS2023 
-#> 4 2001-01-15 09:24:00   1     1     1     1       0     0     2 1740. RS2023 
-#> 5 2001-01-15 09:54:00   1.5   1.5   1.5   1.5     0     0     2 2670. RS2023 
+#> 1 2001-01-12 09:47:00   0     0     0     0       0     0     2    0  RS2023 
+#> 2 2001-01-12 09:47:00   0     0     0     0       1   500     1   NA  RS2023 
+#> 3 2001-01-12 10:17:00   0.5   0.5   0.5   0.5     0     0     2  707. RS2023 
+#> 4 2001-01-12 10:47:00   1     1     1     1       0     0     2 2229. RS2023 
+#> 5 2001-01-12 11:17:00   1.5   1.5   1.5   1.5     0     0     2 3420. RS2023 
 #>   PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD IMPUTATION                
 #>   <chr>  <dbl> <lgl>      <dbl> <dbl> <chr>    <chr>                     
 #> 1 RS2023     1 FALSE        500     0 BA       ""                        
@@ -518,14 +507,14 @@ head(nif, 3)
 #> # A tibble: 3 × 31
 #>     REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT   BMI
 #>   <int> <dbl> <chr>      <chr>             <dbl> <dbl> <fct>  <dbl>  <dbl> <dbl>
-#> 1     1     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2
-#> 2     2     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2
-#> 3     3     1 2023000400 20230004001010002    55     1 WHITE    173   90.3  30.2
+#> 1     1     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3  21.7
+#> 2     2     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3  21.7
+#> 3     3     1 2023000400 20230004001010002    43     1 WHITE   184.   73.3  21.7
 #>   DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE
 #>   <dttm>              <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>  
-#> 1 2001-01-15 08:24:00   0     0     0     0       0     0     2    0  RS2023 
-#> 2 2001-01-15 08:24:00   0     0     0     0       1   500     1   NA  RS2023 
-#> 3 2001-01-15 08:54:00   0.5   0.5   0.5   0.5     0     0     2  624. RS2023 
+#> 1 2001-01-12 09:47:00   0     0     0     0       0     0     2    0  RS2023 
+#> 2 2001-01-12 09:47:00   0     0     0     0       1   500     1   NA  RS2023 
+#> 3 2001-01-12 10:17:00   0.5   0.5   0.5   0.5     0     0     2  707. RS2023 
 #>   PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD IMPUTATION                
 #>   <chr>  <dbl> <lgl>      <dbl> <dbl> <chr>    <chr>                     
 #> 1 RS2023     1 FALSE        500     0 BA       ""                        
@@ -559,8 +548,8 @@ summary(nif)
 #> 
 #> Sex distribution:
 #>   SEX     N   percent  
-#>   male    6   30       
-#>   female  14  70
+#>   male    15  75       
+#>   female  5   25
 #> 
 #> Treatments: RS2023
 #> 
@@ -570,13 +559,13 @@ summary(nif)
 #>   DL          n   
 #>   500-RS2023  20
 #> 
-#> 680 observations:
+#> 660 observations:
 #>   CMT  ANALYTE  n    
-#>   2    RS2023   680
+#>   2    RS2023   660
 #> 
 #> Observations by NTIME:
 #>   NTIME  RS2023  
-#>   0      40      
+#>   0      20      
 #>   0.5    40      
 #>   1      40      
 #>   1.5    40      
@@ -596,10 +585,10 @@ summary(nif)
 #>   PARENT  min  max  mean  median  
 #>   RS2023  2    2    2     2
 #> 
-#> NIF version: 0.66.4
-#> Creation date: 2026-11-04
-#> Hash: f5cff5a63a6e1ecbc6fee16d92d7e562
-#> Last DTC: 2001-02-27 10:06:00
+#> NIF version: 0.66.5
+#> Creation date: 2026-11-17
+#> Hash: 4b9979591d19e51d80169a49429b0eaa
+#> Last DTC: 2001-02-12 11:09:00
 ```
 
 Plotting the summary yields histograms of the baseline demographic

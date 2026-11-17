@@ -27,18 +27,18 @@ subject_info(obj, id, ...)
 ``` r
 subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
 #> ──────── Subject information ────────
-#> SUBJID    1020001            
-#> USUBJID   20230004001020001  
-#> ARM       Fasted - Fed       
-#> ARMCD     AB                 
-#> ACTARM    Fasted - Fed       
-#> ACTARMCD  AB                 
-#> SITEID    102                
+#> SUBJID    1040001            
+#> USUBJID   20230004001040001  
+#> ARM       Fed - Fasted       
+#> ARMCD     BA                 
+#> ACTARM    Fed - Fasted       
+#> ACTARMCD  BA                 
+#> SITEID    104                
 #> COUNTRY   DEU                
-#> RFSTDTC   2001-01-01T09:49   
-#> RFENDTC   2001-01-14T09:49   
+#> RFSTDTC   2001-01-02T09:10   
+#> RFENDTC   2001-01-15T09:10   
 #> SEX       M                  
-#> AGE       23                 
+#> AGE       22                 
 #> RACE      WHITE              
 #> ETHNIC                       
 subject_info(examplinib_poc_nif, 1)

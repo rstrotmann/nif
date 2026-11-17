@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -133,23 +133,19 @@ concentration at the start of each interval (<code>impute = "start_conc0"</code>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">nca</span><span class="op">(</span><span class="va">examplinib_sad_nif</span>, time <span class="op">=</span> <span class="st">"TAD"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> No analyte specified for NCA!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Selected RS2023 as the most likely analyte!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Parent set to RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ID DI start end  PPTESTCD      PPORRES exclude DOSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1  1     0  24   auclast 169.51775378    &lt;NA&gt;    5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1  1     0 Inf      cmax  56.21500000    &lt;NA&gt;    5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1  1     0 Inf      tmax   1.00000000    &lt;NA&gt;    5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1  1     0 Inf     tlast  96.00000000    &lt;NA&gt;    5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1  1     0 Inf clast.obs   0.00050000    &lt;NA&gt;    5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1  1     0 Inf  lambda.z   0.08129487    &lt;NA&gt;    5</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in nca(examplinib_sad_nif, time = "TAD"):</span> `time` must be TIME or NTIME!</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">nca</span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, time <span class="op">=</span> <span class="st">"TIME"</span>, group <span class="op">=</span> <span class="st">"FASTED"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> No analyte specified for NCA!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Selected RS2023 as the most likely analyte!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Parent set to RS2023</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> 6 negative concentrations set to zero!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> NCA: Group by FASTED</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in seq_len(length(time.dosing) - 1):</span> argument must be coercible to non-negative integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   FASTED ID DI start end  PPTESTCD      PPORRES exclude DOSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      0  1  1     0  24   auclast 2.379511e+04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      0  1  1     0 Inf      cmax 3.589220e+03    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3      0  1  1     0 Inf      tmax 2.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4      0  1  1     0 Inf     tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5      0  1  1     0 Inf clast.obs 5.281776e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6      0  1  1     0 Inf  lambda.z 9.272462e-02    &lt;NA&gt;  500</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
