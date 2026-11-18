@@ -155,8 +155,8 @@ summary(nif)
 #>   PLACEBO  7    210  149.1  182     
 #>   XAN      1    212  99.2   81
 #> 
-#> NIF version: 0.66.5
-#> Creation date: 2026-11-17
+#> NIF version: 0.66.5.9000
+#> Creation date: 2026-11-18
 #> Hash: 7901be3f6531b025c574cdcc46e0f350
 #> Last DTC: 2015-03-05 14:40:00
 

@@ -43,7 +43,10 @@ nca(
 
 - time:
 
-  The time field as character.
+  The time field used for the profile, as character. Either `"TIME"`
+  (actual time since the first record, the default) or `"NTIME"`
+  (nominal time). A sample taken at the time of a dose belongs to the
+  previous dosing interval.
 
 - duplicates:
 
@@ -95,8 +98,17 @@ missing concentration at the start of each interval
 ## Examples
 
 ``` r
-head(nca(examplinib_sad_nif, time = "TAD"))
-#> Error in nca(examplinib_sad_nif, time = "TAD"): `time` must be TIME or NTIME!
+head(nca(examplinib_sad_nif))
+#> ! No analyte specified for NCA!
+#> Selected RS2023 as the most likely analyte!
+#> ℹ Parent set to RS2023
+#>   ID DI start end  PPTESTCD      PPORRES exclude DOSE
+#> 1  1  1     0  24   auclast 169.51775378    <NA>    5
+#> 2  1  1     0 Inf      cmax  56.21500000    <NA>    5
+#> 3  1  1     0 Inf      tmax   1.00000000    <NA>    5
+#> 4  1  1     0 Inf     tlast  96.00000000    <NA>    5
+#> 5  1  1     0 Inf clast.obs   0.00050000    <NA>    5
+#> 6  1  1     0 Inf  lambda.z   0.08129487    <NA>    5
 head(nca(examplinib_fe_nif, time = "TIME", group = "FASTED"))
 #> ! No analyte specified for NCA!
 #> Selected RS2023 as the most likely analyte!
