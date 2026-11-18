@@ -109,8 +109,13 @@ test_that("nca() time parameter validation", {
 
   # Test invalid time parameter
   expect_error(
-    nca(test_nif, analyte = "DRUG", time = "INVALID")#,
-    # "`time` must be TIME, TAFD or TAD!"
+    nca(test_nif, analyte = "DRUG", time = "INVALID"),
+    "`time` must be TIME or NTIME!"
+  )
+
+  expect_error(
+    nca(test_nif, analyte = "DRUG", time = "NTIME"),
+    "Input does not have a `NTIME` column!"
   )
 })
 

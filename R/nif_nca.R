@@ -16,7 +16,10 @@
 #' @param parent The parent as character.
 #' @param keep Columns to keep, as character.
 #' @param group Columns to group by, as character.
-#' @param time The time field as character.
+#' @param time The time field used for the profile, as character. Either
+#'   `"TIME"` (actual time since the first record, the default) or `"NTIME"`
+#'   (nominal time). A sample taken at the time of a dose belongs to the
+#'   previous dosing interval.
 #' @param silent Suppress messages.
 #' @param duplicates Selection how to deal with duplicate observations with
 #'   respect to the ID, ANALYTE and the selected time fields:
@@ -37,7 +40,7 @@
 #' @export
 #'
 #' @examples
-#' head(nca(examplinib_sad_nif, time = "TAD"))
+#' head(nca(examplinib_sad_nif))
 #' head(nca(examplinib_fe_nif, time = "TIME", group = "FASTED"))
 nca <- function(
     nif,
@@ -63,9 +66,24 @@ nca <- function(
   validate_argument(
     group, "character", allow_null = TRUE, allow_multiple = TRUE,
     values = names(nif))
+
+  # validate_argument(
+  #   time, "character", allow_null = FALSE,
+  #   values = intersect(names(nif), c("TIME", "NTIME")))
+
   validate_argument(
     time, "character", allow_null = FALSE,
-    values = intersect(names(nif), c("TIME", "NTIME")))
+    values = c("TIME", "NTIME"))
+
+  if (!time %in% names(nif)) {
+    rlang::abort(
+      paste0("Input does not have a `", time, "` column!"),
+      class = "nif_arg_error"
+    )
+  }
+
+
+
   validate_argument(
     duplicates, "character",
     values = c("stop", "identify", "resolve"))
@@ -225,7 +243,6 @@ nca <- function(
   }
 
   # deal with duplicates
-  # dupl_fields <- c("ID", "ANALYTE", "selected_time")
   dupl_fields <- c("ID", "ANALYTE", "selected_time", "DI")
 
   n_dupl <- find_duplicates(

@@ -28,7 +28,10 @@ nca(
 
 \item{group}{Columns to group by, as character.}
 
-\item{time}{The time field as character.}
+\item{time}{The time field used for the profile, as character. Either
+\code{"TIME"} (actual time since the first record, the default) or \code{"NTIME"}
+(nominal time). A sample taken at the time of a dose belongs to the
+previous dosing interval.}
 
 \item{duplicates}{Selection how to deal with duplicate observations with
 respect to the ID, ANALYTE and the selected time fields:
@@ -69,6 +72,6 @@ concentrations are set to zero with a warning. PKNCA still imputes a missing
 concentration at the start of each interval (\code{impute = "start_conc0"}).
 }
 \examples{
-head(nca(examplinib_sad_nif, time = "TAD"))
+head(nca(examplinib_sad_nif))
 head(nca(examplinib_fe_nif, time = "TIME", group = "FASTED"))
 }
