@@ -500,7 +500,7 @@ print.summary_nif <- function(
         "Data from", sum(x$n_studies$N), "subjects across",
         ifelse(
           length(x$studies) == 1, "one study:",
-          paste0(length(x$studies), "studies:")
+          paste0(length(x$studies), " studies:")
         )
       ),
       x$n_studies
