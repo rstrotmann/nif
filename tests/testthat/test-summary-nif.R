@@ -204,7 +204,7 @@ test_that("summary.nif counts observations by CMT and ANALYTE", {
 })
 
 
-test_that("summary.nif counts subjects with administrations by study", {
+test_that("summary.nif counts subjects by study", {
   test_nif <- nif(tibble::tribble(
     ~ID, ~STUDYID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~PARENT, ~METABOLITE, ~DOSE,
       1,     "S1",     0,  100,    1,     1,  NA,      "A",     "A",       FALSE,   100,
@@ -218,7 +218,7 @@ test_that("summary.nif counts subjects with administrations by study", {
 
   expect_equal(s$n_subj, 4)
   expect_equal(s$n_studies$N[s$n_studies$STUDYID == "S1"], 2)
-  expect_equal(s$n_studies$N[s$n_studies$STUDYID == "S2"], 1)
+  expect_equal(s$n_studies$N[s$n_studies$STUDYID == "S2"], 2)
 })
 
 

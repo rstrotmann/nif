@@ -360,12 +360,17 @@ summary.nif <- function(
     summarize(n = n(), .groups = "drop") |>
     as.data.frame()
 
+  # n_studies <- object |>
+  #   filter(.data$EVID == 1) |>
+  #   select(any_of(c("ID", "STUDYID"))) |>
+  #   as.data.frame() |>
+  #   group_by(across(any_of("STUDYID"))) |>
+  #   summarize(N = n_distinct(.data$ID), .groups = "drop")
+
   n_studies <- object |>
-    filter(.data$EVID == 1) |>
     select(any_of(c("ID", "STUDYID"))) |>
-    as.data.frame() |>
-    group_by(across(any_of("STUDYID"))) |>
-    summarize(N = n_distinct(.data$ID), .groups = "drop")
+    distinct() |>
+    reframe(N = n_distinct(.data$ID), .by = any_of("STUDYID"))
 
   sex <- sbs
   if (!"SEX" %in% names(sex)) {
@@ -499,8 +504,9 @@ print.summary_nif <- function(
       paste(
         "Data from", sum(x$n_studies$N), "subjects across",
         ifelse(
-          length(x$studies) == 1, "one study:",
-          paste0(length(x$studies), " studies:")
+          length(x$studies) > 1,
+          paste0(length(x$studies), " studies:"),
+          "one study:"
         )
       ),
       x$n_studies
